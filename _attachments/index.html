@@ -20,12 +20,12 @@
         </div>
         <div id='session_action'>
           <ul>
-            <li>
+            <li id="account">
               <a href='#'>
                 Username
               </a>
             </li>
-            <li>
+            <li id="profile">
               <a href='#'>
                 edit profile
               </a>
@@ -40,51 +40,51 @@
       </div>
     </header>
     <div class='container'>
-      <div class='span-5 last'></div>
       <div class='span-19 last'>
-        <form id="createmessage">
-
-          <ul id="headers">
-            <li>
-              <fieldset>
-                <label for="from" class="key">From:</label>
-                <input type="text" id="from" class="val" />
-              </fieldset>
-            </li>
-            <li>
-              <fieldset>
-                <label for="to" class="key">To:</label>
-                <input type="text" id="to" class="val" />
-              </fieldset>
-            </li>
-            <li id="headertemplate">          
-              <fieldset>
-                <label>
-                  <input type="text" placeholder="Header Key" class="key"/>
-                </label>
-                <input type="text" placeholder="Header Value" class="val" />
-                <a class="delete" data-action="delete">x</a>
-              </fieldset>
-            </li>
-          </ul>
-
-          <a id="addheader"> + Add Header</a>
-
-          <div id="drop">
-            <p>Drag and drop files on the page to attach</p>
-            <div id="attachments">
-            </div>
-          </div>
-
-          <textarea id="message"></textarea>
-
-          <input type="submit" value="Send" class="btn" id="sendbutton" />
-          <span id="feedback"></span>
-
-        </form>
       </div>
-      <div class='span-19 prepend-5 last'></div>
+        <div id="file-upload">
+          <form id="createmessage">
 
+            <ul id="headers">
+              <li>
+                <fieldset>
+                  <label for="from" class="key">From:</label>
+                  <input type="text" id="from" class="val" />
+                </fieldset>
+              </li>
+              <li>
+                <fieldset>
+                  <label for="to" class="key">To:</label>
+                  <input type="text" id="to" class="val" />
+                </fieldset>
+              </li>
+              <li id="headertemplate">          
+                <fieldset>
+                  <label>
+                    <input type="text" placeholder="Header Key" class="key"/>
+                  </label>
+                  <input type="text" placeholder="Header Value" class="val" />
+                  <a class="delete" data-action="delete">x</a>
+                </fieldset>
+              </li>
+            </ul>
+
+            <a id="addheader"> + Add Header</a>
+
+            <div id="drop">
+              <p>Drag and drop files on the page to attach</p>
+              <div id="attachments">
+              </div>
+            </div>
+
+            <textarea id="message"></textarea>
+
+            <input type="submit" value="Send" class="btn" id="sendbutton" />
+            <span id="feedback"></span>
+
+          </form>
+        </div>
+      </div>
     </div>
     <script src="vendor/couchapp/loader.js"></script>
     <script src="./couchappspora.js"></script>

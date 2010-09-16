@@ -136,5 +136,12 @@ var CouchAppspora = (function() {
   document.addEventListener("dragenter", doNothing, false);  
   document.addEventListener("dragover", doNothing, false);  
   document.addEventListener("drop", drop, false);  
+  
+  $.couch.app(function(app) {
+    $("#account").evently("account", app);
+    $("#profile").evently("profile", app);
+    $.evently.connect("#account","#profile", ["loggedIn","loggedOut"]);
+    $(".span-19").evently("items", app);
+  });
  
 })();
