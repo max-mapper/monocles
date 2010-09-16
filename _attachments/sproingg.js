@@ -113,8 +113,8 @@ var SPROINGG = (function() {
       };
     }
     
-    doc["_id"] $("#name").val();
-    doc["_attachments"] $("#name").val();
+    doc["_id"] = $("#name").val();
+    doc["_attachments"] = $("#name").val();
     
     $("#sendbutton")[0].setAttribute("disabled", "disabled");
     
