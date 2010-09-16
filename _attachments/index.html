@@ -21,69 +21,33 @@
         <div id='session_action'>
           <ul>
             <li id="account">
-              <a href='#'>
-                Username
-              </a>
             </li>
             <li id="profile">
-              <a href='#'>
-                edit profile
-              </a>
-            </li>
-            <li>
-              <a href='#'>
-                logout
-              </a>
             </li>
           </ul>
         </div>
       </div>
+      <div id='aspect_header'>
+         <div class='container'>
+           <div class='span-19 last' style='position:relative;'>
+             <div id='publisher'>
+               <form id="createmessage">
+                 <div id="drop">
+                   <p>Drag and drop files on the page to attach</p>
+                   <div id="attachments">
+                   </div>
+                 </div>
+                 <textarea name="message"></textarea>
+                 <input type="submit" value="Send" class="btn" id="sendbutton" />
+               </form>
+             </div>
+           </div>
+         </div>
+       </div>
     </header>
     <div class='container'>
-      <div class='span-19 last'>
+      <div class='span-19 last items'>
       </div>
-        <div id="file-upload">
-          <form id="createmessage">
-
-            <ul id="headers">
-              <li>
-                <fieldset>
-                  <label for="from" class="key">From:</label>
-                  <input type="text" id="from" class="val" />
-                </fieldset>
-              </li>
-              <li>
-                <fieldset>
-                  <label for="to" class="key">To:</label>
-                  <input type="text" id="to" class="val" />
-                </fieldset>
-              </li>
-              <li id="headertemplate">          
-                <fieldset>
-                  <label>
-                    <input type="text" placeholder="Header Key" class="key"/>
-                  </label>
-                  <input type="text" placeholder="Header Value" class="val" />
-                  <a class="delete" data-action="delete">x</a>
-                </fieldset>
-              </li>
-            </ul>
-
-            <a id="addheader"> + Add Header</a>
-
-            <div id="drop">
-              <p>Drag and drop files on the page to attach</p>
-              <div id="attachments">
-              </div>
-            </div>
-
-            <textarea id="message"></textarea>
-
-            <input type="submit" value="Send" class="btn" id="sendbutton" />
-            <span id="feedback"></span>
-
-          </form>
-        </div>
       </div>
     </div>
     <script src="vendor/couchapp/loader.js"></script>

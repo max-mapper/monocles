@@ -326,16 +326,8 @@ label {
   #publisher .avatar {
     float: left;
     margin-right: 15px; }
-  #publisher p {
-    position: absolute;
-    left: 0;
-    top: 0; }
   #publisher form {
     display: inline; }
-    #publisher form input[type='submit'] {
-      float: right;
-      margin-right: 20px;
-      margin-top: 26px; }
   #publisher textarea {
     width: 600px;
     height: 40px;

@@ -141,7 +141,7 @@ var CouchAppspora = (function() {
     $("#account").evently("account", app);
     $("#profile").evently("profile", app);
     $.evently.connect("#account","#profile", ["loggedIn","loggedOut"]);
-    $(".span-19").evently("items", app);
+    $(".items").evently("items", app);
   });
  
 })();
