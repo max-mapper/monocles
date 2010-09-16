@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Sproingg</title>
+    <link rel="stylesheet" href="style/main.css" type="text/css">
+  </head>
+
+  <body>
+
+    <h1>Sproingg</h1>
+
+    <form id="createmessage">
+
+      <ul id="headers">
+        <li>
+          <fieldset>
+            <label for="from" class="key">From:</label>
+            <input type="text" id="from" class="val" />
+          </fieldset>
+        </li>
+        <li>
+          <fieldset>
+            <label for="to" class="key">To:</label>
+            <input type="text" id="to" class="val" />
+          </fieldset>
+        </li>
+        <li id="headertemplate">          
+          <fieldset>
+            <label>
+              <input type="text" placeholder="Header Key" class="key"/>
+            </label>
+            <input type="text" placeholder="Header Value" class="val" />
+            <a class="delete" data-action="delete">x</a>
+          </fieldset>
+        </li>
+      </ul>
+
+      <a id="addheader"> + Add Header</a>
+
+      <div id="drop">
+        <p>Drag and drop files on the page to attach</p>
+        <div id="attachments">
+        </div>
+      </div>
+
+      <textarea id="message"></textarea>
+            
+      <input type="submit" value="Send" class="btn" id="sendbutton" />
+      <span id="feedback"></span>
+
+    </form>
+
+  </body>
+
+  <script src="vendor/couchapp/loader.js"></script>
+  <script src="./sproingg.js"></script>
+</html>
