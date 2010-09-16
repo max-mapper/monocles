@@ -1,0 +1,13 @@
+h1. CouchAppspora
+
+h3. ..is Diaspora implemented on CouchDB
+
+p. The Diaspora source code was initially "released":http://www.joindiaspora.com/2010/09/15/developer-release.html on September 15th, 2010. This project is an implementation of the Diaspora protocol as a CouchApp built entirely on CouchDB.
+
+h3. Why?
+
+p. CouchDB is a good fit for a federated social web node due to it's robust replication and MVCC implementations. Diaspora is an attractive implementation of a federated social web application. I want to marry the front end and features of Diaspora, but build them on the flexible replication of CouchDB.
+
+h3. License
+
+TODO: I think I have to comply with Diaspora's AGPLV3 License...
