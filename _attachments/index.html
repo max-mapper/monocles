@@ -1,58 +1,92 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-
   <head>
-    <title>CouchAppspora</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
+    <link rel="stylesheet" href="style/blueprint-screen.css" type="text/css">
     <link rel="stylesheet" href="style/main.css" type="text/css">
+    <link rel="stylesheet" href="style/application.css" type="text/css">
+    <link rel="stylesheet" href="style/ui.css" type="text/css">
   </head>
-
   <body>
-
-    <h1>CouchAppspora</h1>
-
-    <form id="createmessage">
-
-      <ul id="headers">
-        <li>
-          <fieldset>
-            <label for="from" class="key">From:</label>
-            <input type="text" id="from" class="val" />
-          </fieldset>
-        </li>
-        <li>
-          <fieldset>
-            <label for="to" class="key">To:</label>
-            <input type="text" id="to" class="val" />
-          </fieldset>
-        </li>
-        <li id="headertemplate">          
-          <fieldset>
-            <label>
-              <input type="text" placeholder="Header Key" class="key"/>
-            </label>
-            <input type="text" placeholder="Header Value" class="val" />
-            <a class="delete" data-action="delete">x</a>
-          </fieldset>
-        </li>
-      </ul>
-
-      <a id="addheader"> + Add Header</a>
-
-      <div id="drop">
-        <p>Drag and drop files on the page to attach</p>
-        <div id="attachments">
+    <header>
+      <div class='container' style='position:relative;'>
+        <div href='#' id='diaspora_text'>
+          <a href='#'>
+            COUCHAPPSPORA*
+          </a>
+          <span class='sub_text'>
+            PREVIEW
+          </span>
+        </div>
+        <div id='session_action'>
+          <ul>
+            <li>
+              <a href='#'>
+                Username
+              </a>
+            </li>
+            <li>
+              <a href='#'>
+                edit profile
+              </a>
+            </li>
+            <li>
+              <a href='#'>
+                logout
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
+    </header>
+    <div class='container'>
+      <div class='span-5 last'></div>
+      <div class='span-19 last'>
+        <form id="createmessage">
 
-      <textarea id="message"></textarea>
-            
-      <input type="submit" value="Send" class="btn" id="sendbutton" />
-      <span id="feedback"></span>
+          <ul id="headers">
+            <li>
+              <fieldset>
+                <label for="from" class="key">From:</label>
+                <input type="text" id="from" class="val" />
+              </fieldset>
+            </li>
+            <li>
+              <fieldset>
+                <label for="to" class="key">To:</label>
+                <input type="text" id="to" class="val" />
+              </fieldset>
+            </li>
+            <li id="headertemplate">          
+              <fieldset>
+                <label>
+                  <input type="text" placeholder="Header Key" class="key"/>
+                </label>
+                <input type="text" placeholder="Header Value" class="val" />
+                <a class="delete" data-action="delete">x</a>
+              </fieldset>
+            </li>
+          </ul>
 
-    </form>
+          <a id="addheader"> + Add Header</a>
 
+          <div id="drop">
+            <p>Drag and drop files on the page to attach</p>
+            <div id="attachments">
+            </div>
+          </div>
+
+          <textarea id="message"></textarea>
+
+          <input type="submit" value="Send" class="btn" id="sendbutton" />
+          <span id="feedback"></span>
+
+        </form>
+      </div>
+      <div class='span-19 prepend-5 last'></div>
+
+    </div>
+    <script src="vendor/couchapp/loader.js"></script>
+    <script src="./couchappspora.js"></script>
   </body>
-
-  <script src="vendor/couchapp/loader.js"></script>
-  <script src="./couchappspora.js"></script>
 </html>
