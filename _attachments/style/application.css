@@ -146,6 +146,10 @@ ul#stream {
   ul#stream > li:first-child {
     padding-top: 0; }
 
+p.message {
+  float: left;
+}
+
 li.message {
   position: relative;
   line-height: 140%;
