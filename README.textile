@@ -8,6 +8,14 @@ h3. Why?
 
 p. CouchDB is a good fit for a federated social web node due to it's robust replication and MVCC implementations. Diaspora is an attractive implementation of a federated social web application. I want to marry the front end and features of Diaspora, but build them on the flexible replication of CouchDB.
 
+h3. Hosting your own
+
+p. To demonstrate the built in replication that you get with CouchDB (I haven't implemented any federated web protocols quite yet):
+
+* Go to "couchone.com/get":http://couchone.com/get and sign up for a Couch
+* Make a database and set up continuous replication from @http://glitterbacon.couchone.com/couchappspora@ to your new database
+* Visit "http://yourcouch/yourdb/_design/couchappspora/index.html":http://yourcouch/yourdb/_design/couchappspora/index.html
+
 h3. License
 
 TODO: I think I have to comply with Diaspora's AGPLV3 License...
