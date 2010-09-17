@@ -22,7 +22,7 @@ h3. TO-DO (aka 'how to contribute')
 * Port over the notion of 'aspects' (friend groups). Each aspect should be a new Couch database for easy replication on a per-aspect basis.
 * Port over comment threads
 * Port over photo uploads
-* Investigate encrypting replication
+* Investigate encrypting replication. Diaspora is simply "encrypting JSON":http://github.com/diaspora/diaspora/blob/master/lib/encryptor.rb#L41.
 
 h3. License
 
