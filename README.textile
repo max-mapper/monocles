@@ -16,6 +16,15 @@ p. To demonstrate the built in replication that you get with CouchDB (I haven't 
 * Make a database and set up continuous replication from @http://glitterbacon.couchone.com/couchappspora@ to your new database
 * Visit "http://yourcouch/yourdb/_design/couchappspora/index.html":http://yourcouch/yourdb/_design/couchappspora/index.html
 
+h3. TO-DO (aka 'how to contribute')
+
+* UI for controlling Replication settings. You should be able to setup filtered replication through the UI and only replicate posts from the last 24 hours, for instance.
+* Port over the notion of 'aspects' (friend groups). Each aspect should be a new Couch database for easy replication on a per-aspect basis.
+* Port over comment threads
+* Port over photo uploads
+* Investigate encrypting replication
+
 h3. License
 
-TODO: I think I have to comply with Diaspora's AGPLV3 License...
+p. TODO: I think I have to comply with Diaspora's AGPLV3 License...
+p. CouchAppspora was started on September 15th, 2010 by "Max Ogden":http://www.maxogden.com
