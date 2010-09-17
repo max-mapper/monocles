@@ -1,16 +1,15 @@
-<div class="avatar">
-  {{#gravatar_url}}<img src="{{gravatar_url}}"/>{{/gravatar_url}}
-  <div class="name">
-    {{name}}
-  </div>
+<div id='publisher'>
+  {{#gravatar_url}}<img class='avatar' src="{{gravatar_url}}"/>{{/gravatar_url}}
+  <form>
+    <p>
+      <textarea id="status_message" name='message' rows='2'></textarea>
+    </p>
+    <input type="submit" value="Share" class="btn button" id="sendbutton" />
+  </form>
+  <!-- <div id="drop">
+     <p>Drag and drop files on the page to attach</p>
+     <div id="attachments">
+     </div>
+   </div> -->
 </div>
 
-<form id="createmessage">
- <div id="drop">
-   <p>Drag and drop files on the page to attach</p>
-   <div id="attachments">
-   </div>
- </div>
- <textarea name="message"></textarea>
- <input type="submit" value="Send" class="btn" id="sendbutton" />
-</form>

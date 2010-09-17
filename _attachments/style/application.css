@@ -315,31 +315,42 @@ input[type='text'], textarea {
   text-align: right;
   font-size: 12px; }
 
-form p {
-  position: relative;
-  padding: 0;
-  margin: 0; }
+  form p {
+    position: relative;
+    padding: 0;
+    margin: 0; }
 
-label {
-  color: #999999;
-  font-weight: normal; }
+  label {
+    color: #999999;
+    position: absolute;
+    top: 3px;
+    left: 0.48em;
+    font-weight: normal; }
 
-#publisher {
-  color: #999999;
-  position: relative; }
-  #publisher .avatar {
-    float: left;
-    margin-right: 15px; }
-  #publisher form {
-    display: inline; }
-  #publisher textarea {
-    width: 600px;
-    height: 40px;
-    margin-top: 0;
-    margin-bottom: 0;
-    -webkit-box-shadow: 0 1px 0 white; }
-  #publisher .button {
-    margin-left: 100px; }
+  #publisher {
+    color: #999999;
+    position: relative; }
+    #publisher .avatar {
+      float: left;
+      margin-right: 15px; }
+    #publisher p {
+      position: absolute;
+      left: 0;
+      top: 0; }
+    #publisher form {
+      display: inline; }
+      #publisher form input[type='submit'] {
+        float: right;
+        margin-right: 20px;
+        margin-top: 26px; }
+    #publisher textarea {
+      width: 600px;
+      height: 40px;
+      margin-top: 0;
+      margin-bottom: 0;
+      -webkit-box-shadow: 0 1px 0 white; }
+    #publisher .button {
+      margin-left: 100px; }
 
 #image_picker .small_photo {
   height: 100px;
