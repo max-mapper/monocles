@@ -18,11 +18,7 @@ p. To demonstrate the built in replication that you get with CouchDB (I haven't 
 
 h3. TO-DO (aka 'how to contribute')
 
-* UI for controlling Replication settings. You should be able to setup filtered replication through the UI and only replicate posts from the last 24 hours, for instance.
-* Port over the notion of 'aspects' (friend groups). Each aspect should be a new Couch database for easy replication on a per-aspect basis.
-* Port over comment threads
-* Port over photo uploads
-* Investigate encrypting replication. Diaspora is simply "encrypting JSON":http://github.com/diaspora/diaspora/blob/master/lib/encryptor.rb#L41.
+Check out the "Issues page":http://github.com/maxogden/couchappspora/issues
 
 h3. License
 
