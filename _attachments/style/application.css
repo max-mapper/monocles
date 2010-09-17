@@ -107,6 +107,9 @@ header {
     display: inline;
     top: 0;
     right: 0; }
+    header #session_action form {
+      top: 15px;
+    }
     header #session_action ul {
       list-style: none;
       padding: 0;
@@ -247,6 +250,10 @@ ul.comment_set {
   list-style-type: none;
   margin: 0;
   padding: 0; }
+  
+.profile_setup label{
+  position: relative !important;
+}
 
 #stream img.person_picture, #profile img.person_picture,
 .comments img.person_picture {
@@ -323,7 +330,7 @@ input[type='text'], textarea {
   label {
     color: #999999;
     position: absolute;
-    top: 3px;
+    line-height: 28px;
     left: 0.48em;
     font-weight: normal; }
 

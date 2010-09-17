@@ -137,16 +137,9 @@ var CouchAppspora = (function() {
   document.addEventListener("dragover", doNothing, false);  
   document.addEventListener("drop", drop, false);  
   
-  $.couch.app(function(app) {
-    var couchappsporaProfile = $.extend(true, {}, app.ddoc.vendor.couchapp.evently.profile, {
-      profileReady : {
-        after : "function(e, p) { $$(this).profile = p; $('label').inFieldLabels();};"
-      }
-    });
-    
+  $.couch.app(function(app) {        
     $("#account").evently("account", app);
-    $("#profile").evently(couchappsporaProfile);
-    // $("#profile").evently("profile", app);
+    $("#profile").evently("profile", app);
     $.evently.connect("#account","#profile", ["loggedIn","loggedOut"]);
     $(".items").evently("items", app);
   });
