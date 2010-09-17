@@ -27,4 +27,3 @@ h3. TO-DO (aka 'how to contribute')
 h3. License
 
 p. TODO: I think I have to comply with Diaspora's AGPLV3 License...
-p. CouchAppspora was started on September 15th, 2010 by "Max Ogden":http://www.maxogden.com
