@@ -108,7 +108,7 @@ header {
     top: 0;
     right: 0; }
     header #session_action form {
-      top: 15px;
+      top: 45px;
     }
     header #session_action ul {
       list-style: none;
