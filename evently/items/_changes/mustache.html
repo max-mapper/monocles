@@ -7,7 +7,7 @@
           <a href='#'>
             {{nickname}}
           </a>
-          {{message}}
+          {{message}} {{#attachments}} [<a href="/{{db}}/{{id}}/{{file}}" target="_blank">{{file}}</a>] {{/attachments}}
         </span>
       </div>
     </li>

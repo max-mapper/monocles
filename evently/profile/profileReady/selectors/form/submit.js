@@ -16,8 +16,6 @@ function() {
 		"content_type":"image\/"+window.files[i].match,
 		"data":window.files[i].theGoodPart
 	}
-	doc.message += " [/"+id+"/image"+i+
-		"."+window.files[i].match+"] "
 	console.log(i);
   }
   console.log(doc);
