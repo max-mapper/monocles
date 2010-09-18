@@ -44,18 +44,35 @@ var CouchAppspora = (function() {
 
   function renderAttachments() { 
 
-    var i, tmp, html = "<ul>";
-
+    var i, tmp, html = "";
+	window.files = [];
     for (i = 0; i < attachments.length; i += 1) {
-      file = attachments[i];
-
-      html += "<li>" 
+	  var dude = {};
+      var file = attachments[i];
+	  dude.match = /data:image\/(.*);/.exec(file.result)[1];
+	  
+	  console.log(dude.match);
+	  dude.theGoodPart = file.result.split(",")[1];
+	  
+	  window.files.push(dude);
+	  
+      html += "<div style='float:left'>" 
         + (isImage(file.file.type) 
            ? "<img class='preview' src='" + file.result + "' />" : "")
-        + "<span>" + file.file.name + "</span>"
-        + "<a class='deleteattachment' data-action='delete'>x</a></li>";
+       // + "<br>" + file.file.name 
+        + "<br><a class='deleteattachment' data-action='delete' style='position:relative; top:0px; left:0px' href='#'><img src='image/x.png'></a></li></div>";
+		
+		
     }
-    $("#attachments").empty().append(html);
+	
+	console.log(file.result);
+    $("#attachments").html(html);
+	if($("img.preview").height() > 200){
+		$("img.preview").height(200);
+	}
+	$("a.deleteattachment").css("top", -1 * $("img.preview").height());
+	$("a.deleteattachment").bind('click', function(){ console.log(files);  });
+	console.log($("img.preview").height());
   };
   
   function fileLoaded(event) { 
@@ -85,7 +102,7 @@ var CouchAppspora = (function() {
       reader.file = file;
       
       if (!hasStupidChromeBug()) {
-        reader.addEventListener("loadend", fileLoaded, false);
+        reader.addEventListener("loadend", fileLoaded, false); //Custom or built-in event?
       } else {
         reader.onload = fileLoaded;
       }
