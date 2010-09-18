@@ -56,11 +56,11 @@ var CouchAppspora = (function() {
 	  
 	  window.files.push(dude);
 	  
-      html += "<div style='float:left'>" 
+      html += "<div style='float:left' id='imgDiv"+i+"'>" 
         + (isImage(file.file.type) 
-           ? "<img class='preview' src='" + file.result + "' />" : "")
+           ? "<img  class='preview' src='" + file.result + "' />" : "")
        // + "<br>" + file.file.name 
-        + "<br><a class='deleteattachment' data-action='delete' style='position:relative; top:0px; left:0px' href='#'><img src='image/x.png'></a></li></div>";
+        + "<br><a class='deleteattachment' data-action='delete' style='position:relative; top:0px; left:0px' href='#' id='image_"+i+"'><img src='image/x.png'></a></li></div>";
 		
 		
     }
@@ -71,7 +71,12 @@ var CouchAppspora = (function() {
 		$("img.preview").height(200);
 	}
 	$("a.deleteattachment").css("top", -1 * $("img.preview").height());
-	$("a.deleteattachment").bind('click', function(){ console.log(files);  });
+	$("a.deleteattachment").bind('click', function(){ 
+		var fileNumber = this.id.split("_")[1];
+		attachments.splice(fileNumber,1);
+		$("#imgDiv"+fileNumber).remove();
+		console.log(this.id);  
+	});
 	console.log($("img.preview").height());
   };
   
