@@ -12,12 +12,13 @@ function() {
 	_attachments:{}
   };
   window.files = window.files || [];
-  for(i=0;i<window.files.length;i++){
-	doc._attachments["image"+i+"."+window.files[i].match] = {
-		"content_type":"image\/"+window.files[i].match,
-		"data":window.files[i].theGoodPart
-	}
-  }
+  $.each(window.files, function(i, file) {
+    doc._attachments["image" + i + "." + file.match] = {
+  		"content_type": "image\/" + file.match,
+  		"data": file.theGoodPart
+  	}
+  })
+
   
   $$(this).app.db.saveDoc(doc, {
     success : function(newDoc) {
