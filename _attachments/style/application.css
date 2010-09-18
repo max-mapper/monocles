@@ -505,6 +505,16 @@ h1.big_text {
   #aspect_nav .new_requests {
     color: red; }
 
+#aspect_nav ul.right{
+  position: absolute; 
+  right: 0pt; 
+  bottom: 0.01em;
+}
+
+.aspect-title, .message-container {
+  float: left;
+}
+
 #global_search {
   display: inline;
   position: relative;

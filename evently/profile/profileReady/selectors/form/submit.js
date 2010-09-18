@@ -11,6 +11,7 @@ function() {
     message : $("[name=message]", form).val(),
 	_attachments:{}
   };
+  
   window.files = window.files || [];
   $.each(window.files, function(i, file) {
     doc._attachments["image" + i + "." + file.match] = {
@@ -18,7 +19,6 @@ function() {
   		"data": file.theGoodPart
   	}
   })
-
   
   $$(this).app.db.saveDoc(doc, {
     success : function(newDoc) {
