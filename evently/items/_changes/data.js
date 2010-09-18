@@ -13,7 +13,6 @@ function(data) {
 		var dude = {}
 		dude.file = file
 		attachments.push(dude)
-		console.log(dude);
 	  }
 	  p.attachments = attachments;
       return p;

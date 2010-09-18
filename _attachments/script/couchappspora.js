@@ -51,7 +51,6 @@ var CouchAppspora = (function() {
       var file = attachments[i];
 	  dude.match = /data:image\/(.*);/.exec(file.result)[1];
 	  
-	  console.log(dude.match);
 	  dude.theGoodPart = file.result.split(",")[1];
 	  
 	  window.files.push(dude);
@@ -65,7 +64,6 @@ var CouchAppspora = (function() {
 		
     }
 	
-	console.log(file.result);
     $("#attachments").html(html);
 	if($("img.preview").height() > 200){
 		$("img.preview").height(200);
@@ -75,9 +73,7 @@ var CouchAppspora = (function() {
 		var fileNumber = this.id.split("_")[1];
 		attachments.splice(fileNumber,1);
 		$("#imgDiv"+fileNumber).remove();
-		console.log(this.id);  
 	});
-	console.log($("img.preview").height());
   };
   
   function fileLoaded(event) { 

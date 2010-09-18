@@ -11,15 +11,13 @@ function() {
     message : $("[name=message]", form).val(),
 	_attachments:{}
   };
-  window.files = window.files || []
+  window.files = window.files || [];
   for(i=0;i<window.files.length;i++){
 	doc._attachments["image"+i+"."+window.files[i].match] = {
 		"content_type":"image\/"+window.files[i].match,
 		"data":window.files[i].theGoodPart
 	}
-	console.log(i);
   }
-  console.log(doc);
   
   $$(this).app.db.saveDoc(doc, {
     success : function(newDoc) {
