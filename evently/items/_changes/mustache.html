@@ -15,7 +15,12 @@
 			<span id='image_{{id}}_{{rand}}'><img src="/{{db}}/{{id}}/{{file}}" width=100%></span>
 		  {{/attachments}}
         </span>
+        <div class="info">
+          <a href="#" class="show_post_comments">show comments</a>
+          <a href="#" class="hide_post_comments" style="display:none">hide comments</a>
+        </div>
       </div>
+      <div class="comments"></div>
     </li>
 	<p id='profile_{{nickname}}_{{rand}}'>
 		Name: {{nickname}}<br>
