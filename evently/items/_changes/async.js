@@ -1,18 +1,29 @@
-function getComments(callback, event, post_id) {
-	var obj = {};
-	var spora = $$(this);
-	spora.app.db.view('couchappspora/recent-items', {
-		"descending" : true,
-		"limit" : 50,
-		success: function(posts) {
-            $.log(posts);
-			obj.posts = posts;
-			spora.app.db.view('couchappspora/comments', {
-				success: function(comments) {
-					obj.comments = comments
-					callback(obj);
-				}
-			});
-        }
-    });
+function getPostsWithComments(callback, event) {
+  var posts;
+  var comments;
+  var spora = $$(this);
+
+  // Runs the given callback only when posts and comments are both loaded.
+  function render() {
+    if (posts && comments) {
+      callback(posts, comments);
+    }
+  }
+
+  spora.app.db.view('couchappspora/recent-items', {
+    "descending" : true,
+    "limit" : 50,
+    success: function(data) {
+      posts = data;
+      render();
+    }
+  });
+
+  spora.app.db.view('couchappspora/comments', {
+    "limit" : 250,
+    success: function(data) {
+      comments = data;
+      render();
+    }
+  });
 }

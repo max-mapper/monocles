@@ -1,16 +1,5 @@
 var CouchAppspora = (function() {
 
-	Array.prototype.clean = function(deleteValue) {
-	  for (var i = 0; i < this.length; i++) {
-		if (this[i] == deleteValue) {         
-		  this.splice(i, 1);
-		  i--;
-		}
-	  }
-	  return this;
-	};
-	
-	
   var DateHelper = {
     // Takes the format of "Jan 15, 2007 15:45:00 GMT" and converts it to a relative time
     // Ruby strftime: %b %d, %Y %H:%M:%S GMT

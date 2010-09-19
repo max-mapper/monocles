@@ -4,25 +4,25 @@
       {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}"/>{{/gravatar_url}}
       <div class='content'>
         <span class='from'>
-          <a href='#showProf' class='hover_profile' rel='#profile_{{nickname}}_{{rand}}' title='{{nickname}} profile'>
+          <a href='#showProf' class='hover_profile' rel='#profile_{{nickname}}_{{randomToken}}' title='{{nickname}} profile'>
             {{nickname}}
           </a>
 		  
           {{message}} 
 		  
 		  {{#attachments}} 
-			[<a href="/{{db}}/{{id}}/{{file}}" target="_blank" rel="#image_{{id}}_{{rand}}" class='hover' title='{{file}}'>{{file}}</a>] 
-			<span id='image_{{id}}_{{rand}}'><img src="/{{db}}/{{id}}/{{file}}" width=100%></span>
+			[<a href="/{{db}}/{{id}}/{{file}}" target="_blank" rel="#image_{{id}}_{{randomToken}}" class='hover' title='{{file}}'>{{file}}</a>] 
+			<span id='image_{{id}}_{{randomToken}}'><img src="/{{db}}/{{id}}/{{file}}" width=100%></span>
 		  {{/attachments}}
         </span>
         <div class="info">
-          <a href="#" class="show_post_comments">add comment {{#boolean}}({{commentCount}}){{/boolean}}</a>
+          <a href="#" class="show_post_comments">add comment {{#hasComments}}({{commentCount}}){{/hasComments}}</a>
           <a href="#" class="hide_post_comments" style="display:none">hide comments</a>
         </div>
         <div class="comments"></div>
       </div>
     </li>
-	<p id='profile_{{nickname}}_{{rand}}'>
+	<p id='profile_{{nickname}}_{{randomToken}}'>
 		Name: {{nickname}}<br>
 		Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
 		Url: <a href='{{url}}' target='_blank'>{{url}}</a>
