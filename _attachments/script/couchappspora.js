@@ -42,10 +42,13 @@ var CouchAppspora = (function() {
             + i + "'><img src='image/x.png'></a></li></div>";
         }
         $("#attachments").html(html);
-    	  if($("img.preview").height() > 200){
-    		  $("img.preview").height(200);
-    	  }
-    	  $("a.deleteattachment").css("top", -1 * $("img.preview").height());
+    	setTimeout(function(){
+			if($("img.preview").height() > 200){
+				$("img.preview").height(200);
+			}
+			$("a.deleteattachment").css("top", -1 * $("img.preview").height());
+		},100);
+    	  
     	  $("a.deleteattachment").bind('click', function(){ 
       		var fileNumber = this.id.split("_")[1];
       		imgDrop.attachments.splice(fileNumber,1);
