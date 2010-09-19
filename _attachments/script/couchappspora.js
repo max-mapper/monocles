@@ -81,16 +81,20 @@ var CouchAppspora = (function() {
     	  window.files.push(dude);
           html += "<div style='float:left' id='imgDiv"+i+"'>" 
             + (imgDrop.isImage(file.file.type) 
-               ? "<img  class='preview' src='" + file.result + "' />" : "")
+               ? "<img  class='preview' src='" + file.result + "' picNumber='"+i+"'>" : "")
             + "<br><a class='deleteattachment' data-action='delete' href='#' id='image_" 
             + i + "'><img src='image/x.png'></a></li></div>";
         }
         $("#attachments").html(html);
     	setTimeout(function(){
-			if($("img.preview").height() > 200){
-				$("img.preview").height(200);
-			}
-			$("a.deleteattachment").css("top", -1 * $("img.preview").height());
+			$("#drop").show();
+			$("img.preview").each(function(){
+				if($(this).height() > 200){
+					$(this).height(200);
+				}
+				var picNumber = $(this).attr("picNumber");
+				$("#image_"+picNumber).css("position","relative").css("top", -1 * $(this).height());
+			});
 		},100);
     	  
     	  $("a.deleteattachment").bind('click', function(){ 
