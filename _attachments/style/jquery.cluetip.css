@@ -1,4 +1,11 @@
 /* global */
+#cluetip {
+  border: 3px solid #DDD;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
 #cluetip-close img {
   border: 0;
 }
@@ -33,20 +40,26 @@
 -------------------------------------- */
 
 .cluetip-default {
-  background-color: #d9d9c2;
+  background-color: #DDD;
 }
 .cluetip-default #cluetip-outer {
   position: relative;
   margin: 0;
-  background-color: #d9d9c2;
+  background-color: #FFF;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
 }
 .cluetip-default h3#cluetip-title {
   margin: 0 0 5px;
   padding: 8px 10px 4px;
   font-size: 1.1em;
   font-weight: normal;
-  background-color: #87876a;
-  color: #fff;
+  background-color: #F6F6F6;
+  color: #019DBE;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
 }
 .cluetip-default #cluetip-title a {
   color: #d9d9c2;
@@ -54,9 +67,14 @@
 }  
 .cluetip-default #cluetip-inner {
   padding: 10px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
 }
 .cluetip-default div#cluetip-close { 
-  text-align: right;
+  top: 5px;
+  right: 2px;
+  position: absolute;
   margin: 0 5px 5px;
   color: #900;
 }
