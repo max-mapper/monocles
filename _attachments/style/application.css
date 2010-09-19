@@ -364,10 +364,14 @@ input[type='text'], textarea {
       -webkit-box-shadow: 0 1px 0 white; }
     #publisher .button {
       margin-left: 100px; }
-    #publisher .drop-instructions {
-      color: #999999;
-      margin: 0px;
-    }
+
+.drop-instructions {
+  position:relative; 
+  top:10px; 
+  text-align:center;
+  color: #999999;
+  margin: 0px;
+}
 
 #image_picker .small_photo {
   height: 100px;
