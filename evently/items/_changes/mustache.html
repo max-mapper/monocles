@@ -16,7 +16,7 @@
 		  {{/attachments}}
         </span>
         <div class="info">
-          <a href="#" class="show_post_comments">show comments</a>
+          <a href="#" class="show_post_comments">show comments {{#boolean}}({{commentCount}}){{/boolean}}</a>
           <a href="#" class="hide_post_comments" style="display:none">hide comments</a>
         </div>
         <div class="comments"></div>

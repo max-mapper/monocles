@@ -1,4 +1,5 @@
 function renderComments(data, post_id) {
+	$.log(data);
     var comments = data.rows.map(function(r) {
         return $.extend({
             id : r.id,
