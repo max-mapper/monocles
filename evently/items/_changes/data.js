@@ -7,6 +7,7 @@ function(data) {
     items : data.rows.map(function(r) {
       p = r.value.profile;
       p.message = r.value.message;
+      p.created_at = r.value.created_at;
 	  p.id = r.id
 	  var attachments =[];
 	  for (file in r.value._attachments){
