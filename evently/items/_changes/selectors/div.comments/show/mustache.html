@@ -2,7 +2,10 @@
   {{#comments}}
     <li class="comment">
       {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
-      {{message}}
+      <span class="from">
+        {{message}}
+      </span>
+      <div class="time">a while ago</div>
     </li>
   {{/comments}}
 

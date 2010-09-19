@@ -1,7 +1,7 @@
 <ul id="stream">
   {{#items}}
-    <li class='message'>
-      {{#gravatar_url}}<img class='avatar' src="{{gravatar_url}}"/>{{/gravatar_url}}
+    <li class="message" data-post-id="{{id}}" data-created-at="{{created_at}}">
+      {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}"/>{{/gravatar_url}}
       <div class='content'>
         <span class='from'>
           <a href='#showProf' class='hover_profile' rel='#profile_{{nickname}}_{{rand}}' title='{{nickname}} profile'>
@@ -19,8 +19,8 @@
           <a href="#" class="show_post_comments">show comments</a>
           <a href="#" class="hide_post_comments" style="display:none">hide comments</a>
         </div>
+        <div class="comments"></div>
       </div>
-      <div class="comments"></div>
     </li>
 	<p id='profile_{{nickname}}_{{rand}}'>
 		Name: {{nickname}}<br>
