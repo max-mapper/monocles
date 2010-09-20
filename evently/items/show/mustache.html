@@ -19,10 +19,32 @@
           <a href="#" class="show_post_comments">add comment {{#hasComments}}({{commentCount}}){{/hasComments}}</a>
           <a href="#" class="hide_post_comments" style="display:none">hide comments</a>
         </div>
-        <div class="comments"></div>
+        <div class="comments">
+
+          {{#hasComments}}
+            <ul class="comment_set">
+              {{#hasHiddenComments}}
+                <li class="comment">
+                  <a href="#" class="show_post_comments"><em>show all comments</em></a>
+                </li>
+              {{/hasHiddenComments}}
+
+              {{#latestComments}}
+                <li class="comment">
+                  {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
+                  <span class="from">
+                    {{message}}
+                  </span>
+                  <div class="time">a while ago</div>
+                </li>
+              {{/latestComments}}
+            </ul>
+          {{/hasComments}}
+
+        </div>
       </div>
     </li>
-	<p id='profile_{{nickname}}_{{randomToken}}'>
+	<p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
 		Name: {{nickname}}<br>
 		Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
 		Url: <a href='{{url}}' target='_blank'>{{url}}</a>

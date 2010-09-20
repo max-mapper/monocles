@@ -1,7 +1,8 @@
-function(event) {
+function submitPost(event) {
   var form = this;
   var date = new Date();
   var id = date.valueOf()+"a";
+  var db = $$(this).app.db;
   var doc = {
     created_at : date,
         _id : id,
@@ -20,17 +21,15 @@ function(event) {
     };
   });
   
-  $$(this).app.db.saveDoc(doc, {
-    success : function(newDoc) {
-      // Clear post entry form
-      $("[name=message]", form).val("");
+  posts(db).save(doc).addCallback(function(newDoc) {
+    // Clear post entry form
+    $("[name=message]", form).val("");
 
-      // Remove image attachments from entry form
-      $('a.deleteattachment').trigger('click');
+    // Remove image attachments from entry form
+    $('a.deleteattachment').trigger('click');
 
-      // Reload posts
-      $('.items').trigger('show');
-    }
+    // Reload posts
+    $('.items').trigger('show');
   });
 
   event.preventDefault();
