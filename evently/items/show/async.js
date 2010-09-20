@@ -20,9 +20,17 @@ function getPostsWithComments(callback, event) {
   });
 
   spora.app.db.view('couchappspora/comments', {
+    "descending" : true,
     "limit" : 250,
     success: function(data) {
       comments = data;
+
+      // Reverse order of comments
+      comments.rows = comments.rows.reduceRight(function(list, c) {
+        list.push(c);
+        return list;
+      }, []);
+
       render();
     }
   });
