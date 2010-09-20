@@ -3,9 +3,19 @@
     <li class="comment">
       {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
       <span class="from">
-        {{message}}
+       <a href='#showProf' class='hover_profile' rel='#profile_{{nickname}}_{{randomToken}}' title='{{nickname}} profile'>
+            {{nickname}}@{{hostname}}
+          </a>
+		  
+          {{message}} 
       </span>
       <div class="time">a while ago</div>
+	    <p id='profile_{{nickname}}_{{randomToken}}' class='profStub'>
+		Name: {{nickname}}<br>
+		Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
+		Url: <a href='{{url}}' target='_blank'>{{url}}</a>
+	</p>
+
     </li>
   {{/comments}}
 
