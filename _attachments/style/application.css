@@ -212,12 +212,10 @@ form {
       display: inline;
       margin-right: 1em; }
 
-#stream div.comments {
-  display: none; }
-  #stream div.comments .avatar {
-    width: 30px;
-    height: 30px;
-    margin-right: 10px; }
+#stream div.comments .avatar {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px; }
 
 input.comment_submit {
   display: none;

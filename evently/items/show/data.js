@@ -10,6 +10,11 @@ function renderPostsWithComments(posts, comments) {
     items : posts.rows.map(function(r) {
       var postComments = comments.rows.filter(function(cr) {
             return cr.value.parent_id === r.id;
+          }).map(function(cr) {
+            return $.extend({
+              id : cr.id,
+              message : cr.value.message
+            }, cr.value.profile);
           })
 
         , attachments = Object.keys(r.value._attachments || {}).map(function(file) {
@@ -21,8 +26,11 @@ function renderPostsWithComments(posts, comments) {
 
       return $.extend({
         comments : postComments,
+        latestComments: postComments.slice(-2),  // grab the last 2 comments
         hasComments : postComments.length > 0,
+        hasHiddenComments : postComments.length > 2,
         commentCount : postComments.length,
+        hiddenCommentCount : postComments.length - 2,
         randomToken : randomToken(),
         message : r.value.message,
         created_at : r.value.created_at,
