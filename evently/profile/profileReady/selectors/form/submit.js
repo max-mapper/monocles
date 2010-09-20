@@ -8,8 +8,10 @@ function submitPost(event) {
         _id : id,
     profile : $$("#aspect_header").profile,
     message : $("[name=message]", form).val(),
-    _attachments : {}
+    _attachments : {},
+	hostname : window.location.href.split("/")[2]
   };
+  
   
   window.files = window.files || [];
   $.each(window.files, function(i, file) {

@@ -11,6 +11,7 @@ function submitComment(event) {
           _id : id,
           profile : $$('#aspect_header').profile,
           message : $form.find('[name=message]').val(),
+		  hostname : window.location.href.split("/")[2],
           parent_id : parent_id,
           parent_created_at : parent_created_at
       };

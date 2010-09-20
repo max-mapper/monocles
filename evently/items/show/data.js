@@ -34,6 +34,7 @@ function renderPostsWithComments(posts, comments) {
         randomToken : randomToken(),
         message : r.value.message,
         created_at : r.value.created_at,
+		hostname : r.value.hostname || "unknown",
         id : r.id,
         attachments : attachments
       }, r.value.profile);
