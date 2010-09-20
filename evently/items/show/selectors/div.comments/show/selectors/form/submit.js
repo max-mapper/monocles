@@ -9,7 +9,7 @@ function submitComment(event) {
       , doc = {
           created_at : date,
           _id : id,
-          profile : $$('#profile').profile,
+          profile : $$('#aspect_header').profile,
           message : $form.find('[name=message]').val(),
           parent_id : parent_id,
           parent_created_at : parent_created_at
