@@ -1,0 +1,12 @@
+[
+  {
+    "from": "xml",
+    "to": "_show/challenge",
+    "method": "GET"
+  },
+  {
+    "from":"xml",
+    "to": "_update/test",
+    "method": "POST"
+  }
+]
