@@ -8,5 +8,45 @@
     "from":"xml",
     "to": "_update/test",
     "method": "POST"
+  },
+  {
+    "from": "/.well-known/host-meta",
+    "to": "_show/webfinger"
+  },
+  {
+    "to": "favicon.ico",
+    "from": "favicon.ico"
+  },
+  {
+    "to": "style/*",
+    "from": "style/*"
+  },
+  {
+    "to": "lib/*",
+    "from": "lib/*"
+  },
+  {
+    "to": "script/*",
+    "from": "script/*"
+  },
+  {
+    "to": "images/*",
+    "from": "images/*"
+  },
+  {
+    "to": "vendor/*",
+    "from": "vendor/*"
+  },
+  {
+    "to": "index.html",
+    "from": ""
+  },
+  {
+    "to": "../../",
+    "from": "/couchappspora"
+  },
+  {
+    "to": "../../*",
+    "from": "couchappspora/*"
   }
 ]
