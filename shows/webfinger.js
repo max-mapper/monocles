@@ -1,6 +1,7 @@
-function(head, req){
+function(head, req) {
+  var xrd = require("vendor/couchapp/lib/xrd");
   return {
-     "headers" : {"Content-Type" : "application/xml"},
-     "body" : "<?xml version='1.0' encoding='UTF-8'?> <XRD xmlns='http://docs.oasis-open.org/ns/xri/xrd-1.0'      xmlns:hm='http://host-meta.net/xrd/1.0'>   <hm:Host xmlns='http://host-meta.net/xrd/1.0'>example.com</hm:Host>   <Link rel='lrdd'         template='http://example.com/webfinger/?q={uri}'>     <Title>Resource Descriptor</Title>   </Link> </XRD>"
+    "headers" : {"Content-Type" : "application/xml"},
+    "body" : xrd.generate('example.com').toXMLString()
   }
 }
