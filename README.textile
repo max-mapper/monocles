@@ -16,6 +16,8 @@ p. To demonstrate the built in replication that you get with CouchDB (I haven't 
 * Make a database and set up continuous replication from @http://glitterbacon.couchone.com/couchappspora@ to your new database
 * Visit "http://yourcouch/yourdb/_design/couchappspora/index.html":http://yourcouch/yourdb/_design/couchappspora/index.html
 
+p. For more advanced features (protocols like Webfinger for user discovery) you will have to use a dedicated domain name and configure your CouchDB to use a @vhost@ entry for your domain name. TODO docs for this.
+
 h3. TO-DO (aka 'how to contribute')
 
 Check out the "Issues page":http://github.com/maxogden/couchappspora/issues

@@ -72,7 +72,7 @@ var CouchAppspora = (function() {
             + (imgDrop.isImage(file.file.type) 
                ? "<img  class='preview' src='" + file.result + "' picNumber='"+i+"'>" : "")
             + "<br><a class='deleteattachment' data-action='delete' href='#' id='image_" 
-            + i + "'><img src='image/x.png'></a></li></div>";
+            + i + "'><img src='images/x.png'></a></li></div>";
         }
         $("#attachments").html(html);
     	setTimeout(function(){
@@ -132,11 +132,18 @@ var CouchAppspora = (function() {
   document.addEventListener("dragover", imgDrop.doNothing, false);  
   document.addEventListener("drop", imgDrop.drop, false);  
   
+  var opts = {};
+  if (document.location.pathname.indexOf("_design") == -1) {
+    // we are in a vhost
+    opts.db = "couchappspora";
+    opts.design = "couchappspora";
+  };
+  
   $.couch.app(function(app) {        
     $("#account").evently("account", app);
     $("#aspect_header").evently("profile", app);
     $.evently.connect("#account","#aspect_header", ["loggedIn","loggedOut"]);
     $(".items").evently("items", app);
-  });
+  }, opts);
  
 })();
