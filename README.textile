@@ -6,8 +6,7 @@ p. The Diaspora source code was initially "released":http://www.joindiaspora.com
 
 h3. Why?
 
-p. CouchDB is a good fit for a federated social web node due to it's robust replication and MVCC implementations. Diaspora is an attractive implementation of a federated social web application. I want to marry the front end and features of Diaspora, but build them on the flexible replication of CouchDB.
-
+p. CouchDB is a good fit for a federated social web node due to it's robust replication and MVCC implementations. Diaspora is an attractive implementation of a federated social web application. I want to marry the front end and features of Diaspora, but build them on the flexible replication of CouchDB. The resulting application is written in pure Javascript and HTML and only requires CouchDB in order to run.
 
 h3. Protocols and examples
 
@@ -19,7 +18,7 @@ p. If you join a 'group'/'aspect', you will effectively now be replicating direc
 
 p. Once this framework is set up, CouchDB gets really exciting. You can have your main node acting as the public host/server for others to replicate your data from, but on your devices you can replicate local subsets of the data. On your phone you could only replicate posts from one of your aspects instead of all of them, or choose to not replicate attachcments, or any other filters that you can imagine. The benefit of replicating directly to your devices is that it will allow you to work while offline, and CouchDB will automatically handle replicating your data the moment a connection becomes available.
 
-p. !http://i.imgur.com/ttaag.png!
+p. !http://i.imgur.com/J0HPe.png!
 
 h3. Hosting your own
 
