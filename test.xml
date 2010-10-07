@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:georss="http://www.georss.org/georss" xmlns:activity="http://activitystrea.ms/spec/1.0/" xmlns:media="http://purl.org/syndication/atommedia" xmlns:poco="http://portablecontacts.net/spec/1.0" xmlns:ostatus="http://ostatus.org/schema/1.0" xmlns:statusnet="http://status.net/schema/api/1/">
+ <generator uri="http://status.net" version="0.9.5">StatusNet</generator>
+ <id>http://tyler.status.net/api/statuses/user_timeline/1.atom</id>
+ <title>tyler timeline</title>
+ <subtitle>Updates from tyler on tyler!</subtitle>
+ <logo>http://avatar.status.net/tyler/1-96-20100302163424.jpeg</logo>
+ <updated>2010-10-07T09:04:33+00:00</updated>
+<author>
+ <name>tyler</name>
+ <uri>http://tyler.status.net/user/1</uri>
+</author>
+ <link href="http://tyler.status.net/tyler" rel="alternate" type="text/html"/>
+ <link href="http://tyler.status.net/main/sup#1" rel="http://api.friendfeed.com/2008/03#sup" type="application/json"/>
+ <link href="http://tyler.status.net/main/push/hub" rel="hub"/>
+ <link href="http://tyler.status.net/main/salmon/user/1" rel="salmon"/>
+ <link href="http://tyler.status.net/main/salmon/user/1" rel="http://salmon-protocol.org/ns/salmon-replies"/>
+ <link href="http://tyler.status.net/main/salmon/user/1" rel="http://salmon-protocol.org/ns/salmon-mention"/>
+ <link href="http://tyler.status.net/api/statuses/user_timeline/1.atom" rel="self" type="application/atom+xml"/>
+<activity:subject>
+ <activity:object-type>http://activitystrea.ms/schema/1.0/person</activity:object-type>
+ <id>http://tyler.status.net/user/1</id>
+ <title>Tyler Gillies</title>
+ <link rel="alternate" type="text/html" href="http://tyler.status.net/"/>
+ <link rel="avatar" type="image/jpeg" media:width="237" media:height="237" href="http://avatar.status.net/tyler/1-237-20100302163424.jpeg"/>
+ <link rel="avatar" type="image/jpeg" media:width="96" media:height="96" href="http://avatar.status.net/tyler/1-96-20100302163424.jpeg"/>
+ <link rel="avatar" type="image/jpeg" media:width="48" media:height="48" href="http://avatar.status.net/tyler/1-48-20100302163424.jpeg"/>
+ <link rel="avatar" type="image/jpeg" media:width="24" media:height="24" href="http://avatar.status.net/tyler/1-24-20100302163424.jpeg"/>
+ <georss:point>45.5234515 -122.6762071</georss:point>
+<poco:preferredUsername>tyler</poco:preferredUsername>
+<poco:displayName>Tyler Gillies</poco:displayName>
+<poco:note>hacker &amp; lover of Jesus</poco:note>
+<poco:address>
+ <poco:formatted>Portland Oregon</poco:formatted>
+</poco:address>
+<poco:urls>
+ <poco:type>homepage</poco:type>
+ <poco:value>http://rital.in/tyler</poco:value>
+ <poco:primary>true</poco:primary>
+</poco:urls>
+</activity:subject>
+<entry>
+ <title>yo dawg</title>
+ <link rel="alternate" type="text/html" href="http://tyler.status.net/notice/26153"/>
+ <id>http://tyler.status.net/notice/26153</id>
+ <published>2010-10-07T09:04:32+00:00</published>
+ <updated>2010-10-07T09:04:32+00:00</updated>
+ <content type="html">yo dawg</content>
+ <activity:verb>http://activitystrea.ms/schema/1.0/post</activity:verb>
+ <activity:object-type>http://activitystrea.ms/schema/1.0/note</activity:object-type>
+ <statusnet:notice_info local_id="26153" source="web"></statusnet:notice_info>
+ <link rel="ostatus:conversation" href="http://tyler.status.net/conversation/25811"/>
+ <georss:point>45.58178 -122.68149</georss:point>
+</entry>
+</feed>
+
