@@ -12,7 +12,7 @@ function getPostsWithComments(callback, event) {
 
   spora.app.db.view('couchappspora/recent-items', {
     "descending" : true,
-    "limit" : 50,
+    "limit" : 20,
     success: function(data) {
       posts = data;
       render();
