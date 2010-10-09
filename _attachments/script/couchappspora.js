@@ -144,6 +144,7 @@ var CouchAppspora = (function() {
     $("#aspect_header").evently("profile", app);
     $.evently.connect("#account","#aspect_header", ["loggedIn","loggedOut"]);
     $(".items").evently("items", app);
+    $('.items').trigger('show');
   }, opts);
  
 })();
