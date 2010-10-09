@@ -14,6 +14,17 @@
     "to": "_show/webfinger"
   },
   {
+    "from": "/webfinger",
+    "to": "_show/lrdd"
+  },
+  {
+    "from": "/feeds/:user",
+    "to": "_list/feed/recent-items",
+    "query": {
+      "name" : ":user"
+    }
+  },
+  {
     "to": "favicon.ico",
     "from": "favicon.ico"
   },

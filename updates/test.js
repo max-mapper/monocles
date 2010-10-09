@@ -11,5 +11,7 @@ function(doc, req){
   var hostname = codez..atom::link.(@rel == 'alternate')[1].@href.toString().split("/")[2];
   var message = codez..atom::entry.atom::title.toString();
   var created_at = new Date();
-  return [{_id:req.uuid, created_at:created_at, xml:req.body, profile:profile, message:message, hostname:hostname, type:"pubsub"}, "posted"]
+  if (profile.gravatar_url.length > 0){
+    return [{_id:req.uuid, created_at:created_at, xml:req.body, profile:profile, message:message, hostname:hostname, type:"pubsub"}, "posted"]
+  };
 }
