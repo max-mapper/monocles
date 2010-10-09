@@ -6,29 +6,23 @@ p. The Diaspora source code was initially "released":http://www.joindiaspora.com
 
 h3. Why?
 
-p. CouchDB is a good fit for a federated social web node due to it's robust replication and MVCC implementations. Diaspora is an attractive implementation of a federated social web application. I want to marry the front end and features of Diaspora, but build them on the flexible replication of CouchDB. The resulting application is written in pure Javascript and HTML and only requires CouchDB in order to run.
+p. CouchDB is a good fit for a federated social web node due to it's robust replication, HTTP and JSON APIs. Diaspora is an attractive implementation of a federated social web application. I want to marry the front end and features of Diaspora, but build them on the flexible replication of CouchDB. The resulting application is written in pure Javascript and HTML and only requires CouchDB in order to run.
 
-h3. Protocols and examples
+h3. Protocols
 
-p. I am shooting for Social Web Acid Test level 0 (SWAT0) compliance by implementing the OStatus stack. Since Couch can use CommonJS, I started a project called "ostatus-js":http://github.com/maxogden/ostatus-js to write the OStatus protocols in server side javascript. If you want to help build these protocols, please check out that project.
-
-p. Once the OStatus protocols are in place, you will be able to set up your own 'seed'/'node' on any CouchDB, or use someone elses. Your data will live on this node. If you 'follow' someone, CouchDB will start replicating all posts from that person's node to your local node. You will be able to choose much of your followers data and how long their data stays around on your local node, but you will always want to keep all of your own personally created posts around for others to replicate from.
-
-p. If you join a 'group'/'aspect', you will effectively now be replicating directly from all group posts from all users in that group. Groups will be able to be public or private. 
-
-p. Once this framework is set up, CouchDB gets really exciting. You can have your main node acting as the public host/server for others to replicate your data from, but on your devices you can replicate local subsets of the data. On your phone you could only replicate posts from one of your aspects instead of all of them, or choose to not replicate attachcments, or any other filters that you can imagine. The benefit of replicating directly to your devices is that it will allow you to work while offline, and CouchDB will automatically handle replicating your data the moment a connection becomes available.
+p. I am shooting for Social Web Acid Test level 0 (SWAT0) compliance by implementing the OStatus stack. Since Couch can use CommonJS, I started a project called "ostatus-js":http://github.com/maxogden/ostatus-js to write the OStatus protocols in server side javascript. To learn more about how CouchAppSpora works and interoperates with other seeds, check out "this wiki page":http://github.com/maxogden/couchappspora/wiki/Protocols-and-examples.
 
 p. !http://i.imgur.com/J0HPe.png!
 
 h3. Hosting your own
 
-p. To demonstrate the built in replication that you get with CouchDB (I haven't implemented any federated web protocols quite yet):
+p. You can run CouchAppSpora anywhere that you can run CouchDB, and since it's a CouchApp, the entire application lives inside your database and can be replicated from any other CouchAppSpora seed. To demonstrate the built in replication that you get with CouchDB:
 
-* Go to "couchone.com/get":http://couchone.com/get and sign up for a Couch
-* Make a database and set up bidirectional continuous replication from @http://glitterbacon.couchone.com/couchappspora@ to your new database
+* Go to "couchone.com/get":http://couchone.com/get and either get a free hosted Couch or follow instructions on how to set up your own local Couch.
+* Make a database and set up bidirectional continuous replication from @http://glitterbacon.couchone.com/couchappspora@ (or any other CouchAppSpora seed) to your new database
 * Visit "http://yourcouch/yourdb/_design/couchappspora/index.html":http://yourcouch/yourdb/_design/couchappspora/index.html
 
-p. For more advanced features (protocols like Webfinger for user discovery) you will have to use a dedicated domain name and configure your CouchDB to use a @vhost@ entry for your domain name. TODO docs for this.
+p. For more advanced features (OStatus protocols like Webfinger for user discovery) you will have to use a dedicated domain name and configure your CouchDB to use a @vhost@ entry for your domain name. See "this wiki article":http://github.com/maxogden/couchappspora/wiki/Setting-up-a-vhost-(assigning-a-domain-name-to-your-couchappspora-seed) for instructions.
 
 h3. TO-DO (aka 'how to contribute')
 
