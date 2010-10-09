@@ -18,6 +18,13 @@
     "to": "_show/lrdd"
   },
   {
+    "from": "/users/:user",
+    "to": "_list/profile/recent-items",
+    "query":{
+      "name":":user"
+    }
+  },
+  {
     "from": "/feeds/:user",
     "to": "_list/feed/recent-items",
     "query": {
