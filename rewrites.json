@@ -32,6 +32,10 @@
     }
   },
   {
+    "from":"/salmon/:user",
+    "to": "_update/salmon"
+  },
+  {
     "to": "favicon.ico",
     "from": "favicon.ico"
   },

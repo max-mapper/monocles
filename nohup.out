@@ -1,1 +1,2 @@
 Xlib:  extension "RANDR" missing on display ":1.0".
+<unknown>: Fatal IO error 11 (Resource temporarily unavailable) on X server :1.0.
