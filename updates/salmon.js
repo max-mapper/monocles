@@ -17,15 +17,16 @@ function(doc, req){
     return str;
   }
   var striped = tr(data, "-_,","+/=");
-  var decoded = new XML(Base64.client.decode(striped).replace(/<.*?>/,""));
-  
+  var decoded = new XML(Base64.client.decode(striped).replace(/<.*?>/,"").replace(/in-reply-to/g,"reply"));
   var profile = {
-    nickname: decoded..atom::author.atom::name.toString(),
+    name: decoded..atom::author.atom::name.toString(),
     url: decoded..atom::author.atom::uri.toString(),
     gravatar_url: decoded..activity::actor.atom::link.(@rel == 'avatar')[0].@href.toString()
   }
+  var parent_id = decoded..thr::reply.@ref.toString().split("/");
+  parent_id = parent_id[parent_id.length-1];
   var hostname = profile.url.split("/")[2];
   var message = decoded..atom::content.toString().replace(/<.*?>/g,"");
   var created_at = new Date();
-  return [{_id:req.uuid, created_at:created_at, xml:req.body, decoded:decoded, hostname:hostname, profile:profile, message:message }, "posted"]
+  return [{_id:req.uuid, created_at:created_at, xml:req.body, decoded:decoded.toString(), hostname:hostname, profile:profile, message:message, parent_id:parent_id }, "posted"]
 }

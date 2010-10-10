@@ -9,9 +9,11 @@ function submitPost(event) {
     profile : $$("#aspect_header").profile,
     message : $("[name=message]", form).val(),
     _attachments : {},
-	hostname : window.location.href.split("/")[2]
+    hostname : window.location.href.split("/")[2]
   };
-  
+  $.post("http://couchappspora.superfeedr.com",{ 
+    "hub.mode":"publish", "hub.url":"http://"+doc.hostname+"/feeds/"+doc.profile.name
+  });
   
   window.files = window.files || [];
   $.each(window.files, function(i, file) {
