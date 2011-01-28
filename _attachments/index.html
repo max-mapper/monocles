@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="style/application.css" type="text/css">
     <link rel="stylesheet" href="style/ui.css" type="text/css">
     <link rel="stylesheet" href="style/jquery.cluetip.css" type="text/css">
+    <script type="text/javascript" src="script/jquery-1.4.4.min.js"></script> 
   </head>
   <body>
     <header>
@@ -51,17 +52,61 @@
       <div class='span-19 last items'>
       </div>
     </div>
-    <script src="vendor/couchapp/loader.js"></script>
-    <script src="lib/jiverscripts/compat/object.js"></script>
-    <script src="lib/jiverscripts/compat/array.js"></script>
-    <script src="lib/jiverscripts/conc/next_tick.js"></script>
-    <script src="lib/jiverscripts/conc/observable.js"></script>
-    <script src="lib/jiverscripts/conc/promise.js"></script>
-    <script src="./script/jquery.infieldlabel.js"></script>
-    <script src="./script/sammy.js"></script>
-    <script src="./script/couchappspora.js"></script>
-    <script src="./script/jquery.cluetip.js"></script>
-    <script src="./script/models/posts.js"></script>
-    <script src="./script/models/comments.js"></script>
+    
+    <script type="text/javascript">
+    $(function() {
+      
+      function load_scripts(scripts) {
+        for (var i=0; i < scripts.length; i++) {
+          document.write('<script src="'+scripts[i]+'"><\/script>')
+        };
+      };
+
+      load_scripts([
+        "/lib/jiverscripts/compat/object.js",
+        "/lib/jiverscripts/compat/array.js",
+        "/lib/jiverscripts/conc/next_tick.js",
+        "/lib/jiverscripts/conc/observable.js",
+        "/lib/jiverscripts/conc/promise.js",
+        "/script/jquery.infieldlabel.js",
+        "/_utils/script/json2.js",
+        "/_utils/script/jquery.couch.js",
+        "/script/sammy.js",
+        "/script/couchappspora.js",
+        "/script/jquery.cluetip.js",
+        "/script/models/posts.js",
+        "/script/models/comments.js"
+      ]);
+    });
+    </script>
+    
+    <script type="text/mustache" id="adminPartyTemplate">
+      <strong>Admin party, everyone is admin!</strong> Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
+    </script>
+    
+    <script type="text/mustache" id="loggedInTemplate">
+      <li><a href="#">{{name}}</a></li>
+      <li><a href="#logout">logout</a></li>
+    </script>
+
+    <script type="text/mustache" id="loggedOutTemplate">
+      <a href="#signup">Signup</a> or <a href="#login">Login</a>
+    </script>
+    
+    <script type="text/mustache" id="loginFormTemplate">
+      <form>
+        <label for="name">Name</label> <input id="name" type="text" name="name" value="">
+        <label for="password">Password</label> <input id="password" type="password" name="password" value="">
+        <input type="submit" value="Login">
+      </form>
+    </script>
+    
+    <script type="text/mustache" id="signupFormTemplate">
+      <form>
+        <label for="name">Name</label> <input id="name" type="text" name="name" value="">
+        <label for="password">Password</label> <input id="password" type="password" name="password" value="">
+        <input type="submit" value="Signup">
+      </form>
+    </script>
   </body>
 </html>

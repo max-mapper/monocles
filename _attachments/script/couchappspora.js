@@ -140,7 +140,48 @@ var CouchAppspora = (function() {
   };
   
   $.couch.app(function(app) {        
-    $("#account").evently("account", app);
+    
+    $.couch.session({
+      success : function(r) {
+        var userCtx = r.userCtx;
+        if (userCtx.name) {
+          elem.trigger("loggedIn", [r]);
+        } else if (userCtx.roles.indexOf("_admin") != -1) {
+          elem.trigger("adminParty");
+        } else {
+          elem.trigger("loggedOut");
+        };
+      }
+    });
+    
+    function login(name, pass) {
+      $.couch.login({
+        name : name,
+        password : pass,
+        success : function(r) {
+          elem.trigger("_init");
+        }
+      });
+    }
+    
+    function logout() {
+      $.couch.logout({
+        success : function() {
+          elem.trigger("_init");
+        }
+      });
+    }
+    
+    function signUp() {
+      $.couch.signup({
+        name : name
+      }, pass, {
+        success : function() {
+          login(name, pass);
+        }
+      });
+    }
+    
     $("#aspect_header").evently("profile", app);
     $.evently.connect("#account","#aspect_header", ["loggedIn","loggedOut"]);
     $(".items").evently("items", app);
