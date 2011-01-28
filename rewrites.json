@@ -18,11 +18,22 @@
     "to": "_show/lrdd"
   },
   {
+    "from": "/users/:user",
+    "to": "_list/profile/recent-items",
+    "query":{
+      "name":":user"
+    }
+  },
+  {
     "from": "/feeds/:user",
     "to": "_list/feed/recent-items",
     "query": {
       "name" : ":user"
     }
+  },
+  {
+    "from":"/salmon/:user",
+    "to": "_update/salmon"
   },
   {
     "to": "favicon.ico",

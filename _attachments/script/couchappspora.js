@@ -64,7 +64,7 @@ var CouchAppspora = (function() {
       	window.files = [];
         for (i = 0; i < imgDrop.attachments.length; i += 1) {
     	  var dude = {};
-          var file = imgDrop.attachments[i];
+        var file = imgDrop.attachments[i];
     	  dude.match = /data:image\/(.*);/.exec(file.result)[1];
     	  dude.theGoodPart = file.result.split(",")[1];
     	  window.files.push(dude);
