@@ -7,6 +7,21 @@
     <link rel="stylesheet" href="style/ui.css" type="text/css">
     <link rel="stylesheet" href="style/jquery.cluetip.css" type="text/css">
     <script type="text/javascript" src="script/jquery-1.4.4.min.js"></script> 
+    <script type="text/javascript" src="lib/jiverscripts/compat/object.js"></script>
+    <script type="text/javascript" src="lib/jiverscripts/compat/array.js"></script>
+    <script type="text/javascript" src="lib/jiverscripts/conc/next_tick.js"></script>
+    <script type="text/javascript" src="lib/jiverscripts/conc/observable.js"></script>
+    <script type="text/javascript" src="lib/jiverscripts/conc/promise.js"></script>
+    <script type="text/javascript" src="script/jquery.infieldlabel.js"></script>
+    <script type="text/javascript" src="_utils/script/json2.js"></script>
+    <script type="text/javascript" src="_utils/script/jquery.couch.js"></script>
+    <script type="text/javascript" src="script/jquery.couch.app.js"></script>
+    <script type="text/javascript" src="script/sammy.js"></script>
+    <script type="text/javascript" src="script/mustache.js"></script>
+    <script type="text/javascript" src="script/couchappspora.js"></script>
+    <script type="text/javascript" src="script/jquery.cluetip.js"></script>
+    <script type="text/javascript" src="script/models/posts.js"></script>
+    <script type="text/javascript" src="script/models/comments.js"></script>
   </head>
   <body>
     <header>
@@ -54,30 +69,9 @@
     </div>
     
     <script type="text/javascript">
-    $(function() {
-      
-      function load_scripts(scripts) {
-        for (var i=0; i < scripts.length; i++) {
-          document.write('<script src="'+scripts[i]+'"><\/script>')
-        };
-      };
-
-      load_scripts([
-        "/lib/jiverscripts/compat/object.js",
-        "/lib/jiverscripts/compat/array.js",
-        "/lib/jiverscripts/conc/next_tick.js",
-        "/lib/jiverscripts/conc/observable.js",
-        "/lib/jiverscripts/conc/promise.js",
-        "/script/jquery.infieldlabel.js",
-        "/_utils/script/json2.js",
-        "/_utils/script/jquery.couch.js",
-        "/script/sammy.js",
-        "/script/couchappspora.js",
-        "/script/jquery.cluetip.js",
-        "/script/models/posts.js",
-        "/script/models/comments.js"
-      ]);
-    });
+      $(function() {
+        CouchAppSporaInit();
+      });
     </script>
     
     <script type="text/mustache" id="adminPartyTemplate">
