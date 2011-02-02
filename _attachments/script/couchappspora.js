@@ -138,6 +138,75 @@ $(function() {
    opts.db = "couchappspora";
    opts.design = "couchappspora";
   };
+  
+  function initializeProfile(userCtx) {
+    $.couch.userDb(function(db) {
+      var userDocId = "org.couchdb.user:"+userCtx.name;
+      db.openDoc(userDocId, {
+        success : function(userDoc) {
+          var profile = userDoc["couch.app.profile"];
+          if (profile) {
+            // we copy the name to the profile so it can be used later
+            // without publishing the entire userdoc (roles, pass, etc)
+            profile.name = userDoc.name;
+            profileReady(profile)
+          } else {
+            $('#aspect_header').html(Mustache.to_html($('#profileFormTemplate').text(), userCtx));
+            $('#aspect_header form').submit(function(e) {
+              saveUser($(this));
+              e.preventDefault();
+            });
+          }
+        }
+      });
+    });
+  }
+  
+  function saveUser(form) {
+    var opts = {};
+    opts.db = "couchappspora";
+    opts.design = "couchappspora";
+
+    $.couch.app(function(app) {     
+      var md5 = app.require("vendor/md5");
+      
+      // TODO this can be cleaned up with docForm?
+      // it still needs the workflow to edit an existing profile
+      var name = $("input[name=userCtxName]", form).val();
+      var newProfile = {
+        rand : Math.random().toString(), 
+        nickname : $("input[name=nickname]", form).val(),
+        email : $("input[name=email]", form).val(),
+        url : $("input[name=url]", form).val()
+      };
+      
+      // setup gravatar_url
+      if (md5) {
+        newProfile.gravatar_url = 'http://www.gravatar.com/avatar/'+md5.hex(newProfile.email || newProfile.rand)+'.jpg?s=40&d=identicon';    
+      }
+      
+      // store the user profile on the user account document
+      $.couch.userDb(function(db) {
+        var userDocId = "org.couchdb.user:"+name;
+        db.openDoc(userDocId, {
+          success : function(userDoc) {
+            userDoc["couch.app.profile"] = newProfile;
+            db.saveDoc(userDoc, {
+              success : function() {
+                newProfile.name = userDoc.name;
+                profileReady(newProfile);
+              }
+            });
+          }
+        });
+      });
+    }, opts);
+  }
+  
+  function profileReady(profile) {
+    $('#aspect_header').html(Mustache.to_html($('#profileReadyTemplate').text(), profile));
+    $('label').inFieldLabels();
+  }
 
   $.couch.app(function(app) { 
     function initSession() {
@@ -150,13 +219,20 @@ $(function() {
               uri_name : encodeURIComponent(r.userCtx.name),
               auth_db : encodeURIComponent(r.info.authentication_db)
             }
-            $("#account").html(Mustache.to_html($("#loggedInTemplate").text(), data))
+            $("#account").html(Mustache.to_html($("#loginTemplate").text(), data))
               .attr("data-name", r.userCtx.name);
             $("a[href=#logout]").click(function() { logout() });
+
+            initializeProfile(r.userCtx);
+            
           } else if (userCtx.roles.indexOf("_admin") != -1) {
             $("#account").html($("#adminPartyTemplate").text());
           } else {
-            $("#account").html($("#loggedOutTemplate").text());
+            $("#account").html($("#signUpTemplate").text());
+            $("#aspect_header").html($("#loggedOutTemplate").text());
+            
+            $('label').inFieldLabels();
+            $("input[name=name]").focus();
             $("a[href=#signup]").click(function() {
               $("#account").html($('#signupFormTemplate').text())
               $("#account form").submit(function(e) {
@@ -168,16 +244,18 @@ $(function() {
             })
             $("a[href=#login]").click(function() {
               $("#account").html($('#loginFormTemplate').text());
+              $('label').inFieldLabels();
+              $("input[name=name]").focus();
               $("#account form").submit(function(e) {
                 var name = $('input[name=name]', this).val(),
-                  pass = $('input[name=password]', this).val();              
+                  pass = $('input[name=password]', this).val();
                 login(name, pass);
                 e.preventDefault();
               })
             })
           };
         }
-      });      
+      });
     }       
     
     initSession();

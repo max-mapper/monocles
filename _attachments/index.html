@@ -73,13 +73,17 @@
       <strong>Admin party, everyone is admin!</strong> Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
     </script>
     
-    <script type="text/mustache" id="loggedInTemplate">
+    <script type="text/mustache" id="loginTemplate">
       <li><a href="#">{{name}}</a></li>
       <li><a href="#logout">logout</a></li>
     </script>
 
-    <script type="text/mustache" id="loggedOutTemplate">
+    <script type="text/mustache" id="signUpTemplate">
       <a href="#signup">Signup</a> or <a href="#login">Login</a>
+    </script>
+    
+    <script type="text/mustache" id="loggedOutTemplate">
+      <div class="container"><p>Log in or sign up to post.</p></div>
     </script>
     
     <script type="text/mustache" id="loginFormTemplate">
@@ -96,6 +100,47 @@
         <label for="password">Password</label> <input id="password" type="password" name="password" value="">
         <input type="submit" value="Signup">
       </form>
+    </script>
+    
+    <script type="text/mustache" id="profileFormTemplate">
+      <form class="profile_setup">
+        <p>Hello {{name}}, Please setup your user profile.</p>
+        <label for="nickname">Nickname 
+          <input type="text" name="nickname" value=""></label>
+        <label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)
+          <input type="text" name="email" value=""></label>
+        <label for="url">URL 
+          <input type="text" name="url" value=""></label>
+        <input type="submit" value="Go &rarr;">
+        <input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName">
+      </form>
+    </script>
+    
+    <script type="text/mustache" id="profileReadyTemplate">
+      <div class='container'>
+        <div class="span-5 aspect-title last">
+          <h1><a href="#">Public</a></h1>
+        </div>
+        <div class='span-19 message-container last' style='position:relative;'>
+          <div id='publisher'>
+            {{#gravatar_url}}<img class='avatar' src="{{gravatar_url}}"/>{{/gravatar_url}}
+            <form>
+              <p>
+                <label for='status_message'>
+                  Message
+                </label>
+                <textarea id="status_message" name='message' rows='2' ></textarea>
+          	</p>
+          	 <input type="submit" value="Share" class="btn button" id="sendbutton" >
+            </form>
+          </div>
+          <div id="drop" style="padding-top:50px; display:none">
+          	<div id="attachments">
+          	</div>
+          </div>
+        </div>
+      </div>
+      <p class="drop-instructions">Drop images anywhere on the page to attach them</p>
     </script>
     
     <script type="text/mustache" id="streamTemplate">
