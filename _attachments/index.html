@@ -202,13 +202,12 @@
                 {{message}} 
             </span>
             <div class="time">a while ago</div>
-      	    <p id='profile_{{nickname}}_{{randomToken}}' class='profStub'>
-      		Name: {{nickname}}<br>
-      		Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
-      		Url: <a href='{{url}}' target='_blank'>{{url}}</a>
-      	</p>
-
           </li>
+          <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
+        		Name: {{nickname}}<br>
+        		Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
+        		Url: <a href='{{url}}' target='_blank'>{{url}}</a>
+        	</p>
         {{/comments}}
 
         {{#empty}}

@@ -361,7 +361,7 @@ function getComments(post_id, callback) {
   });
 }
 
-function renderComments(post_id, data) {
+function formatComments(post_id, data) {
   var comments = data.rows.map(function(r) {
     return $.extend({
       id : r.id,
@@ -378,6 +378,41 @@ function renderComments(post_id, data) {
   };
 }
 
+function showComments(post_id, post) {
+  getComments(post_id, function(post_id, data) {
+     post.html(Mustache.to_html($('#commentsTemplate').text(), formatComments(post_id, data)));
+     post.show().find('*').show();
+     post.closest('li').find('a.show_post_comments').hide().end().find('a.hide_post_comments').show();
+     post.find('label').inFieldLabels();
+     $('form', post).submit(submitComment);
+     $(".hover_profile", post).cluetip({local:true, sticky:true, activation:"click"});
+  });
+}
+
+function submitComment(e) {
+  var form = $(this)
+    , date = new Date()
+    , parent = form.closest('li.message')
+    , parent_id = parent.attr('data-post-id')
+    , parent_created_at = parent.attr('data-created-at')
+    , db = $.couch.db(opts.db)
+    , doc = {
+        created_at : date,
+        profile : $('#aspect_header').data('profile'),
+        message : form.find('[name=message]').val(),
+	  hostname : window.location.href.split("/")[2],
+        parent_id : parent_id,
+        parent_created_at : parent_created_at
+    };
+
+  comments(db).save(doc).addCallback(function(savedComment) {
+    form.find('[name=message]').val('');
+    showComments(parent_id, form.closest('div.comments'));
+  });
+
+  e.preventDefault();
+}
+
 function decorateStream() {
   $("a.hover").cluetip({local:true});
 	$(".hover_profile").cluetip({local:true, sticky:true, activation:"click"});
@@ -391,43 +426,11 @@ function decorateStream() {
 
 	$('a.show_post_comments').click(function(e) {
 	  var postComments = $(this);
-    var post = postComments.closest('li.message')
-      , post_id = post.attr('data-post-id');
-    getComments(post_id, function(post_id, data) {
-       postComments.closest('li.message').find('div.comments').html(Mustache.to_html($('#commentsTemplate').text(), renderComments(post_id, data)));
-    });    
-    postComments.show().find('*').show();
-    postComments.closest('li').find('a.show_post_comments').hide().end().find('a.hide_post_comments').show();
-    postComments.find('label').inFieldLabels();
+    var post = postComments.closest('li.message').find('div.comments')
+      , post_id = postComments.closest('li.message').attr('data-post-id');
+    showComments(post_id, post);
     e.preventDefault();
 	})
-
-	$('div.comments form').submit(function(e){
-    var $form = $(this)
-      , date = new Date()
-      , id = date.valueOf()+'a'
-      , $parent = $form.closest('li.message')
-      , parent_id = $parent.attr('data-post-id')
-      , parent_created_at = $parent.attr('data-created-at')
-      , db = $.app.db(opts.db)
-      , doc = {
-          created_at : date,
-          _id : id,
-          profile : $$('#aspect_header').profile,
-          message : $form.find('[name=message]').val(),
-		  hostname : window.location.href.split("/")[2],
-          parent_id : parent_id,
-          parent_created_at : parent_created_at
-      };
-
-    comments(db).save(doc).addCallback(function(savedComment) {
-      $form.find('[name=message]').val('');
-      $form.closest('div.comments').renderComments(parent_id);
-    });
-
-    e.preventDefault();
-	})
-
 }
 
 function initSession() {
