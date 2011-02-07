@@ -259,6 +259,10 @@ ul.comment_set {
   position: relative !important;
 }
 
+.profile_setup {
+  margin: 0px 50px;
+}
+
 #stream img.person_picture, #profile img.person_picture,
 .comments img.person_picture {
   border-radius: 3px;

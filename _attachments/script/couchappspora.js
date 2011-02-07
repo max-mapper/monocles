@@ -230,11 +230,12 @@ $(function() {
           } else {
             $("#account").html($("#signUpTemplate").text());
             $("#aspect_header").html($("#loggedOutTemplate").text());
-            
             $('label').inFieldLabels();
             $("input[name=name]").focus();
             $("a[href=#signup]").click(function() {
-              $("#account").html($('#signupFormTemplate').text())
+              $("#account").html($('#signupFormTemplate').text());
+              $('label').inFieldLabels();
+              $("input[name=name]").focus();
               $("#account form").submit(function(e) {
                 var name = $('input[name=name]', this).val(),
                   pass = $('input[name=password]', this).val();              
