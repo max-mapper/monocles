@@ -241,6 +241,10 @@ function submitPost(e) {
   return false;
 }
 
+function randomToken() {
+  return String(Math.floor(Math.random() * 1000));
+}
+
 function login(name, pass) {
   $.couch.login({
     name : name,
@@ -276,7 +280,8 @@ function getPostsWithComments() {
   // Renders only when posts and comments are both loaded.
   function render() {
     if (posts && comments) {
-      $('.items').html(Mustache.to_html($('#streamTemplate').text(), renderPostsWithComments(posts, comments)))
+      $('.items').html(Mustache.to_html($('#streamTemplate').text(), renderPostsWithComments(posts, comments)));
+      decorateStream();
     }
   }
 
@@ -307,10 +312,6 @@ function getPostsWithComments() {
 }
 
 function renderPostsWithComments(posts, comments) {
-
-  function randomToken() {
-      return String(Math.floor(Math.random() * 1000));
-  }
 
   return {
     items : posts.rows.map(function(r) {
@@ -350,25 +351,55 @@ function renderPostsWithComments(posts, comments) {
   };
 }
 
+function getComments(post_id, callback) {
+  $.couch.db(opts.db).view('couchappspora/comments', {
+    startkey: [post_id],
+    endkey: [post_id + "\u9999"],
+    success: function(data) {
+      callback(post_id, data);
+    }
+  });
+}
+
+function renderComments(post_id, data) {
+  var comments = data.rows.map(function(r) {
+    return $.extend({
+      id : r.id,
+      message : r.value.message,
+			hostname : r.value.hostname || "unknown",
+			randomToken : randomToken()
+    }, r.value.profile);
+  });
+
+  return {
+    id : post_id,
+    empty : comments.length === 0,
+    comments : comments
+  };
+}
+
 function decorateStream() {
   $("a.hover").cluetip({local:true});
 	$(".hover_profile").cluetip({local:true, sticky:true, activation:"click"});
 
-	$('a.hide_post_comments').click(function() {
-    $(this).closest('li').find('div.comments').trigger('hide');
-  	return false;
+	$('a.hide_post_comments').click(function(e) {
+    var comment = $(this).closest('li').find('div.comments');
+    comment.find('*').remove();
+    comment.closest('li').find('a.hide_post_comments').hide().end().find('a.show_post_comments').show();
+    e.preventDefault();
 	})
 
-	$('a.show_post_comments').click(function() {
-    var $post = $(this).closest('li.message')
-      , post_id = $post.attr('data-post-id');
-    $(this).closest('li.message').find('div.comments').trigger('show', post_id);
-  	return false;        
-	})
-
-	$('div.comments').hide(function() {
-	  $(this).find('*').remove();
-    $(this).closest('li').find('a.hide_post_comments').hide().end().find('a.show_post_comments').show();
+	$('a.show_post_comments').click(function(e) {
+	  var postComments = $(this);
+    var post = postComments.closest('li.message')
+      , post_id = post.attr('data-post-id');
+    getComments(post_id, function(post_id, data) {
+       postComments.closest('li.message').find('div.comments').html(Mustache.to_html($('#commentsTemplate').text(), renderComments(post_id, data)));
+    });    
+    postComments.show().find('*').show();
+    postComments.closest('li').find('a.show_post_comments').hide().end().find('a.hide_post_comments').show();
+    postComments.find('label').inFieldLabels();
+    e.preventDefault();
 	})
 
 	$('div.comments form').submit(function(e){
@@ -397,40 +428,6 @@ function decorateStream() {
     e.preventDefault();
 	})
 
-}
-
-function getComments(callback, event, post_id) {
-  $.couch.db(opts.db).view('couchappspora/comments', {
-    startkey: [post_id],
-    endkey: [post_id + "\u9999"], // why not do key: ?
-    success: function(data) {
-      renderComments(data, post_id);
-      var $comments = $(this);
-      $comments.show().find('*').show();
-      $comments.closest('li').find('a.show_post_comments').hide().end().find('a.hide_post_comments').show();
-      $comments.find('label').inFieldLabels();
-    }
-  });
-}
-
-function renderComments(data, post_id) {
-	 function randomToken() {
-      return String(Math.floor(Math.random() * 1000));
-  }
-    var comments = data.rows.map(function(r) {
-        return $.extend({
-            id : r.id,
-            message : r.value.message,
-			hostname : r.value.hostname || "unknown",
-			randomToken : randomToken()
-        }, r.value.profile);
-    });
-
-    return {
-        id : post_id,
-        empty : comments.length === 0,
-        comments : comments
-    };
 }
 
 function initSession() {
