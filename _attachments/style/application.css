@@ -367,14 +367,6 @@ input[type='text'], textarea {
     #publisher .button {
       margin-left: 100px; }
 
-.drop-instructions {
-  position:relative; 
-  top:10px; 
-  text-align:center;
-  color: #999999;
-  margin: 0px;
-}
-
 #image_picker .small_photo {
   height: 100px;
   position: relative;

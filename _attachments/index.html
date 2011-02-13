@@ -6,7 +6,11 @@
     <link rel="stylesheet" href="style/application.css" type="text/css">
     <link rel="stylesheet" href="style/ui.css" type="text/css">
     <link rel="stylesheet" href="style/jquery.cluetip.css" type="text/css">
+    <link rel="stylesheet" href="style/jquery.fileupload-ui.css" type="text/css">
     <script type="text/javascript" src="script/jquery-1.4.4.min.js"></script> 
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="script/jquery.fileupload.js"></script>
+    <script type="text/javascript" src="script/jquery.fileupload-ui.js"></script>
     <script type="text/javascript" src="lib/jiverscripts/compat/object.js"></script>
     <script type="text/javascript" src="lib/jiverscripts/compat/array.js"></script>
     <script type="text/javascript" src="lib/jiverscripts/conc/next_tick.js"></script>
@@ -120,17 +124,19 @@
                   Message
                 </label>
                 <textarea id="status_message" name='message' rows='2' ></textarea>
-          	</p>
+            	</p>
           	 <input type="submit" value="Share" class="btn button" id="sendbutton" >
             </form>
           </div>
-          <div id="drop" style="padding-top:50px; display:none">
-          	<div id="attachments">
-          	</div>
-          </div>
         </div>
       </div>
-      <p class="drop-instructions">Drop images anywhere on the page to attach them</p>
+      <div class='uploader'>
+        <form id="file_upload" method="PUT">
+            <input class="drop_input" type="file" name="file" multiple>
+            <button class="drop_button">Upload</button>
+            <p class="drop_instructions">Drop images here or click to attach</p>
+        </form>
+      </div>
     </script>
     
     <script type="text/mustache" id="streamTemplate">
@@ -230,5 +236,15 @@
       </ul>
     </script>
     
+    <script type="text/mustache" id="uploaderTemplate">
+      <tr>
+        <td>{{name}}</td>
+        <td class="file_upload_progress"></td>
+        <td class="file_upload_cancel">
+          <button class="ui-state-default ui-corner-all" title="Cancel"><span class="ui-icon ui-icon-cancel">Cancel</span></button>
+        </td>
+      </tr>
+    </script>
+  
   </body>
 </html>

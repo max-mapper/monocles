@@ -30,102 +30,7 @@ var DateHelper = {
   }
 };
 
-var imgDrop = function() { 
-  return {
-    attachments: [],
-    removeAttachment: function(e) { 
-      if (e.target.getAttribute("data-action") === "delete") { 
-        e.preventDefault();
-        var i, attach = [], 
-        $parent = $(e.target).closest("li"),
-        text = $parent.find("span").text();
-        for (i = 0; i < imgDrop.attachments.length; i += 1) {
-          if (imgDrop.attachments[i].file.name !== text) { 
-            attach.push(imgDrop.attachments[i]);
-          }
-        }
-        imgDrop.attachments = attach;
-        imgDrop.renderAttachments();      
-      }
-    },
-
-    hasStupidChromeBug: function() { 
-      return typeof(FileReader.prototype.addEventListener) !== "function";
-    },
-
-    isImage: function(type) { 
-      return type === "image/png" || type === "image/jpeg";
-    },
-
-    renderAttachments: function() { 
-      var i, tmp, html = "";
-    	window.files = [];
-      for (i = 0; i < imgDrop.attachments.length; i += 1) {
-  	  var dude = {};
-      var file = imgDrop.attachments[i];
-  	  dude.match = /data:image\/(.*);/.exec(file.result)[1];
-  	  dude.theGoodPart = file.result.split(",")[1];
-  	  window.files.push(dude);
-        html += "<div style='float:left' id='imgDiv"+i+"'>" 
-          + (imgDrop.isImage(file.file.type) 
-             ? "<img  class='preview' src='" + file.result + "' picNumber='"+i+"'>" : "")
-          + "<br><a class='deleteattachment' data-action='delete' href='#' id='image_" 
-          + i + "'><img src='images/x.png'></a></li></div>";
-      }
-      $("#attachments").html(html);
-  	setTimeout(function(){
-		$("#drop").show();
-		$("img.preview").each(function(){
-			if($(this).height() > 200){
-				$(this).height(200);
-			}
-			var picNumber = $(this).attr("picNumber");
-			$("#image_"+picNumber).css("position","relative").css("top", -1 * $(this).height());
-		});
-	},100);
-  	  
-  	  $("a.deleteattachment").bind('click', function(){ 
-    		var fileNumber = this.id.split("_")[1];
-    		imgDrop.attachments.splice(fileNumber,1);
-    		$("#imgDiv"+fileNumber).remove();
-  	  });
-    },
-
-    fileLoaded: function(event) { 
-      var file                = event.target.file,
-          getBinaryDataReader = new FileReader(); 
-
-      imgDrop.attachments.push(event.target);    
-      imgDrop.renderAttachments();
-    },
-
-    drop: function(e) { 
-      var i, len, files, file;
-      e.stopPropagation();  
-      e.preventDefault();  
-      files = e.dataTransfer.files;  
-      for (i = 0; i < files.length; i++) {
-        file = files[i];
-        reader = new FileReader();
-        reader.index = i;
-        reader.file = file;
-        if (!imgDrop.hasStupidChromeBug()) {
-          reader.addEventListener("loadend", imgDrop.fileLoaded, false); //Custom or built-in event?
-        } else {
-          reader.onload = imgDrop.fileLoaded;
-        }
-        reader.readAsDataURL(file);
-      }
-    },
-
-    doNothing: function(e) {  
-      e.stopPropagation();  
-      e.preventDefault();  
-    }
-  }
-}();
-
-var opts = {};
+var currentDoc = null, opts = {};
 if (document.location.pathname.indexOf("_design") == -1) {
   // we are in a vhost
   opts.db = "couchappspora";
@@ -196,11 +101,75 @@ function saveUser(form) {
   }, opts);
 }
 
+
 function profileReady(profile) {
   $('#aspect_header').data('profile', profile);
   $('#aspect_header').html(Mustache.to_html($('#profileReadyTemplate').text(), profile));
   $('label').inFieldLabels();
   $('form.status_message').submit(submitPost);
+  
+  initFileUpload();
+}
+
+function initFileUpload() {
+  var db = $.couch.db(opts.db);
+  
+  var newId, currentUrl, uploadSequence = [];
+  
+  $.getJSON('/_uuids', function(data) { newId = data.uuids[0] });
+  
+  uploadSequence.start = function (index) {
+    var next = this[index];
+    if (next) {
+      next({url: currentUrl});
+      this[index] = null;
+    } else {
+      var doc = {
+        _id: currentDoc.id,
+        _rev: currentDoc.rev,
+        created_at : new Date(),
+        profile : $("#aspect_header").data('profile'),
+        message : $("form.status_message [name=message]").val(),
+        hostname : window.location.href.split("/")[2]
+      };
+      posts(db).update(doc._id, doc).addCallback(function(newDoc) {
+        currentDoc = newDoc;
+      });
+    }
+  };
+  
+  $('.drop_instructions').html("");
+  $('#file_upload').fileUploadUI({
+    uploadTable: $('.drop_instructions'),
+    downloadTable: $('.drop_instructions'),
+    buildUploadRow: function (files, index) {
+      return $(Mustache.to_html($('#uploaderTemplate').text(), {name: files[index].name}));
+    },
+    buildDownloadRow: function (file) {
+      return $('<tr><td>' + file.id + '<\/td><\/tr>');
+    },
+    beforeSend: function (event, files, index, xhr, handler, callBack) {
+      handler.url = opts.db + "/" + newId + "/" + files[index].fileName;
+      uploadSequence.push(callBack);
+      if (index === 0) {
+        uploadSequence.splice(0, uploadSequence.length - 1);
+      }
+      if (index + 1 === files.length) {
+        uploadSequence.start(0);
+      }
+    },
+    onComplete: function (event, files, index, xhr, handler) {
+      currentDoc = handler.response;
+      handler.url = currentUrl = opts.db + "/" + newId + "/" + files[index].fileName + "?rev=" + currentDoc.rev;
+      uploadSequence.start(index + 1);
+    },
+    onAbort: function (event, files, index, xhr, handler) {
+      handler.removeNode(handler.uploadRow);
+      uploadSequence[index] = null;
+      uploadSequence.start(index + 1);
+    },
+    multipart: false
+  });
 }
 
 function submitPost(e) {
@@ -211,34 +180,31 @@ function submitPost(e) {
     created_at : date,
     profile : $("#aspect_header").data('profile'),
     message : $("[name=message]", form).val(),
-    _attachments : {},
     hostname : window.location.href.split("/")[2]
   };
+  
   // $.post("http://couchappspora.superfeedr.com",{ 
   //   "hub.mode":"publish", "hub.url":"http://"+doc.hostname+"/feeds/"+doc.profile.name
   // });
-  // 
-  // window.files = window.files || [];
-  // $.each(window.files, function(i, file) {
-  //   doc._attachments["image" + i + "." + file.match] = {
-  //     "content_type": "image\/" + file.match,
-  //     "data": file.theGoodPart
-  //   };
-  // });
   
-  posts(db).save(doc).addCallback(function(newDoc) {
-    // Clear post entry form
-    $("[name=message]", form).val("");
-
-    // Remove image attachments from entry form
-    $('a.deleteattachment').trigger('click');
-
-    // Reload posts
-    getPostsWithComments();
-  });
+  if (currentDoc) {
+    posts(db).update(currentDoc.id, {message: doc.message}).addCallback(afterPost);
+  } else {
+    posts(db).save(doc).addCallback(afterPost);    
+  }
   
   e.preventDefault();
   return false;
+}
+
+function afterPost(newDoc) {
+  // Clear post entry form
+  $("form.status_message [name=message]").val("");
+  $('.drop_instructions').html("");
+  currentDoc = null;
+
+  // Reload posts
+  getPostsWithComments();
 }
 
 function randomToken() {
@@ -312,8 +278,7 @@ function getPostsWithComments() {
 }
 
 function renderPostsWithComments(posts, comments) {
-
-  return {
+  var data = {
     items : posts.rows.map(function(r) {
       var postComments = comments.rows.filter(function(cr) {
             return cr.value.parent_id === r.id;
@@ -340,15 +305,17 @@ function renderPostsWithComments(posts, comments) {
         hiddenCommentCount : postComments.length - 2,
         randomToken : randomToken(),
         message : r.value.message,
+        id: r.id,
         created_at : r.value.created_at,
-		hostname : r.value.hostname || "unknown",
-        id : r.id,
+    		hostname : r.value.hostname || "unknown",
         attachments : attachments
       }, r.value.profile);
     }),
-
+    
     db : opts.db
   };
+  data['id'] = data['items'][0]['id'];
+  return data;
 }
 
 function getComments(post_id, callback) {
@@ -400,7 +367,7 @@ function submitComment(e) {
         created_at : date,
         profile : $('#aspect_header').data('profile'),
         message : form.find('[name=message]').val(),
-	  hostname : window.location.href.split("/")[2],
+    	  hostname : window.location.href.split("/")[2],
         parent_id : parent_id,
         parent_created_at : parent_created_at
     };
@@ -489,10 +456,10 @@ function initSession() {
 
 $(function() {
   
-  $("#attachments").bind("mousedown", imgDrop.removeAttachment);
-  document.addEventListener("dragenter", imgDrop.doNothing, false);  
-  document.addEventListener("dragover", imgDrop.doNothing, false);  
-  document.addEventListener("drop", imgDrop.drop, false);  
+  // $("#attachments").bind("mousedown", imgDrop.removeAttachment);
+  // document.addEventListener("dragenter", imgDrop.doNothing, false);  
+  // document.addEventListener("dragover", imgDrop.doNothing, false);  
+  // document.addEventListener("drop", imgDrop.drop, false);  
   
   initSession();
   getPostsWithComments();
