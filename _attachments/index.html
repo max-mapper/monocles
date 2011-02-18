@@ -150,7 +150,12 @@
                   {{name}}@{{hostname}}
                 </a>
 
-                {{message}} 
+                {{#message}}
+                	{{text}}
+                	{{#link}}
+                		<a href="{{link}}">{{link}}</a>
+                	{{/link}}
+                {{/message}} 
 
       		  {{#attachments}} 
       			[<a href="/{{db}}/{{id}}/{{file}}" target="_blank" rel="#image_{{id}}_{{randomToken}}" class='hover' title='{{file}}'>{{file}}</a>] 
@@ -175,7 +180,12 @@
                       <li class="comment">
                         {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
                         <span class="from">
-                          {{message}}
+                          {{#message}}
+                	         {{text}}
+                 	           {{#link}}
+                		       <a href="{{link}}">{{link}}</a>
+                	           {{/link}}
+                          {{/message}}
                         </span>
                         <div class="time">a while ago</div>
                       </li>
@@ -204,8 +214,12 @@
              <a href='#showProf' class='hover_profile' rel='#profile_{{nickname}}_{{randomToken}}' title='{{nickname}} profile'>
                   {{nickname}}@{{hostname}}
                 </a>
-
-                {{message}} 
+                {{#message}}
+                	{{text}}
+                	{{#link}}
+                		<a href="{{link}}">{{link}}</a>
+                	{{/link}}
+                {{/message}}
             </span>
             <div class="time">a while ago</div>
           </li>

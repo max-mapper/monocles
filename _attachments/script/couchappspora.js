@@ -285,7 +285,7 @@ function renderPostsWithComments(posts, comments) {
           }).map(function(cr) {
             return $.extend({
               id : cr.id,
-              message : cr.value.message
+              message : linkSplit(cr.value.message)
             }, cr.value.profile);
           })
 
@@ -304,7 +304,7 @@ function renderPostsWithComments(posts, comments) {
         commentCount : postComments.length,
         hiddenCommentCount : postComments.length - 2,
         randomToken : randomToken(),
-        message : r.value.message,
+        message : linkSplit(r.value.message),
         id: r.id,
         created_at : r.value.created_at,
     		hostname : r.value.hostname || "unknown",
@@ -314,9 +314,37 @@ function renderPostsWithComments(posts, comments) {
     
     db : opts.db
   };
-  data['id'] = data['items'][0]['id'];
+  data['notid'] = data['items'][0]['id'];
   return data;
 }
+
+//splits message into an array of tagged links or text
+function linkSplit(string)
+{
+	//from http://snipplr.com/view/6889/regular-expressions-for-uri-validationparsing/
+	var regexUri = /([a-z0-9+.-]+):(?:\/\/(?:((?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*)@)?((?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*)(?::(\d*))?(\/(?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*)?|(\/?(?:[a-z0-9-._~!$&'()*+,;=:@]|%[0-9A-F]{2})+(?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*)?)(?:\?((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?(?:#((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?/i;
+	var res=[];
+	while (string.length > 0){
+		var pos=string.search(regexUri);
+		switch(pos){
+			case -1: //no match
+				res.push({"text":string});
+				string="";
+				break;
+			case 0: //match at front of string
+				var link=string.match(regexUri)[0];
+				res.push({"link":link});
+				string=string.substr(link.length);
+				break;
+			default:
+				res.push({"text":string.substr(0,pos)});
+				string=string.substr(pos);
+				break;
+		}	
+	}
+	return res
+}
+
 
 function getComments(post_id, callback) {
   $.couch.db(opts.db).view('couchappspora/comments', {
@@ -332,7 +360,7 @@ function formatComments(post_id, data) {
   var comments = data.rows.map(function(r) {
     return $.extend({
       id : r.id,
-      message : r.value.message,
+      message : linkSplit(r.value.message),
 			hostname : r.value.hostname || "unknown",
 			randomToken : randomToken()
     }, r.value.profile);
