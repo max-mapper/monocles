@@ -49,7 +49,7 @@ function initializeProfile(userCtx) {
           profile.name = userDoc.name;
           profileReady(profile)
         } else {
-          $('#aspect_header').html(Mustache.to_html($('#profileFormTemplate').text(), userCtx));
+          $('#aspect_header').html($.mustache($('#profileFormTemplate').text(), userCtx));
           $('#aspect_header form').submit(function(e) {
             saveUser($(this));
             e.preventDefault();
@@ -104,7 +104,7 @@ function saveUser(form) {
 
 function profileReady(profile) {
   $('#aspect_header').data('profile', profile);
-  $('#aspect_header').html(Mustache.to_html($('#profileReadyTemplate').text(), profile));
+  $('#aspect_header').html($.mustache($('#profileReadyTemplate').text(), profile));
   $('label').inFieldLabels();
   $('form.status_message').submit(submitPost);
   
@@ -143,7 +143,7 @@ function initFileUpload() {
     uploadTable: $('.drop_instructions'),
     downloadTable: $('.drop_instructions'),
     buildUploadRow: function (files, index) {
-      return $(Mustache.to_html($('#uploaderTemplate').text(), {name: files[index].name}));
+      return $($.mustache($('#uploaderTemplate').text(), {name: files[index].name}));
     },
     buildDownloadRow: function (file) {
       return $('<tr><td>' + file.id + '<\/td><\/tr>');
@@ -246,7 +246,7 @@ function getPostsWithComments() {
   // Renders only when posts and comments are both loaded.
   function render() {
     if (posts && comments) {
-      $('.items').html(Mustache.to_html($('#streamTemplate').text(), renderPostsWithComments(posts, comments)));
+      $('.items').html($.mustache($('#streamTemplate').text(), renderPostsWithComments(posts, comments)));
       decorateStream();
     }
   }
@@ -347,7 +347,7 @@ function formatComments(post_id, data) {
 
 function showComments(post_id, post) {
   getComments(post_id, function(post_id, data) {
-     post.html(Mustache.to_html($('#commentsTemplate').text(), formatComments(post_id, data)));
+     post.html($.mustache($('#commentsTemplate').text(), formatComments(post_id, data)));
      post.show().find('*').show();
      post.closest('li').find('a.show_post_comments').hide().end().find('a.hide_post_comments').show();
      post.find('label').inFieldLabels();
@@ -412,7 +412,7 @@ function initSession() {
             uri_name : encodeURIComponent(r.userCtx.name),
             auth_db : encodeURIComponent(r.info.authentication_db)
           }
-          $("#account").html(Mustache.to_html($("#loginTemplate").text(), data))
+          $("#account").html($.mustache($("#loginTemplate").text(), data))
             .attr("data-name", r.userCtx.name);
           $("a[href=#logout]").click(function() { logout() });
 
