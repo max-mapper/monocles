@@ -126,20 +126,20 @@ header {
         margin-right: 1em; }
         header #session_action ul li:last-child {
           margin-right: 0; }
-  header #aspect_header {
+  header #header {
     z-index: 5;
     background-color: #eeeeee;
     border-top: 1px solid white;
     padding: 20px 0; }
-    header #aspect_header h1 {
+    header #header h1 {
       margin-bottom: 0;
       text-shadow: 0 2px 0 white; }
-    header #aspect_header a {
+    header #header a {
       color: #111111; }
-      header #aspect_header a:hover {
+      header #header a:hover {
         background: none;
         color: #333333; }
-    header #aspect_header .page_title {
+    header #header .page_title {
       text-transform: uppercase;
       text-shadow: 0 2px 0 white;
       margin-top: -5px; }

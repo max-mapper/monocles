@@ -1,35 +1,3 @@
-var DateHelper = {
-  // Takes the format of "Jan 15, 2007 15:45:00 GMT" and converts it to a relative time
-  // Ruby strftime: %b %d, %Y %H:%M:%S GMT
-  time_ago_in_words_with_parsing: function(from) {
-    var date = new Date; 
-    date.setTime(Date.parse(from));
-    return this.time_ago_in_words(date);
-  },
-
-  time_ago_in_words: function(from) {
-    return this.distance_of_time_in_words(new Date, from);
-  },
-
-  distance_of_time_in_words: function(to, from) {
-    var distance_in_seconds = ((to - from) / 1000);
-    var distance_in_minutes = Math.floor(distance_in_seconds / 60);
-
-    if (distance_in_minutes == 0) { return 'less than a minute ago'; }
-    if (distance_in_minutes == 1) { return 'a minute ago'; }
-    if (distance_in_minutes < 45) { return distance_in_minutes + ' minutes ago'; }
-    if (distance_in_minutes < 90) { return 'about 1 hour ago'; }
-    if (distance_in_minutes < 1440) { return 'about ' + Math.floor(distance_in_minutes / 60) + ' hours ago'; }
-    if (distance_in_minutes < 2880) { return '1 day ago'; }
-    if (distance_in_minutes < 43200) { return Math.floor(distance_in_minutes / 1440) + ' days ago'; }
-    if (distance_in_minutes < 86400) { return 'about 1 month ago'; }
-    if (distance_in_minutes < 525960) { return Math.floor(distance_in_minutes / 43200) + ' months ago'; }
-    if (distance_in_minutes < 1051199) { return 'about 1 year ago'; }
-
-    return 'over ' + (distance_in_minutes / 525960).floor() + ' years ago';
-  }
-};
-
 var currentDoc = null, opts = {};
 if (document.location.pathname.indexOf("_design") == -1) {
   // we are in a vhost
@@ -37,20 +5,81 @@ if (document.location.pathname.indexOf("_design") == -1) {
   opts.design = "couchappspora";
 };
 
-function initializeProfile(userCtx) {
+// uses mustache to render a template out to a target DOM
+// arguments:
+// template == camelcase ID (minus the word Template) of the DOM object containg your mustache template
+// target == ID of the DOM node you wish to render the template into
+// data == data object to pass into the mustache template when rendering
+function render(template, target, data) {
+  if (!data) var data = {};
+  $("#" + target).html($.mustache($("#" + template + "Template").text(), data));
+}
+
+// true if no admins exist in the database
+function isAdminParty(userCtx) {
+  return userCtx.roles.indexOf("_admin") !== -1;
+}
+
+// binds UX interaction and form submit event handlers to the signup/login forms
+function waitForLoginOrSignUp() {
+  $("a.session").click(function() {
+    render('signupForm', 'account');
+    var link = $(this);
+    var form = $("#account form");
+    $('label', form).inFieldLabels();
+    $("input[name=name]", form).focus();
+    form.submit(function(e) {
+      var name = $('input[name=name]', this).val(),
+          pass = $('input[name=password]', this).val(); 
+      if (link.attr('href') == '#signup') {
+        signUp(name, pass);
+      } else if (link.attr('href') == '#login') {
+        login(name, pass);
+      }
+      e.preventDefault();
+    })
+  })
+}
+
+// checks if the user is logged in and responds accordingly
+function fetchSession() {
+  $.couch.app(function(app) { 
+    $.couch.session({
+      success : function(session) {
+        if (session.userCtx.name) {
+          render('loggedIn', 'account', { name : session.userCtx.name });
+          
+          // TODO sammy
+          $("a[href=#logout]").click(function() { logout() });
+
+          fetchProfile(session);
+        } else if (isAdminParty(session.userCtx)) {
+          render('adminParty', 'account');
+        } else {
+          render('signUp', 'account');
+          render('loggedOut', 'header');
+          waitForLoginOrSignUp();
+        };
+      }
+    });
+  }, opts);
+}
+
+// gets user's stored profile info from couch
+// asks them to fill out a form if it's their first login
+function fetchProfile(session) {  
   $.couch.userDb(function(db) {
-    var userDocId = "org.couchdb.user:"+userCtx.name;
-    db.openDoc(userDocId, {
+    db.openDoc("org.couchdb.user:" + session.userCtx.name, {
       success : function(userDoc) {
         var profile = userDoc["couch.app.profile"];
         if (profile) {
           // we copy the name to the profile so it can be used later
           // without publishing the entire userdoc (roles, pass, etc)
           profile.name = userDoc.name;
-          profileReady(profile)
+          profileReady(profile);
         } else {
-          $('#aspect_header').html($.mustache($('#profileFormTemplate').text(), userCtx));
-          $('#aspect_header form').submit(function(e) {
+          render('newProfileForm', 'header', session.userCtx);
+          $('#header form').submit(function(e) {
             saveUser($(this));
             e.preventDefault();
           });
@@ -61,10 +90,6 @@ function initializeProfile(userCtx) {
 }
 
 function saveUser(form) {
-  var opts = {};
-  opts.db = "couchappspora";
-  opts.design = "couchappspora";
-
   $.couch.app(function(app) {     
     var md5 = app.require("vendor/md5");
     
@@ -101,13 +126,11 @@ function saveUser(form) {
   }, opts);
 }
 
-
 function profileReady(profile) {
-  $('#aspect_header').data('profile', profile);
-  $('#aspect_header').html($.mustache($('#profileReadyTemplate').text(), profile));
+  $('#header').data('profile', profile);
+  $('#header').html($.mustache($('#profileReadyTemplate').text(), profile));
   $('label').inFieldLabels();
   $('form.status_message').submit(submitPost);
-  
   initFileUpload();
 }
 
@@ -128,7 +151,7 @@ function initFileUpload() {
         _id: currentDoc.id,
         _rev: currentDoc.rev,
         created_at : new Date(),
-        profile : $("#aspect_header").data('profile'),
+        profile : $("#header").data('profile'),
         message : $("form.status_message [name=message]").val(),
         hostname : window.location.href.split("/")[2]
       };
@@ -178,7 +201,7 @@ function submitPost(e) {
   var db = $.couch.db(opts.db);
   var doc = {
     created_at : date,
-    profile : $("#aspect_header").data('profile'),
+    profile : $("#header").data('profile'),
     message : $("[name=message]", form).val(),
     hostname : window.location.href.split("/")[2]
   };
@@ -216,7 +239,7 @@ function login(name, pass) {
     name : name,
     password : pass,
     success : function(r) {
-      initSession();
+      fetchSession();
     }
   });
 }
@@ -224,7 +247,7 @@ function login(name, pass) {
 function logout() {
   $.couch.logout({
     success : function() {
-      initSession();
+      fetchSession();
     }
   });
 }
@@ -345,7 +368,6 @@ function linkSplit(string)
 	return res
 }
 
-
 function getComments(post_id, callback) {
   $.couch.db(opts.db).view('couchappspora/comments', {
     startkey: [post_id],
@@ -393,7 +415,7 @@ function submitComment(e) {
     , db = $.couch.db(opts.db)
     , doc = {
         created_at : date,
-        profile : $('#aspect_header').data('profile'),
+        profile : $('#header').data('profile'),
         message : form.find('[name=message]').val(),
     	  hostname : window.location.href.split("/")[2],
         parent_id : parent_id,
@@ -428,68 +450,7 @@ function decorateStream() {
 	})
 }
 
-function initSession() {
-  $.couch.app(function(app) { 
-  
-    $.couch.session({
-      success : function(r) {
-        var userCtx = r.userCtx;
-        if (userCtx.name) {
-          var data = {
-            name : r.userCtx.name,
-            uri_name : encodeURIComponent(r.userCtx.name),
-            auth_db : encodeURIComponent(r.info.authentication_db)
-          }
-          $("#account").html($.mustache($("#loginTemplate").text(), data))
-            .attr("data-name", r.userCtx.name);
-          $("a[href=#logout]").click(function() { logout() });
-
-          initializeProfile(r.userCtx);
-        
-        } else if (userCtx.roles.indexOf("_admin") != -1) {
-          $("#account").html($("#adminPartyTemplate").text());
-        } else {
-          $("#account").html($("#signUpTemplate").text());
-          $("#aspect_header").html($("#loggedOutTemplate").text());
-          $('label').inFieldLabels();
-          $("input[name=name]").focus();
-          $("a[href=#signup]").click(function() {
-            $("#account").html($('#signupFormTemplate').text());
-            $('label').inFieldLabels();
-            $("input[name=name]").focus();
-            $("#account form").submit(function(e) {
-              var name = $('input[name=name]', this).val(),
-                pass = $('input[name=password]', this).val();              
-              signUp(name, pass);
-              e.preventDefault();
-            })
-          })
-          $("a[href=#login]").click(function() {
-            $("#account").html($('#loginFormTemplate').text());
-            $('label').inFieldLabels();
-            $("input[name=name]").focus();
-            $("#account form").submit(function(e) {
-              var name = $('input[name=name]', this).val(),
-                pass = $('input[name=password]', this).val();
-              login(name, pass);
-              e.preventDefault();
-            })
-          })
-        };
-      }
-    });
-  }, opts);
-}
-
-
 $(function() {
-  
-  // $("#attachments").bind("mousedown", imgDrop.removeAttachment);
-  // document.addEventListener("dragenter", imgDrop.doNothing, false);  
-  // document.addEventListener("dragover", imgDrop.doNothing, false);  
-  // document.addEventListener("drop", imgDrop.drop, false);  
-  
-  initSession();
+  fetchSession();
   getPostsWithComments();
-  
 });

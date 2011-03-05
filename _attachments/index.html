@@ -23,6 +23,7 @@
     <script type="text/javascript" src="script/jquery.couch.app.js"></script>
     <script type="text/javascript" src="script/jquery.mustache.js"></script>
     <script type="text/javascript" src="script/sammy.js"></script>
+    <script type="text/javascript" src="script/helpers.js"></script>
     <script type="text/javascript" src="script/couchappspora.js"></script>
     <script type="text/javascript" src="script/jquery.cluetip.js"></script>
     <script type="text/javascript" src="script/models/posts.js"></script>
@@ -55,7 +56,7 @@
           </ul>
         </div>
       </div>
-      <div id='aspect_header'>
+      <div id='header'>
       </div>
     </header>
     <div class='container'>
@@ -67,13 +68,13 @@
       <strong>Admin party, everyone is admin!</strong> Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
     </script>
     
-    <script type="text/mustache" id="loginTemplate">
+    <script type="text/mustache" id="loggedInTemplate">
       <li><a href="#">{{name}}</a></li>
       <li><a href="#logout">logout</a></li>
     </script>
 
     <script type="text/mustache" id="signUpTemplate">
-      <a href="#signup">Signup</a> or <a href="#login">Login</a>
+      <a class="session" href="#signup">Signup</a> or <a class="session" href="#login">Login</a>
     </script>
     
     <script type="text/mustache" id="loggedOutTemplate">
@@ -96,7 +97,7 @@
       </form>
     </script>
     
-    <script type="text/mustache" id="profileFormTemplate">
+    <script type="text/mustache" id="newProfileFormTemplate">
       <form class="profile_setup">
         <p>Hello {{name}}, Please setup your user profile.</p>
         <label for="nickname">Nickname 

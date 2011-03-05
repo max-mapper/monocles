@@ -6,7 +6,7 @@ function submitPost(event) {
   var doc = {
     created_at : date,
         _id : id,
-    profile : $$("#aspect_header").profile,
+    profile : $$("#header").profile,
     message : $("[name=message]", form).val(),
     _attachments : {},
     hostname : window.location.href.split("/")[2]
