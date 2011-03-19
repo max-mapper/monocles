@@ -60,15 +60,19 @@
     "from": "vendor/*"
   },
   {
-    "to": "index.html",
+    "to": "pages/index.html",
     "from": ""
   },
   {
+    "to": "./",
+    "from": "ddoc"
+  },
+  {
     "to": "../../",
-    "from": "/couchappspora"
+    "from": "db"
   },
   {
     "to": "../../*",
-    "from": "couchappspora/*"
+    "from": "db/*"
   }
 ]

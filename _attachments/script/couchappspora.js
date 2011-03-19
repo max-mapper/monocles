@@ -1,22 +1,52 @@
-var currentDoc = null, opts = {};
-if (document.location.pathname.indexOf("_design") == -1) {
-  // we are in a vhost
-  opts.db = "couchappspora";
-  opts.design = "couchappspora";
-};
+var currentDoc = null, opts = {}, baseURL;
 
-// uses mustache to render a template out to a target DOM
-// arguments:
-// template == camelcase ID (minus the word Template) of the DOM object containg your mustache template
-// target == ID of the DOM node you wish to render the template into
-// data == data object to pass into the mustache template when rendering
-function render(template, target, data) {
+// vhosts are when you mask couchapps behind a pretty URL
+var inVhost = function() {
+  var path = document.location.pathname
+    , vhost = false;
+
+  if ( path.indexOf( "_design" ) == -1 ) {
+    vhost = true;
+  }
+  
+  return vhost;
+}
+
+// compatibility with non-vhosted instances
+var getBaseURL = function() {
+  var url;
+  if ( inVhost() ) {
+    url = "";
+  } else {
+    url = "_rewrite/";
+  }
+  return url;
+}
+
+function getDb( callback ) {
+  $.getJSON( baseURL + 'db', function( dbInfo ) {
+    callback( dbInfo.db_name );
+  })
+}
+
+function getDDoc( callback ) {
+  $.getJSON( baseURL + 'ddoc', function( ddocInfo ) {
+    callback( ddocInfo._id.split('/')[1] );
+  });
+}
+
+/** Uses mustache to render a template out to a target DOM
+ *  template: camelcase ID (minus the word Template) of the DOM object containg your mustache template
+ *  target: ID of the DOM node you wish to render the template into
+ *  data: data object to pass into the mustache template when rendering
+**/
+function render( template, target, data ) {
   if (!data) var data = {};
   $("#" + target).html($.mustache($("#" + template + "Template").text(), data));
 }
 
 // true if no admins exist in the database
-function isAdminParty(userCtx) {
+function isAdminParty( userCtx ) {
   return userCtx.roles.indexOf("_admin") !== -1;
 }
 
@@ -451,6 +481,19 @@ function decorateStream() {
 }
 
 $(function() {
-  fetchSession();
-  getPostsWithComments();
+  baseURL = getBaseURL();
+  if ( inVhost() ) {
+    opts.db = "db";
+    getPostsWithComments();
+    getDDoc( function( ddoc ) {
+      opts.design = ddoc;
+      fetchSession();
+    })
+  } else {
+    getDb( function( db ) {
+      opts.db = db;
+      fetchSession();
+      getPostsWithComments();
+    })
+  }
 });
