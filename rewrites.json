@@ -68,6 +68,14 @@
     "from": "ddoc"
   },
   {
+    "to": "./",
+    "from": "db/_design/ddoc"
+  },
+  {
+    "to": "./*",
+    "from": "db/_design/ddoc/*"
+  },
+  {
     "to": "../../",
     "from": "db"
   },

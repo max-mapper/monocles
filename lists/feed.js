@@ -20,7 +20,7 @@ function(head, req){
         var rand = Math.random();
         return {
           entry_title: r.value.message,
-          entry_url: "http://"+req.headers.Host+"/couchappspora/"+r.value._id,
+          entry_url: "http://"+req.headers.Host+"/db/"+r.value._id,
           entry_published: Rfc3339.convert(new Date(r.value.created_at)),
           entry_updated: Rfc3339.convert(new Date(r.value.created_at)),
           entry_content: r.value.message

@@ -1,4 +1,8 @@
-var currentDoc = null, opts = {}, baseURL;
+var currentDoc = null
+  , opts = {
+      db: "db"
+    , design: "ddoc"
+  };
 
 // vhosts are when you mask couchapps behind a pretty URL
 var inVhost = function() {
@@ -10,29 +14,6 @@ var inVhost = function() {
   }
   
   return vhost;
-}
-
-// compatibility with non-vhosted instances
-var getBaseURL = function() {
-  var url;
-  if ( inVhost() ) {
-    url = "";
-  } else {
-    url = "_rewrite/";
-  }
-  return url;
-}
-
-function getDb( callback ) {
-  $.getJSON( baseURL + 'db', function( dbInfo ) {
-    callback( dbInfo.db_name );
-  })
-}
-
-function getDDoc( callback ) {
-  $.getJSON( baseURL + 'ddoc', function( ddocInfo ) {
-    callback( ddocInfo._id.split('/')[1] );
-  });
 }
 
 /** Uses mustache to render a template out to a target DOM
@@ -167,14 +148,17 @@ function profileReady(profile) {
 function initFileUpload() {
   var db = $.couch.db(opts.db);
   
-  var newId, currentUrl, uploadSequence = [];
+  var newId, currentURL, baseURL, uploadSequence = [];
   
-  $.getJSON('/_uuids', function(data) { newId = data.uuids[0] });
+  $.getJSON('/_uuids', function(data) { 
+    newId = data.uuids[0];
+    baseURL = "/" + opts.db + "/_design/" + opts.design + "/_rewrite/db/" + newId + "/";
+  });
   
   uploadSequence.start = function (index) {
     var next = this[index];
     if (next) {
-      next({url: currentUrl});
+      next({url: currentURL});
       this[index] = null;
     } else {
       var doc = {
@@ -191,6 +175,8 @@ function initFileUpload() {
     }
   };
   
+  
+  
   $('.drop_instructions').html("");
   $('#file_upload').fileUploadUI({
     uploadTable: $('.drop_instructions'),
@@ -202,7 +188,7 @@ function initFileUpload() {
       return $('<tr><td>' + file.id + '<\/td><\/tr>');
     },
     beforeSend: function (event, files, index, xhr, handler, callBack) {
-      handler.url = opts.db + "/" + newId + "/" + files[index].fileName;
+      handler.url = baseURL + files[index].fileName;
       uploadSequence.push(callBack);
       if (index === 0) {
         uploadSequence.splice(0, uploadSequence.length - 1);
@@ -213,7 +199,7 @@ function initFileUpload() {
     },
     onComplete: function (event, files, index, xhr, handler) {
       currentDoc = handler.response;
-      handler.url = currentUrl = opts.db + "/" + newId + "/" + files[index].fileName + "?rev=" + currentDoc.rev;
+      handler.url = currentURL = baseURL + files[index].fileName + "?rev=" + currentDoc.rev;
       uploadSequence.start(index + 1);
     },
     onAbort: function (event, files, index, xhr, handler) {
@@ -304,7 +290,7 @@ function getPostsWithComments() {
     }
   }
 
-  $.couch.db(opts.db).view('couchappspora/recent-items', {
+  $.couch.db(opts.db).view(opts.design + '/recent-items', {
     "descending" : true,
     "limit" : 20,
     success: function(data) {
@@ -313,7 +299,7 @@ function getPostsWithComments() {
     }
   });
 
-  $.couch.db(opts.db).view('couchappspora/comments', {
+  $.couch.db(opts.db).view(opts.design + '/comments', {
     "descending" : true,
     "limit" : 250,
     success: function(data) {
@@ -399,7 +385,7 @@ function linkSplit(string)
 }
 
 function getComments(post_id, callback) {
-  $.couch.db(opts.db).view('couchappspora/comments', {
+  $.couch.db(opts.db).view(opts.design + '/comments', {
     startkey: [post_id],
     endkey: [post_id + "\u9999"],
     success: function(data) {
@@ -481,19 +467,13 @@ function decorateStream() {
 }
 
 $(function() {
-  baseURL = getBaseURL();
   if ( inVhost() ) {
-    opts.db = "db";
     getPostsWithComments();
-    getDDoc( function( ddoc ) {
-      opts.design = ddoc;
-      fetchSession();
-    })
+    fetchSession();
   } else {
-    getDb( function( db ) {
-      opts.db = db;
-      fetchSession();
-      getPostsWithComments();
-    })
+    opts.db = document.location.href.split('/')[3];
+    opts.design = unescape(document.location.href).split('/')[5];
+    fetchSession();
+    getPostsWithComments();
   }
 });
