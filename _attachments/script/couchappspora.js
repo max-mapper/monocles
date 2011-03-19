@@ -1,8 +1,4 @@
 var currentDoc = null
-  , opts = {
-      db: "db"
-    , design: "ddoc"
-  };
 
 // vhosts are when you mask couchapps behind a pretty URL
 var inVhost = function() {
@@ -73,7 +69,7 @@ function fetchSession() {
         };
       }
     });
-  }, opts);
+  }, couchOpts);
 }
 
 // gets user's stored profile info from couch
@@ -134,7 +130,7 @@ function saveUser(form) {
         }
       });
     });
-  }, opts);
+  }, couchOpts);
 }
 
 function profileReady(profile) {
@@ -146,13 +142,13 @@ function profileReady(profile) {
 }
 
 function initFileUpload() {
-  var db = $.couch.db(opts.db);
+  var db = $.couch.db(couchOpts.db);
   
   var newId, currentURL, baseURL, uploadSequence = [];
   
   $.getJSON('/_uuids', function(data) { 
     newId = data.uuids[0];
-    baseURL = "/" + opts.db + "/_design/" + opts.design + "/_rewrite/db/" + newId + "/";
+    baseURL = "/" + couchOpts.db + "/_design/" + couchOpts.design + "/_rewrite/db/" + newId + "/";
   });
   
   uploadSequence.start = function (index) {
@@ -214,7 +210,7 @@ function initFileUpload() {
 function submitPost(e) {
   var form = this;
   var date = new Date();
-  var db = $.couch.db(opts.db);
+  var db = $.couch.db(couchOpts.db);
   var doc = {
     created_at : date,
     profile : $("#header").data('profile'),
@@ -290,7 +286,7 @@ function getPostsWithComments() {
     }
   }
 
-  $.couch.db(opts.db).view(opts.design + '/recent-items', {
+  $.couch.db(couchOpts.db).view(couchOpts.design + '/recent-items', {
     "descending" : true,
     "limit" : 20,
     success: function(data) {
@@ -299,7 +295,7 @@ function getPostsWithComments() {
     }
   });
 
-  $.couch.db(opts.db).view(opts.design + '/comments', {
+  $.couch.db(couchOpts.db).view(couchOpts.design + '/comments', {
     "descending" : true,
     "limit" : 250,
     success: function(data) {
@@ -351,7 +347,7 @@ function renderPostsWithComments(posts, comments) {
       }, r.value.profile);
     }),
     
-    db : opts.db
+    db : couchOpts.db
   };
   data['notid'] = data['items'][0]['id'];
   return data;
@@ -385,7 +381,7 @@ function linkSplit(string)
 }
 
 function getComments(post_id, callback) {
-  $.couch.db(opts.db).view(opts.design + '/comments', {
+  $.couch.db(couchOpts.db).view(couchOpts.design + '/comments', {
     startkey: [post_id],
     endkey: [post_id + "\u9999"],
     success: function(data) {
@@ -428,7 +424,7 @@ function submitComment(e) {
     , parent = form.closest('li.message')
     , parent_id = parent.attr('data-post-id')
     , parent_created_at = parent.attr('data-created-at')
-    , db = $.couch.db(opts.db)
+    , db = $.couch.db(couchOpts.db)
     , doc = {
         created_at : date,
         profile : $('#header').data('profile'),
@@ -466,14 +462,18 @@ function decorateStream() {
 	})
 }
 
+// by default use the relative vhost links defined in rewrites.json
+var couchOpts = {
+    db: "db"
+  , design: "ddoc"
+};
+
 $(function() {
-  if ( inVhost() ) {
-    getPostsWithComments();
-    fetchSession();
-  } else {
-    opts.db = document.location.href.split('/')[3];
-    opts.design = unescape(document.location.href).split('/')[5];
-    fetchSession();
-    getPostsWithComments();
+  if ( !inVhost() ) {
+    // grab db and ddoc ids from the current url
+    couchOpts.db = document.location.href.split('/')[3];
+    couchOpts.design = unescape(document.location.href).split('/')[5];
   }
+  fetchSession();
+  getPostsWithComments();
 });
