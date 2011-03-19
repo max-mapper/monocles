@@ -22,6 +22,8 @@
 
 .file_upload .drop_input {
   position: absolute;
+  height: 0px;
+  padding: 0px;
   top: 0;
   margin: 0;
   width: 400px;
