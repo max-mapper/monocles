@@ -1,9 +1,13 @@
-function(head, req) {
-  var xrd = require("vendor/couchapp/lib/xrd_gen");
+function(doc, req){
+  //!json templates.xrd
+  uri = req.query.q
+  Mustache = require("vendor/mustache");
   var host = req.headers.Host;
-  var domain = host.split(":")[0];
-  return {
-    "headers" : {"Content-Type" : "application/xml"},
-    "body" : xrd.generate(domain).toXMLString()
-  }
+  var view = {
+    host: host
+  };
+  var xml = Mustache.to_html(templates.xrd, view);
+  provides("xml", function(){
+    return xml;
+  });
 }

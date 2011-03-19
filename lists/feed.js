@@ -2,8 +2,8 @@ function(head, req){
   provides("atom",function(){
     var rows = [];
     // !json templates.feed
-    Mustache = require("vendor/couchapp/lib/mustache");
-    Rfc3339 = require("vendor/couchapp/lib/rfc3339");
+    Mustache = require("vendor/mustache");
+    Rfc3339 = require("vendor/rfc3339");
     while(row = getRow()){
       if (row.value.profile && row.value.profile.name === req.query.name && row.value.message.length > 0){
         rows.push(row);

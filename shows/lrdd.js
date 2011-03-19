@@ -1,13 +1,12 @@
 function(doc, req){
   //!json templates.lrdd
   uri = req.query.q
-  Mustache = require("vendor/couchapp/lib/mustache");
+  Mustache = require("vendor/mustache");
   var username = uri.split("@")[0].replace("acct:","");
   var host = req.headers.Host;
-  var domain = host.split(":")[0];
   var view = {
     username: username,
-    domain: domain
+    host: host
   };
   var xml = Mustache.to_html(templates.lrdd, view);
   provides("xml", function(){

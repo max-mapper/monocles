@@ -1,5 +1,5 @@
 function(doc, req){
-  var Base64 = require("vendor/couchapp/lib/base64");
+  var Base64 = require("vendor/base64");
   req.body = req.body.replace(/<.*?>/,"");
   var codez = new XML(req.body);
   var atom = new Namespace('http://www.w3.org/2005/Atom');
