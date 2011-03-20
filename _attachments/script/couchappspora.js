@@ -54,12 +54,15 @@ function fetchSession() {
     $.couch.session({
       success : function(session) {
         if (session.userCtx.name) {
-          render('loggedIn', 'account', { name : session.userCtx.name });
-          
-          // TODO sammy
-          $("a[href=#logout]").click(function() { logout() });
+          fetchProfile(session, function(profile) {
+            render('loggedIn', 'account', {
+              name : session.userCtx.name,
+              gravatar_url : profile.gravatar_url
+            });
 
-          fetchProfile(session);
+            // TODO sammy
+            $("a[href=#logout]").click(function() { logout() });
+          });
         } else if (isAdminParty(session.userCtx)) {
           render('adminParty', 'account');
         } else {
@@ -74,7 +77,7 @@ function fetchSession() {
 
 // gets user's stored profile info from couch
 // asks them to fill out a form if it's their first login
-function fetchProfile(session) {  
+function fetchProfile(session, callback) {
   $.couch.userDb(function(db) {
     db.openDoc("org.couchdb.user:" + session.userCtx.name, {
       success : function(userDoc) {
@@ -84,6 +87,7 @@ function fetchProfile(session) {
           // without publishing the entire userdoc (roles, pass, etc)
           profile.name = userDoc.name;
           profileReady(profile);
+          callback(profile);
         } else {
           render('newProfileForm', 'header', session.userCtx);
           $('#header form').submit(function(e) {
