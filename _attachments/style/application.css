@@ -126,6 +126,13 @@ header {
         margin-right: 1em; }
         header #session_action ul li:last-child {
           margin-right: 0; }
+      header #session_action ul .avatar {
+        margin-right: 0; }
+        header #session_action ul .avatar img {
+          width: 1.5em;
+          height: 1.5em;
+          vertical-align: middle; }
+
   header #header {
     z-index: 5;
     background-color: #eeeeee;

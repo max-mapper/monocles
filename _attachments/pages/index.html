@@ -68,6 +68,7 @@
     </script>
     
     <script type="text/mustache" id="loggedInTemplate">
+      <li class="avatar">{{#gravatar_url}}<img src="{{gravatar_url}}" />{{/gravatar_url}}</li>
       <li><a href="#">{{name}}</a></li>
       <li><a href="#logout">logout</a></li>
     </script>
