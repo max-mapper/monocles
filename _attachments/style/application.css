@@ -11,23 +11,24 @@ body {
   margin: 0; }
 
 a {
-  color: #556270;
-  color: #107fc9;
+  text-decoration: none;
+}
+
+.hidden {
+  display: none; }
+
+a {
   color: #019dbe;
   text-decoration: none; }
-  a:hover {
+  .message a:hover {
     color: white;
     background-color: #556270;
     background-color: #019dbe; }
 
-h1 {
+.aspect-header {
   font-size: 21px;
   font-weight: bold;
   line-height: 36px; }
-
-h3 {
-  font-size: 18px;
-  font-weight: bold; }
 
 .deleteattachment {
   position:relative; 
@@ -133,7 +134,7 @@ header {
         header #session_action ul li:last-child {
           margin-right: 0; }
       header #session_action ul .avatar {
-        margin-right: 0; }
+        margin-right: 5px; }
         header #session_action ul .avatar img {
           width: 1.5em;
           height: 1.5em;
@@ -157,22 +158,159 @@ header {
       text-shadow: 0 2px 0 white;
       margin-top: -5px; }
 
-ul#stream {
-  margin: 0;
-  padding: 0; }
-  ul#stream > li {
-    min-height: 50px;
-    list-style: none;
-    padding: 12px 0;
-    border-bottom: 1px solid #eeeeee; }
-  ul#stream > li:first-child {
-    padding-top: 0; }
+.stream audio {
+  display: block;
+  margin: 5px 0; }
+.stream .stream_element {
+  padding: 20px 20px;
+    padding-right: 70px;
+  min-height: 50px;
+  border-bottom: 1px solid #dddddd;
+  border-top: 1px solid white; }
+  .stream .stream_element:hover .right {
+    display: inline; }
+  .stream .stream_element:hover .from a {
+    color: #3f8fba; }
+  .stream .stream_element .youtube-player, .stream .stream_element .vimeo-player {
+    border: none;
+    height: 370px;
+    width: 500px; }
+  .stream .stream_element time {
+    font-weight: normal;
+    font-size: smaller;
+    position: absolute;
+    right: 20px; }
+
+.stream_element {
+  position: relative;
+  word-wrap: break-word;
+  color: #888888;
+  font-size: 14px; }
+  .stream_element a.author {
+    font-weight: bold;
+    color: #444444; }
+  .stream_element .content {
+    margin-top: 0;
+    padding-left: 60px;
+    color: #666666;
+    font-weight: normal; }
+    .stream_element .content p {
+      margin-bottom: 0px;
+      font-size: 13px;
+      line-height: 18px; }
+    .stream_element .content .photo_attachments {
+      margin-top: 7px; }
+      .stream_element .content .photo_attachments img {
+        margin-right: 0;
+        max-width: 100%; }
+    .stream_element .content .stream_photo {
+      float: left;
+      margin-top: 6px; }
+    .stream_element .content .photo_description {
+      margin-top: 6px;
+      padding-left: 220px;
+      min-height: 185px;
+      color: #888888;
+      font-style: italic; }
+    .stream_element .content .small_text {
+      font-size: smaller; }
+    .stream_element .content .info {
+      margin-top: 2px;
+      color: #999999;
+      font-size: 11px; }
+    .stream_element .content .comments .info {
+      margin-top: -1px; }
+  .stream_element .delete {
+    opacity: 0.6;
+    padding: 5px; }
+    .stream_element .delete:hover {
+      opacity: 1; }
+
+.stream_element .right {
+  position: absolute;
+  right: 12px; }
+  .stream_element .right.controls {
+    z-index: 6;
+    font-size: 12px;
+    color: #999999;
+    padding-left: 100px; }
+    .stream_element .right.controls a {
+      color: #999999;
+      font-weight: normal; }
+.stream_element:hover .controls {
+  display: inline; }
+
+.stream_element:hover .right {
+  display: inline; }
+
+
+.stream .avatar {
+  float: left; }
+.stream .arrow .aspect_badges,
+.stream .stream_element .aspect_badges {
+  opacity: 0.5; }
+.stream .arrow:hover .aspect_badges,
+.stream .stream_element:hover .aspect_badges {
+  opacity: 1; }
+.stream .aspect_badge {
+  position: relative;
+  margin-bottom: 0; }
+.stream .arrow {
+  top: -0.1em; }
+.stream .aspect_badge {
+  top: -0.2em; }
+ 
+.aspect_badge {
+  color: white;
+  line-height: auto;
+  padding: 0 4px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  line-height: 14px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  display: inline-block;
+  font-size: smaller;
+  font-weight: normal;
+  text-shadow: none;
+  cursor: default; }
+  .aspect_badge a {
+    color: white; }
+  .aspect_badge a {
+    color: white;
+    font-weight: normal; }
+    .aspect_badge a:hover {
+      text-decoration: none; }
+
+.aspects {
+  position: relative;
+  margin-top: 1em; }
+  .aspects .right {
+    right: 12px; }
+  .aspects .contact_list {
+    height: auto;
+    max-height: auto;
+    width: 298px; }
+
+.aspects .aspect_badge {
+  font-size: 1em; }
+
+.aspect_badge.public {
+  background-color: #c0e76c; }
+
+.aspect_badge.single {
+  background-color: #999999; }
+  .aspect_badge.single:hover {
+    background-color: #bbbbbb; }
+  .aspect_badge.single:active {
+    top: 0px; }
 
 p.message {
   float: left;
 }
 
-li.message {
+/*li.message {
   position: relative;
   line-height: 140%;
   font-family: "Lucida Grande", sans-serif;
@@ -190,13 +328,13 @@ li.message {
       font-size: 110%; }
     li.message .content div.info {
       color: #bababa;
-      font-size: 70%; }
+      font-size: 70%; }*/
 
 form {
   position: relative;
   font-size: 120%;
   margin: 1em;
-    margin-left: 0em; }
+  margin-left: 0em; }
 
 #user_name {
   margin-bottom: 20px; }
@@ -224,11 +362,6 @@ form {
     #user_name ul > li {
       display: inline;
       margin-right: 1em; }
-
-#stream div.comments .avatar {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px; }
 
 input.comment_submit {
   display: none;
@@ -276,7 +409,7 @@ ul.comment_set {
   margin: 0px 50px;
 }
 
-#stream img.person_picture, #profile img.person_picture,
+#profile img.person_picture,
 .comments img.person_picture {
   border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -395,30 +528,6 @@ input[type='text'], textarea {
   -moz-box-shadow: 0 3px 6px black;
   border: 1px solid white; }
 
-/* cycle it! */
-.album {
-  position: relative;
-  height: 200px;
-  width: 200px;
-  display: inline-block; }
-  .album img {
-    width: 200px;
-    height: 200px; }
-  .album .name {
-    position: absolute;
-    z-index: 6;
-    padding: 1em;
-    background: rgba(0, 0, 0, 0.8);
-    bottom: 20px;
-    font-size: 18px;
-    text-shadow: 0 2px 0 black; }
-    .album .name .time {
-      font-size: 12px; }
-      .album .name .time a {
-        font-weight: normal; }
-  .album div.image_cycle img {
-    display: none; }
-
 .field_with_submit input[type='text'] {
   width: 82%;
   display: inline; }
@@ -433,9 +542,58 @@ h1.big_text {
 #content_bottom .right {
   top: -5px; }
 
-.right {
+.right .reshare_pane .reshare_button a.inactive {
+  color: #cccccc;
+  cursor: default; }
+  .right .reshare_pane .reshare_button a.inactive:hover {
+    text-decoration: none; }
+
+.right .reshare_pane .reshare_button {
+  padding: 2px; }
+  .right .reshare_pane .reshare_button.active {
+    background-color: #333333;
+    -webkit-border-radius: 5px 5px 0 0;
+    -moz-border-radius: 5px 5px 0 0;
+    border-radius: 5px 5px 0 0; }
+    .right .reshare_pane .reshare_button.active a {
+      color: white;
+      text-shadow: none; }
+
+.right .reshare_pane {
+  margin-left: 5px;
+  margin-right: 5px;
   display: inline;
-  float: right; }
+  position: relative; }
+  .right .reshare_pane ul.reshare_box {
+    width: 150px;
+    display: none;
+    z-index: 10;
+    position: absolute;
+    margin-top: 0;
+    padding: 0;
+    background-color: #fafafa;
+    border: 5px solid #333333;
+    text-shadow: 0 2px white;
+    color: black; }
+    .right .reshare_pane ul.reshare_box > li {
+      font-weight: bold;
+      color: #cccccc;
+      border-top: 1px solid white;
+      border-bottom: 1px solid #cccccc; }
+      .right .reshare_pane ul.reshare_box > li:first-child {
+        border-top: none; }
+      .right .reshare_pane ul.reshare_box > li:last-child {
+        border-bottom: none; }
+      .right .reshare_pane ul.reshare_box > li a {
+        display: block;
+        height: 100%;
+        padding: 2px 5px;
+        cursor: default; }
+        .right .reshare_pane ul.reshare_box > li a:hover {
+          background-color: #eeeeee;
+          text-decoration: none; }
+        .right .reshare_pane ul.reshare_box > li a:active {
+          background-color: #cccccc; }
 
 .back {
   font-size: 12px;

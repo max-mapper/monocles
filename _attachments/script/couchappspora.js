@@ -62,7 +62,7 @@ function fetchSession() {
         if (session.userCtx.name) {
           fetchProfile(session, function(profile) {
             render('loggedIn', 'account', {
-              name : session.userCtx.name,
+              nickname : profile.nickname,
               gravatar_url : profile.gravatar_url
             });
 
@@ -491,7 +491,7 @@ function submitComment(e) {
 function decorateStream() {
   $("a.hover").cluetip({local:true});
 	$(".hover_profile").cluetip({local:true, sticky:true, activation:"click"});
-
+  $('.timeago').timeago();
 	$('a.hide_post_comments').click(function(e) {
     var comment = $(this).closest('li').find('div.comments');
     comment.find('*').remove();
