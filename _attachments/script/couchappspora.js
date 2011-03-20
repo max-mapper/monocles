@@ -1,4 +1,4 @@
-var currentDoc = null
+var currentDoc, oldestDoc, requestInProgress;
 
 // vhosts are when you mask couchapps behind a pretty URL
 var inVhost = function() {
@@ -17,9 +17,15 @@ var inVhost = function() {
  *  target: ID of the DOM node you wish to render the template into
  *  data: data object to pass into the mustache template when rendering
 **/
-function render( template, target, data ) {
+function render( template, target, data, append ) {
   if (!data) var data = {};
-  $("#" + target).html($.mustache($("#" + template + "Template").text(), data));
+  var html = $.mustache($("#" + template + "Template").text(), data),
+      targetDom = $("#" + target);
+  if( append ) {
+    targetDom.append(html);    
+  } else {
+    targetDom.html(html);
+  }
 }
 
 // true if no admins exist in the database
@@ -243,7 +249,7 @@ function afterPost(newDoc) {
   currentDoc = null;
 
   // Reload posts
-  getPostsWithComments();
+  getPostsWithComments({reload:true});
 }
 
 function randomToken() {
@@ -278,26 +284,46 @@ function signUp(name, pass) {
   });
 }
 
-function getPostsWithComments() {
-  var posts;
-  var comments;
+function getPostsWithComments(opts) {
+  var opts = opts || {};
+  if(opts.offsetDoc === false) return;
+  var posts, comments;
+  requestInProgress = true;
 
   // Renders only when posts and comments are both loaded.
-  function render() {
+  function renderStream() {
     if (posts && comments) {
-      $('.items').html($.mustache($('#streamTemplate').text(), renderPostsWithComments(posts, comments)));
+      var append = true;
+      if (opts.reload) append = false;
+      render('stream', 'items', renderPostsWithComments(posts, comments), append);
       decorateStream();
     }
   }
 
-  $.couch.db(couchOpts.db).view(couchOpts.design + '/recent-items', {
+  var query = {
     "descending" : true,
     "limit" : 20,
     success: function(data) {
-      posts = data;
-      render();
+      requestInProgress = false;
+      if( data.rows.length === 0 ) {
+        oldestDoc = false;
+      } else {
+        oldestDoc = data.rows[data.rows.length-1];
+        posts = data;
+        renderStream(); 
+      }
     }
-  });
+  }
+  
+  if (opts.offsetDoc) {
+    $.extend(query, {
+      "startkey": opts.offsetDoc.key,
+      "startkey_docid": opts.offsetDoc.id,
+      "skip": 1
+    })
+  }
+  
+  $.couch.db(couchOpts.db).view(couchOpts.design + '/recent-items', query);
 
   $.couch.db(couchOpts.db).view(couchOpts.design + '/comments', {
     "descending" : true,
@@ -311,7 +337,7 @@ function getPostsWithComments() {
         return list;
       }, []);
 
-      render();
+      renderStream();
     }
   });
 }
@@ -466,6 +492,32 @@ function decorateStream() {
 	})
 }
 
+function bindInfiniteScroll() {
+  var settings = {
+    lookahead: 400,
+    container: $(document)
+  };
+    
+  $(window).scroll(function(e) {
+    if (requestInProgress) {
+      return;
+    }
+
+    var containerScrollTop = settings.container.scrollTop();
+    if (!containerScrollTop) {
+      var ownerDoc = settings.container.get().ownerDocument;
+      if(ownerDoc) {
+        containerScrollTop = $(ownerDoc.body).scrollTop();        
+      }
+    }
+    var distanceToBottom = $(document).height() - (containerScrollTop + $(window).height());
+    
+    if (distanceToBottom < settings.lookahead) {  
+      getPostsWithComments({offsetDoc: oldestDoc});
+    }
+  });
+}
+
 // by default use the relative vhost links defined in rewrites.json
 var couchOpts = {
     db: "db"
@@ -480,4 +532,5 @@ $(function() {
   }
   fetchSession();
   getPostsWithComments();
+  bindInfiniteScroll();
 });
