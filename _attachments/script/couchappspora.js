@@ -1,4 +1,4 @@
-var currentDoc, oldestDoc, requestInProgress;
+var currentDoc, oldestDoc;
 
 // vhosts are when you mask couchapps behind a pretty URL
 var inVhost = function() {
@@ -284,15 +284,31 @@ function signUp(name, pass) {
   });
 }
 
+function showLoader() {
+  $('.loader').css('display', 'block');
+}
+
+function hideLoader() {
+  $('.loader').css('display', 'none');
+}
+
+function loaderShowing() {
+  var showing = false;
+  if( $('.loader').css('display') !== "none" ) showing = true;
+  return showing;
+}
+
 function getPostsWithComments(opts) {
+  
   var opts = opts || {};
   if(opts.offsetDoc === false) return;
   var posts, comments;
-  requestInProgress = true;
+  showLoader();
 
   // Renders only when posts and comments are both loaded.
   function renderStream() {
     if (posts && comments) {
+      hideLoader();
       var append = true;
       if (opts.reload) append = false;
       render('stream', 'items', renderPostsWithComments(posts, comments), append);
@@ -304,9 +320,9 @@ function getPostsWithComments(opts) {
     "descending" : true,
     "limit" : 20,
     success: function(data) {
-      requestInProgress = false;
       if( data.rows.length === 0 ) {
         oldestDoc = false;
+        hideLoader();
       } else {
         oldestDoc = data.rows[data.rows.length-1];
         posts = data;
@@ -439,12 +455,12 @@ function formatComments(post_id, data) {
 
 function showComments(post_id, post) {
   getComments(post_id, function(post_id, data) {
-     post.html($.mustache($('#commentsTemplate').text(), formatComments(post_id, data)));
-     post.show().find('*').show();
-     post.closest('li').find('a.show_post_comments').hide().end().find('a.hide_post_comments').show();
-     post.find('label').inFieldLabels();
-     $('form', post).submit(submitComment);
-     $(".hover_profile", post).cluetip({local:true, sticky:true, activation:"click"});
+    post.html($.mustache($('#commentsTemplate').text(), formatComments(post_id, data)));
+    post.show().find('*').show();
+    post.closest('li').find('a.show_post_comments').hide().end().find('a.hide_post_comments').show();
+    post.find('label').inFieldLabels();
+    $('form', post).submit(submitComment);
+    $(".hover_profile", post).cluetip({local:true, sticky:true, activation:"click"});
   });
 }
 
@@ -499,7 +515,7 @@ function bindInfiniteScroll() {
   };
     
   $(window).scroll(function(e) {
-    if (requestInProgress) {
+    if (loaderShowing()) {
       return;
     }
 
