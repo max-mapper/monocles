@@ -16,6 +16,7 @@ var inVhost = function() {
  *  template: camelcase ID (minus the word Template) of the DOM object containg your mustache template
  *  target: ID of the DOM node you wish to render the template into
  *  data: data object to pass into the mustache template when rendering
+ *  append: whether or not to append to or replace the contents of the target
 **/
 function render( template, target, data, append ) {
   if ( ! data ) var data = {};
@@ -38,12 +39,15 @@ function waitForLoginOrSignUp() {
   $( "a.login" ).click( function() {
     disableStream();
     render( 'login', 'stream', { host: "monocles" }, false );
-
+    
     var form = $( "#login form" )
       , button = $( '.login_submit .button' );
       
-    $( 'label', form ).inFieldLabels();
-    $( "input[name=username]", form ).focus();
+    setTimeout( function() {
+      $( '#stream' ).fadeIn(200);
+      $( 'label', form ).inFieldLabels();
+      $( "input[name=username]", form ).focus();
+    }, 200);
     
     $( '.loginToggle' ).click( function ( e ) {
       var label = $( this )
@@ -58,7 +62,7 @@ function waitForLoginOrSignUp() {
       var type = button.text()
         , name = $( 'input[name=username]', this ).val()
         , pass = $( 'input[name=password]', this ).val(); 
-        
+
       if ( type === 'Sign up' ) {
         signUp( name, pass );
       } else if ( type === 'Login' ) {
@@ -317,14 +321,16 @@ function signUp(name, pass) {
 
 function disableStream() {
   if ( streamDisabled === false ) {
-    $( 'header' ).slideUp( 'fast' );
+    $( 'header' ).fadeOut(200);
+    $( '#stream' ).hide();
     streamDisabled = true;
   }
 }
 
 function enableStream() {
   if ( streamDisabled ) {
-    $( 'header' ).show( 'fast' );
+    $( 'header' ).fadeIn(200);
+    $( '#stream' ).show();
     streamDisabled = false;
   }
 }
