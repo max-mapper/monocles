@@ -578,12 +578,12 @@ input[type='text'], textarea {
   text-align: right;
   font-size: 12px; }
 
-  #publisher form p {
+  .status_message p {
     position: relative;
     padding: 0;
     margin: 0; }
 
-  #publisher label {
+  .status_message p label {
     color: #999999;
     position: absolute;
     line-height: 28px;
