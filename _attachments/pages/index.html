@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style/ui.css" type="text/css">
     <link rel="stylesheet" href="style/jquery.cluetip.css" type="text/css">
     <link rel="stylesheet" href="style/jquery.fileupload-ui.css" type="text/css">
+    <link rel="stylesheet" href="style/css3buttons.css" type="text/css">    
     <script type="text/javascript" src="script/jquery-1.4.4.min.js"></script> 
     <script type="text/javascript" src="script/jquery.fileupload.js"></script>
     <script type="text/javascript" src="script/jquery.fileupload-ui.js"></script>
@@ -31,7 +32,7 @@
   </head>
   <body>
     <header>
-      <div class='container' style='position:relative;'>
+      <div class='container' id="headerContainer">
         <div href='#' id='diaspora_text'>
           <a href='#'>
             COUCHAPPSPORA*
@@ -59,12 +60,10 @@
       <div id='header'>
       </div>
     </header>
-    <div class='container'>
-      <div class='span-19 last' id="items">
-      </div>
-      <div class="loader">
-        <img src="images/loading-bar.gif"></img>
-      </div>
+    <div class='container' id="stream">
+    </div>
+    <div class="loader">
+      <img src="images/loading-bar.gif"></img>
     </div>
     
     <script type="text/mustache" id="adminPartyTemplate">
@@ -78,7 +77,12 @@
     </script>
 
     <script type="text/mustache" id="signUpTemplate">
-      <a class="session" href="#signup">Signup</a> or <a class="session" href="#login">Login</a>
+      <div class="right">
+        <ul id="landing_nav">
+          <li><a href="#login" class="login">login</a></li>
+        </ul>
+      </div>
+
     </script>
     
     <script type="text/mustache" id="loggedOutTemplate">
@@ -145,86 +149,88 @@
     </script>
     
     <script type="text/mustache" id="streamTemplate">
-      <div id="main_stream" class="stream">
-      {{#items}}
-        <div class='stream_element' data-post-id="{{id}}" data-created-at="{{created_at}}">
-          <div class='right hidden controls'>
-            <a class='delete' href='#'>
-              <img src='/images/deletelabel.png' />
-            </a>
-          </div>
-          <a href='#'>
-            {{#gravatar_url}}<img class='avatar' src='{{gravatar_url}}' />{{/gravatar_url}}
-          </a>
-          <div class='content'>
-            <div class='from'>
-              <a class='author' href='#'>
-                {{nickname}}
+      <div class='span-19 last' id="items">
+        <div id="main_stream" class="stream">
+        {{#items}}
+          <div class='stream_element' data-post-id="{{id}}" data-created-at="{{created_at}}">
+            <div class='right hidden controls'>
+              <a class='delete' href='#'>
+                <img src='/images/deletelabel.png' />
               </a>
-              <p></p>
-              {{#attachments}} 
-              <div class='photo_attachments'>
-                <div class='key_photo'>
-                  <a href="/{{db}}/{{id}}/{{file}}">
-                    <img src="/{{db}}/{{id}}/{{file}}" rel="{{file}}"/>
-                  </a>
+            </div>
+            <a href='#'>
+              {{#gravatar_url}}<img class='avatar' src='{{gravatar_url}}' />{{/gravatar_url}}
+            </a>
+            <div class='content'>
+              <div class='from'>
+                <a class='author' href='#'>
+                  {{nickname}}
+                </a>
+                <p></p>
+                {{#attachments}} 
+                <div class='photo_attachments'>
+                  <div class='key_photo'>
+                    <a href="/{{db}}/{{id}}/{{file}}">
+                      <img src="/{{db}}/{{id}}/{{file}}" rel="{{file}}"/>
+                    </a>
+                  </div>
+                  <br />
                 </div>
-                <br />
+                {{/attachments}}
+                {{#message}}
+                	{{text}}
+                	{{#link}}
+                		<a href="{{link}}">{{link}}</a>
+                	{{/link}}
+                {{/message}}
               </div>
-              {{/attachments}}
-              {{#message}}
-              	{{text}}
-              	{{#link}}
-              		<a href="{{link}}">{{link}}</a>
-              	{{/link}}
-              {{/message}}
-            </div>
-            <div class='info'>
-              <span class='aspect_badges'>
-                <span class='aspect_badge public'>
-                  public
+              <div class='info'>
+                <span class='aspect_badges'>
+                  <span class='aspect_badge public'>
+                    public
+                  </span>
                 </span>
-              </span>
-              <span class='timeago' title="{{created_at}}"></span>
-              <a href="#" class="show_post_comments">comment {{#hasComments}}({{commentCount}}){{/hasComments}}</a>
-              <a href="#" class="hide_post_comments" style="display:none">hide comments</a>
-            </div>
-            <div class="comments">
+                <span class='timeago' title="{{created_at}}"></span>
+                <a href="#" class="show_post_comments">comment {{#hasComments}}({{commentCount}}){{/hasComments}}</a>
+                <a href="#" class="hide_post_comments" style="display:none">hide comments</a>
+              </div>
+              <div class="comments">
 
-              {{#hasComments}}
-                <ul class="comment_set">
-                  {{#hasHiddenComments}}
-                    <li class="comment">
-                      <a href="#" class="show_post_comments"><em>show all comments</em></a>
-                    </li>
-                  {{/hasHiddenComments}}
+                {{#hasComments}}
+                  <ul class="comment_set">
+                    {{#hasHiddenComments}}
+                      <li class="comment">
+                        <a href="#" class="show_post_comments"><em>show all comments</em></a>
+                      </li>
+                    {{/hasHiddenComments}}
 
-                  {{#latestComments}}
-                    <li class="comment">
-                      {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
-                      <span class="from">
-                        {{#message}}
-              	         {{text}}
-               	           {{#link}}
-              		       <a href="{{link}}">{{link}}</a>
-              	           {{/link}}
-                        {{/message}}
-                      </span>
-                      <div class="time">a while ago</div>
-                    </li>
-                  {{/latestComments}}
-                </ul>
-              {{/hasComments}}
+                    {{#latestComments}}
+                      <li class="comment">
+                        {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
+                        <span class="from">
+                          {{#message}}
+                	         {{text}}
+                 	           {{#link}}
+                		       <a href="{{link}}">{{link}}</a>
+                	           {{/link}}
+                          {{/message}}
+                        </span>
+                        <div class="time">a while ago</div>
+                      </li>
+                    {{/latestComments}}
+                  </ul>
+                {{/hasComments}}
 
+              </div>
             </div>
           </div>
+          <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
+        		Name: {{nickname}}<br>
+        		Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
+        		Url: <a href='{{url}}' target='_blank'>{{url}}</a>
+        	</p>
+        {{/items}}
         </div>
-        <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
-      		Name: {{nickname}}<br>
-      		Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
-      		Url: <a href='{{url}}' target='_blank'>{{url}}</a>
-      	</p>
-      {{/items}}
       </div>
     </script>
 
@@ -281,6 +287,40 @@
           <button class="ui-state-default ui-corner-all" title="Cancel"><span class="ui-icon ui-icon-cancel">Cancel</span></button>
         </td>
       </tr>
+    </script>
+    
+    <script type="text/mustache" id="loginTemplate">
+      <div class='span-24 last'> 
+        <div class='container' style='text-align:center;'> 
+          <div id="login">
+            <form data="login">
+              <p>
+                <label for="username" style="opacity: 1;">Username</label>
+                <input id="username" name="username" size="30" type="text">
+                <span class="pod_location">
+                  @{{host}}
+                  <br>
+                  <br>
+                </span>
+              </p>
+              <p>
+                <label for="password" style="opacity: 1;">Password</label>
+                <input id="password" name="password" size="30" type="password">
+                <span>
+                  <a href="#signup">Sign up</a>
+                  <br>
+                  <br>
+                </span>
+              </p>
+              <p class='submit'> 
+                <a href="#login" class="large primary button">Login</a> 
+                <br>
+                <br>
+              </p>
+            </form>
+          </div>
+        </div> 
+      </div>
     </script>
   
   </body>

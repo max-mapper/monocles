@@ -1,4 +1,4 @@
-var currentDoc, oldestDoc;
+var currentDoc, oldestDoc, streamDisabled = false;
 
 // vhosts are when you mask couchapps behind a pretty URL
 var inVhost = function() {
@@ -35,22 +35,27 @@ function isAdminParty( userCtx ) {
 
 // binds UX interaction and form submit event handlers to the signup/login forms
 function waitForLoginOrSignUp() {
-  $("a.session").click(function() {
-    render('signupForm', 'account');
-    var link = $(this);
-    var form = $("#account form");
+  $("a.login").click(function() {
+    disableStream();
+    render('login', 'stream', {host: "monocles"}, false);
+    var form = $("#login form");
     $('label', form).inFieldLabels();
-    $("input[name=name]", form).focus();
+    $("input[name=username]", form).focus();
     form.submit(function(e) {
-      var name = $('input[name=name]', this).val(),
+      var link = $(this).attr('data');
+      var name = $('input[name=username]', this).val(),
           pass = $('input[name=password]', this).val(); 
-      if (link.attr('href') == '#signup') {
+      if (link === 'signup') {
         signUp(name, pass);
-      } else if (link.attr('href') == '#login') {
+      } else if (link === 'login') {
         login(name, pass);
       }
       e.preventDefault();
     })
+    $("input", form).keydown(function(e) {
+       if(e.keyCode == 13) form.submit();
+    });
+    $('.button', form).click( form.submit );
   })
 }
 
@@ -60,12 +65,16 @@ function fetchSession() {
     $.couch.session({
       success : function(session) {
         if (session.userCtx.name) {
+          
           fetchProfile(session, function(profile) {
+            enableStream();
             render('loggedIn', 'account', {
               nickname : profile.nickname,
               gravatar_url : profile.gravatar_url
             });
-
+            
+            getPostsWithComments({reload:true});
+            
             // TODO sammy
             $("a[href=#logout]").click(function() { logout() });
           });
@@ -284,6 +293,16 @@ function signUp(name, pass) {
   });
 }
 
+function disableStream() {
+  $('header').slideUp('fast');
+  streamDisabled = true;
+}
+
+function enableStream() {
+  $('header').show('fast');
+  streamDisabled = false;
+}
+
 function showLoader() {
   $('.loader').css('display', 'block');
 }
@@ -311,7 +330,7 @@ function getPostsWithComments(opts) {
       hideLoader();
       var append = true;
       if (opts.reload) append = false;
-      render('stream', 'items', renderPostsWithComments(posts, comments), append);
+      render('stream', 'stream', renderPostsWithComments(posts, comments), append);
       decorateStream();
     }
   }
@@ -515,7 +534,7 @@ function bindInfiniteScroll() {
   };
     
   $(window).scroll(function(e) {
-    if (loaderShowing()) {
+    if (loaderShowing() || streamDisabled) {
       return;
     }
 
