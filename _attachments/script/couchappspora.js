@@ -18,13 +18,13 @@ var inVhost = function() {
  *  data: data object to pass into the mustache template when rendering
 **/
 function render( template, target, data, append ) {
-  if (!data) var data = {};
-  var html = $.mustache($("#" + template + "Template").text(), data),
-      targetDom = $("#" + target);
+  if ( ! data ) var data = {};
+  var html = $.mustache( $( "#" + template + "Template" ).text(), data ),
+      targetDom = $( "#" + target );
   if( append ) {
-    targetDom.append(html);    
+    targetDom.append( html );    
   } else {
-    targetDom.html(html);
+    targetDom.html( html );
   }
 }
 
@@ -35,78 +35,95 @@ function isAdminParty( userCtx ) {
 
 // binds UX interaction and form submit event handlers to the signup/login forms
 function waitForLoginOrSignUp() {
-  $("a.login").click(function() {
+  $( "a.login" ).click( function() {
     disableStream();
-    render('login', 'stream', {host: "monocles"}, false);
-    var form = $("#login form");
-    $('label', form).inFieldLabels();
-    $("input[name=username]", form).focus();
-    form.submit(function(e) {
-      var link = $(this).attr('data');
-      var name = $('input[name=username]', this).val(),
-          pass = $('input[name=password]', this).val(); 
-      if (link === 'signup') {
-        signUp(name, pass);
-      } else if (link === 'login') {
-        login(name, pass);
+    render( 'login', 'stream', { host: "monocles" }, false );
+
+    var form = $( "#login form" )
+      , button = $( '.login_submit .button' );
+      
+    $( 'label', form ).inFieldLabels();
+    $( "input[name=username]", form ).focus();
+    
+    $( '.loginToggle' ).click( function ( e ) {
+      var label = $( this )
+        , labelText = label.text()
+        , buttonText = button.text();
+      
+      label.text( buttonText );
+      button.text( labelText );
+    })
+    
+    form.submit( function( e ) {
+      var type = button.text()
+        , name = $( 'input[name=username]', this ).val()
+        , pass = $( 'input[name=password]', this ).val(); 
+        
+      if ( type === 'Sign up' ) {
+        signUp( name, pass );
+      } else if ( type === 'Login' ) {
+        login( name, pass );
       }
+      
       e.preventDefault();
     })
-    $("input", form).keydown(function(e) {
-       if(e.keyCode == 13) form.submit();
+    
+    $( "input", form ).keydown( function( e ) {
+       if( e.keyCode == 13 ) form.submit();
     });
-    $('.button', form).click( form.submit );
+    
+    button.click( function( e ) {
+      form.submit();
+      e.preventDefault();
+    });
+    
   })
 }
 
 // checks if the user is logged in and responds accordingly
 function fetchSession() {
-  $.couch.app(function(app) { 
+  $.couch.app ( function( app ) { 
     $.couch.session({
-      success : function(session) {
-        if (session.userCtx.name) {
-          
-          fetchProfile(session, function(profile) {
-            enableStream();
-            render('loggedIn', 'account', {
+      success : function( session ) {
+        if ( session.userCtx.name ) {
+          fetchProfile( session, function( profile ) {
+            render( 'loggedIn', 'account', {
               nickname : profile.nickname,
               gravatar_url : profile.gravatar_url
             });
-            
-            getPostsWithComments({reload:true});
-            
+            getPostsWithComments( { reload: true } );
             // TODO sammy
-            $("a[href=#logout]").click(function() { logout() });
+            $( "a[href=#logout]" ).click (function() { logout() });
           });
-        } else if (isAdminParty(session.userCtx)) {
-          render('adminParty', 'account');
+        } else if ( isAdminParty( session.userCtx ) ) {
+          render( 'adminParty', 'account' );
         } else {
-          render('signUp', 'account');
-          render('loggedOut', 'header');
+          render( 'loginButton', 'account' );
+          render( 'loggedOut', 'header' );
           waitForLoginOrSignUp();
         };
       }
     });
-  }, couchOpts);
+  }, couchOpts );
 }
 
 // gets user's stored profile info from couch
 // asks them to fill out a form if it's their first login
-function fetchProfile(session, callback) {
-  $.couch.userDb(function(db) {
-    db.openDoc("org.couchdb.user:" + session.userCtx.name, {
-      success : function(userDoc) {
-        var profile = userDoc["couch.app.profile"];
-        if (profile) {
+function fetchProfile( session, callback ) {
+  $.couch.userDb( function( db ) {
+    db.openDoc( "org.couchdb.user:" + session.userCtx.name, {
+      success : function( userDoc ) {
+        var profile = userDoc[ "couch.app.profile" ];
+        if ( profile ) {
           // we copy the name to the profile so it can be used later
           // without publishing the entire userdoc (roles, pass, etc)
           profile.name = userDoc.name;
-          profileReady(profile);
-          callback(profile);
+          profileReady( profile );
+          callback( profile );
         } else {
-          render('newProfileForm', 'header', session.userCtx);
-          $('#header form').submit(function(e) {
-            saveUser($(this));
+          render( 'newProfileForm', 'stream', session.userCtx, false );
+          $( '#stream form' ).submit( function( e ) {
+            saveUser( $( this ) );
             e.preventDefault();
           });
         }
@@ -116,34 +133,39 @@ function fetchProfile(session, callback) {
 }
 
 function saveUser(form) {
-  $.couch.app(function(app) {     
-    var md5 = app.require("vendor/md5");
+  $.couch.app( function( app ) {     
+    var md5 = app.require( "vendor/md5" );
     
     // TODO this can be cleaned up with docForm?
     // it still needs the workflow to edit an existing profile
-    var name = $("input[name=userCtxName]", form).val();
+    var name = $( "input[name=userCtxName]", form ).val();
     var newProfile = {
       rand : Math.random().toString(), 
-      nickname : $("input[name=nickname]", form).val(),
-      email : $("input[name=email]", form).val(),
-      url : $("input[name=url]", form).val()
+      nickname : $( "input[name=nickname]", form ).val(),
+      email : $( "input[name=email]", form ).val(),
+      url : $( "input[name=url]", form ).val()
     };
     
     // setup gravatar_url
-    if (md5) {
-      newProfile.gravatar_url = 'http://www.gravatar.com/avatar/'+md5.hex(newProfile.email || newProfile.rand)+'.jpg?s=40&d=identicon';    
+    if ( md5 ) {
+      newProfile.gravatar_url = 'http://www.gravatar.com/avatar/' + md5.hex( newProfile.email || newProfile.rand ) + '.jpg?s=40&d=identicon';    
     }
     
     // store the user profile on the user account document
-    $.couch.userDb(function(db) {
-      var userDocId = "org.couchdb.user:"+name;
-      db.openDoc(userDocId, {
-        success : function(userDoc) {
-          userDoc["couch.app.profile"] = newProfile;
-          db.saveDoc(userDoc, {
+    $.couch.userDb( function( db ) {
+      var userDocId = "org.couchdb.user:" + name;
+      db.openDoc( userDocId, {
+        success : function( userDoc ) {
+          userDoc[ "couch.app.profile" ] = newProfile;
+          db.saveDoc( userDoc, {
             success : function() {
               newProfile.name = userDoc.name;
-              profileReady(newProfile);
+              render( 'loggedIn', 'account', {
+                nickname : newProfile.nickname,
+                gravatar_url : newProfile.gravatar_url
+              });
+              getPostsWithComments( { reload: true } );
+              profileReady( newProfile );
             }
           });
         }
@@ -258,7 +280,7 @@ function afterPost(newDoc) {
   currentDoc = null;
 
   // Reload posts
-  getPostsWithComments({reload:true});
+  getPostsWithComments( { reload: true } );
 }
 
 function randomToken() {
@@ -294,13 +316,17 @@ function signUp(name, pass) {
 }
 
 function disableStream() {
-  $('header').slideUp('fast');
-  streamDisabled = true;
+  if ( streamDisabled === false ) {
+    $( 'header' ).slideUp( 'fast' );
+    streamDisabled = true;
+  }
 }
 
 function enableStream() {
-  $('header').show('fast');
-  streamDisabled = false;
+  if ( streamDisabled ) {
+    $( 'header' ).show( 'fast' );
+    streamDisabled = false;
+  }
 }
 
 function showLoader() {
@@ -317,8 +343,8 @@ function loaderShowing() {
   return showing;
 }
 
-function getPostsWithComments(opts) {
-  
+function getPostsWithComments( opts ) {
+  enableStream();
   var opts = opts || {};
   if(opts.offsetDoc === false) return;
   var posts, comments;

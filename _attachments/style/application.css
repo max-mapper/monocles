@@ -123,21 +123,20 @@ a {
     #login form p:last-child {
       margin-left: 3px; }
     #login form p span {
-      display: block;
-      color: white; }
+      display: block; }
       #login form p span.pod_location {
         color: #888888; }
-    #login form p.submit {
+    #login form p.login_submit {
       width: auto;
       bottom: 15px; }
-      #login form p.submit input {
+      #login form p.login_submit input {
         width: auto;
         position: relative;
         height: 40px;
         top: 0px;
         color: #666666;
         margin-bottom: 10px; }
-        #login form p.submit input:hover {
+        #login form p.login_submit input:hover {
           color: #444444; }
 
 #flash_notice,
