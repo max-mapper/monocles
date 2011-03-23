@@ -20,7 +20,7 @@ p. You can run CouchAppSpora anywhere that you can run CouchDB, and since it's a
 
 * Go to "couchone.com/get":http://couchone.com/get and either get a free hosted Couch or follow instructions on how to set up your own local Couch.
 * Make a database and set up bidirectional continuous replication from @http://glitterbacon.couchone.com/couchappspora@ (or any other CouchAppSpora seed) to your new database
-* Visit "http://yourcouch/yourdb/_design/couchappspora/index.html":http://yourcouch/yourdb/_design/couchappspora/index.html
+* Visit "http://yourcouch/yourdb/==_design/couchappspora/_==rewrite":http://yourcouch/yourdb/_design/couchappspora/_rewrite
 
 p. For more advanced features (OStatus protocols like Webfinger for user discovery) you will have to use a dedicated domain name and configure your CouchDB to use a @vhost@ entry for your domain name. See "this wiki article":http://github.com/maxogden/couchappspora/wiki/Setting-up-a-vhost-(assigning-a-domain-name-to-your-couchappspora-seed) for instructions.
 
