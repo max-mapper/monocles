@@ -1,12 +1,12 @@
 [
   {
-    "from": "xml",
+    "from": "push",
     "to": "_show/challenge",
     "method": "GET"
   },
   {
-    "from":"xml",
-    "to": "_update/test",
+    "from":"push",
+    "to": "_update/pubsub",
     "method": "POST"
   },
   {

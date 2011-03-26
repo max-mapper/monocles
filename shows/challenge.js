@@ -1,3 +1,3 @@
 function(head, req){
-    return req.query["hub.challenge"];
+  return req.query["hub.challenge"];
 }

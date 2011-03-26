@@ -261,11 +261,12 @@ function submitPost( e ) {
     message : $( "[name=message]", form ).val(),
     hostname : window.location.href.split( "/" )[ 2 ]
   };
+  var host = doc.hostname;
   
-  // $.postCORS("http://psychicwarlock.com/subscribe",{ 
-  //   "hub.mode":"publish", "hub.url":"http://"+doc.hostname+"/feeds/"+doc.profile.name
-  // }, function(data) { console.log("CORS: " + data) });
-  
+  $.post("http://psychicwarlock.com/subscribe",{ 
+    "hub.mode": "subscribe", "hub.verify": "sync", "hub.topic": "http://"+host+couchOpts.baseURL+"feeds/"+doc.profile.name, "hub.callback": "http://"+host+couchOpts.baseURL+"push"
+  }, function(data) { console.log("CORS: " + data) });
+    
   if ( currentDoc ) {
     posts( db ).update( currentDoc.id, { message: doc.message }).addCallback( afterPost );
   } else {
@@ -590,13 +591,17 @@ function bindInfiniteScroll() {
 var couchOpts = {
     db: "db"
   , design: "ddoc"
+  , vhost: true
+  , baseURL: "/"
 };
 
 $(function() {
   if ( !inVhost() ) {
+    couchOpts.vhost = false
     // grab db and ddoc ids from the current url
     couchOpts.db = document.location.href.split( '/' )[ 3 ];
     couchOpts.design = unescape( document.location.href ).split( '/' )[ 5 ];
+    couchOpts.baseURL = "/" + couchOpts.db + "/_design/" + couchOpts.design + "/_rewrite/";
   }
   fetchSession();
   getPostsWithComments();

@@ -9,7 +9,7 @@ function(head, req){
         rows.push(row);
       }
     }
-    var pubhub_host="http://psychicwarlock.com/"
+    var pubhub_host="http://psychicwarlock.com/publish"
     var host = req.headers.Host;
     var view = {
       username: req.query.name,
