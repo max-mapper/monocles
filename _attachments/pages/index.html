@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="style/ui.css" type="text/css">
     <link rel="stylesheet" href="style/jquery.cluetip.css" type="text/css">
     <link rel="stylesheet" href="style/jquery.fileupload-ui.css" type="text/css">
-    <link rel="stylesheet" href="style/css3buttons.css" type="text/css">    
-    <script type="text/javascript" src="script/jquery-1.4.4.min.js"></script> 
+    <link rel="stylesheet" href="style/css3buttons.css" type="text/css">
+    <script type="text/javascript" src="script/jquery-1.4.4.min.js"></script>
     <script type="text/javascript" src="script/jquery.fileupload.js"></script>
     <script type="text/javascript" src="script/jquery.fileupload-ui.js"></script>
     <script type="text/javascript" src="script/jiverscripts/compat/object.js"></script>
@@ -16,7 +16,7 @@
     <script type="text/javascript" src="script/jiverscripts/conc/next_tick.js"></script>
     <script type="text/javascript" src="script/jiverscripts/conc/observable.js"></script>
     <script type="text/javascript" src="script/jiverscripts/conc/promise.js"></script>
-    <script type="text/javascript" src="script/jquery.infieldlabel.js"></script>    
+    <script type="text/javascript" src="script/jquery.infieldlabel.js"></script>
     <script type="text/javascript" src="/_utils/script/sha1.js"></script>
     <script type="text/javascript" src="/_utils/script/json2.js"></script>
     <script type="text/javascript" src="script/jquery.couch.js"></script>
@@ -65,11 +65,11 @@
     <div class="loader">
       <img src="images/loading-bar.gif"></img>
     </div>
-    
+
     <script type="text/mustache" id="adminPartyTemplate">
       <strong>Admin party, everyone is admin!</strong> Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
     </script>
-    
+
     <script type="text/mustache" id="loggedInTemplate">
       <li class="avatar">{{#gravatar_url}}<img src="{{gravatar_url}}" />{{/gravatar_url}}</li>
       <li><a href="#">{{nickname}}</a></li>
@@ -83,25 +83,25 @@
         </ul>
       </div>
     </script>
-    
+
     <script type="text/mustache" id="loggedOutTemplate">
       <div class="container"><p>Log in or sign up to post.</p></div>
     </script>
-    
+
     <script type="text/mustache" id="newProfileFormTemplate">
       <form class="profile_setup">
         <p>Hello {{name}}, Please setup your user profile.</p>
-        <label for="nickname">Nickname 
+        <label for="nickname">Nickname
           <input type="text" name="nickname" value=""></label>
         <label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)
           <input type="text" name="email" value=""></label>
-        <label for="url">URL 
+        <label for="url">URL
           <input type="text" name="url" value=""></label>
         <input type="submit" value="Go &rarr;">
         <input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName">
       </form>
     </script>
-    
+
     <script type="text/mustache" id="profileReadyTemplate">
       <div class='container'>
         <div class="span-5 aspect-title last">
@@ -116,8 +116,8 @@
                   Message
                 </label>
                 <textarea id="status_message" name='message' rows='2' ></textarea>
-            	</p>
-          	 <input type="submit" value="Share" class="btn button" id="sendbutton" >
+              </p>
+              <input type="submit" value="Share" class="btn button" id="sendbutton" >
             </form>
           </div>
         </div>
@@ -130,7 +130,7 @@
         </form>
       </div>
     </script>
-    
+
     <script type="text/mustache" id="streamTemplate">
       <div class='span-19 last' id="items">
         <div id="main_stream" class="stream">
@@ -150,7 +150,7 @@
                   {{nickname}}
                 </a>
                 <p></p>
-                {{#attachments}} 
+                {{#attachments}}
                 <div class='photo_attachments'>
                   <div class='key_photo'>
                     <a href="/{{db}}/{{id}}/{{file}}">
@@ -161,10 +161,10 @@
                 </div>
                 {{/attachments}}
                 {{#message}}
-                	{{text}}
-                	{{#link}}
-                		<a href="{{link}}">{{link}}</a>
-                	{{/link}}
+                  {{text}}
+                  {{#link}}
+                    <a href="{{link}}">{{link}}</a>
+                  {{/link}}
                 {{/message}}
               </div>
               <div class='info'>
@@ -192,10 +192,10 @@
                         {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
                         <span class="from">
                           {{#message}}
-                	         {{text}}
-                 	           {{#link}}
-                		       <a href="{{link}}">{{link}}</a>
-                	           {{/link}}
+                            {{text}}
+                            {{#link}}
+                              <a href="{{link}}">{{link}}</a>
+                            {{/link}}
                           {{/message}}
                         </span>
                         <div class="time">a while ago</div>
@@ -208,16 +208,16 @@
             </div>
           </div>
           <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
-        		Name: {{nickname}}<br>
-        		Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
-        		Url: <a href='{{url}}' target='_blank'>{{url}}</a>
-        	</p>
+            Name: {{nickname}}<br>
+            Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
+            Url: <a href='{{url}}' target='_blank'>{{url}}</a>
+          </p>
         {{/items}}
         </div>
       </div>
     </script>
 
-    <script type="text/mustache" id="commentsTemplate">    
+    <script type="text/mustache" id="commentsTemplate">
       <ul class="comment_set">
         {{#comments}}
           <li class="comment">
@@ -227,19 +227,19 @@
                   {{nickname}}@{{hostname}}
                 </a>
                 {{#message}}
-                	{{text}}
-                	{{#link}}
-                		<a href="{{link}}">{{link}}</a>
-                	{{/link}}
+                  {{text}}
+                  {{#link}}
+                    <a href="{{link}}">{{link}}</a>
+                  {{/link}}
                 {{/message}}
             </span>
             <div class="time">a while ago</div>
           </li>
           <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
-        		Name: {{nickname}}<br>
-        		Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
-        		Url: <a href='{{url}}' target='_blank'>{{url}}</a>
-        	</p>
+            Name: {{nickname}}<br>
+            Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
+            Url: <a href='{{url}}' target='_blank'>{{url}}</a>
+          </p>
         {{/comments}}
 
         {{#empty}}
@@ -261,7 +261,7 @@
         </li>
       </ul>
     </script>
-    
+
     <script type="text/mustache" id="uploaderTemplate">
       <tr>
         <td>{{name}}</td>
@@ -271,10 +271,10 @@
         </td>
       </tr>
     </script>
-    
+
     <script type="text/mustache" id="loginTemplate">
-      <div class='span-24 last'> 
-        <div class='container' style='text-align:center;'> 
+      <div class='span-24 last'>
+        <div class='container' style='text-align:center;'>
           <div id="login">
             <form>
               <p>
@@ -296,16 +296,16 @@
                   <br>
                 </span>
               </p>
-              <p class='login_submit'> 
-                <a href="javascript:void(false)" class="large primary button">Login</a> 
+              <p class='login_submit'>
+                <a href="javascript:void(false)" class="large primary button">Login</a>
                 <br>
                 <br>
               </p>
             </form>
           </div>
-        </div> 
+        </div>
       </div>
     </script>
-  
+
   </body>
 </html>
