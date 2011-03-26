@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
     <link rel="stylesheet" href="style/blueprint-screen.css" type="text/css">
     <link rel="stylesheet" href="style/application.css" type="text/css">
     <link rel="stylesheet" href="style/ui.css" type="text/css">
@@ -32,23 +32,23 @@
   </head>
   <body>
     <header>
-      <div class='container' id="headerContainer">
-        <div href='#' id='diaspora_text'>
-          <a href='#'>
+      <div class="container" id="headerContainer">
+        <div href="#" id="diaspora_text">
+          <a href="#">
             COUCHAPPSPORA*
           </a>
-          <span class='sub_text'>
+          <span class="sub_text">
             PREVIEW
           </span>
         </div>
-        <div id='session_action'>
+        <div id="session_action">
           <ul id="account">
           </ul>
         </div>
-        <div id='aspect_nav'>
+        <div id="aspect_nav">
           <ul>
-            <li class='selected'>
-              <a href='#'>
+            <li class="selected">
+              <a href="#">
                 Public
               </a>
             </li>
@@ -57,17 +57,17 @@
           </ul>
         </div>
       </div>
-      <div id='header'>
+      <div id="header">
       </div>
     </header>
-    <div class='container' id="stream">
+    <div class="container" id="stream">
     </div>
     <div class="loader">
       <img src="images/loading-bar.gif"></img>
     </div>
 
     <script type="text/mustache" id="adminPartyTemplate">
-      <strong>Admin party, everyone is admin!</strong> Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
+      <strong>Admin party, everyone is admin!</strong>Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
     </script>
 
     <script type="text/mustache" id="loggedInTemplate">
@@ -103,26 +103,26 @@
     </script>
 
     <script type="text/mustache" id="profileReadyTemplate">
-      <div class='container'>
+      <div class="container">
         <div class="span-5 aspect-title last">
           <h1 class="aspect-header"><a href="#">Public</a></h1>
         </div>
-        <div class='span-19 message-container last' style='position:relative;'>
-          <div id='publisher'>
-            {{#gravatar_url}}<img class='avatar' src="{{gravatar_url}}"/>{{/gravatar_url}}
+        <div class="span-19 message-container last" style="position:relative;">
+          <div id="publisher">
+            {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}"/>{{/gravatar_url}}
             <form class="status_message">
               <p>
-                <label for='status_message'>
+                <label for="status_message">
                   Message
                 </label>
-                <textarea id="status_message" name='message' rows='2' ></textarea>
+                <textarea id="status_message" name="message" rows="2" ></textarea>
               </p>
               <input type="submit" value="Share" class="btn button" id="sendbutton" >
             </form>
           </div>
         </div>
       </div>
-      <div class='uploader'>
+      <div class="uploader">
         <form id="file_upload" method="PUT">
             <input class="drop_input" type="file" name="file" multiple>
             <button class="drop_button">Upload</button>
@@ -132,17 +132,17 @@
     </script>
 
     <script type="text/mustache" id="streamTemplate">
-      <div class='span-19 last' id="items">
+      <div class="span-19 last" id="items">
         <div id="main_stream" class="stream">
         {{#items}}
-          <div class='stream_element' data-post-id="{{id}}" data-created-at="{{created_at}}">
-            <div class='right hidden controls'>
-              <a class='delete' href='#'>
-                <img src='/images/deletelabel.png' />
+          <div class="stream_element" data-post-id="{{id}}" data-created-at="{{created_at}}">
+            <div class="right hidden controls">
+              <a class="delete" href="#">
+                <img src="/images/deletelabel.png" />
               </a>
             </div>
-            <a href='#'>
-              {{#gravatar_url}}<img class='avatar' src='{{gravatar_url}}' />{{/gravatar_url}}
+            <a href="#">
+              {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
             </a>
             <div class='content'>
               <div class='from'>
@@ -151,8 +151,8 @@
                 </a>
                 <p></p>
                 {{#attachments}}
-                <div class='photo_attachments'>
-                  <div class='key_photo'>
+                <div class="photo_attachments">
+                  <div class="key_photo">
                     <a href="/{{db}}/{{id}}/{{file}}">
                       <img src="/{{db}}/{{id}}/{{file}}" rel="{{file}}"/>
                     </a>
@@ -167,13 +167,13 @@
                 	{{/link}}
                 {{/message}}
               </div>
-              <div class='info'>
-                <span class='aspect_badges'>
-                  <span class='aspect_badge public'>
+              <div class="info">
+                <span class="aspect_badges">
+                  <span class="aspect_badge public">
                     public
                   </span>
                 </span>
-                <span class='timeago' title="{{created_at}}"></span>
+                <span class="timeago" title="{{created_at}}"></span>
                 <a href="#" class="show_post_comments">comment {{#hasComments}}({{commentCount}}){{/hasComments}}</a>
                 <a href="#" class="hide_post_comments" style="display:none">hide comments</a>
               </div>
@@ -224,7 +224,7 @@
           <li class="comment">
             {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
             <span class="from">
-             <a href='#showProf' class='hover_profile' rel='#profile_{{nickname}}_{{randomToken}}' title='{{nickname}} profile'>
+             <a href="#showProf" class="hover_profile" rel="#profile_{{nickname}}_{{randomToken}}" title="{{nickname}} profile">
                   {{nickname}}@{{hostname}}
                 </a>
                 {{#message}}
@@ -236,10 +236,10 @@
             </span>
             <div class="time">a while ago</div>
           </li>
-          <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
+          <p id="profile_{{nickname}}_{{randomToken}}" style="display:none">
             Name: {{nickname}}<br>
-            Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
-            Url: <a href='{{url}}' target='_blank'>{{url}}</a>
+            Email: <a href="mailto:{{email}}" target="_blank">{{email}}</a><br>
+            Url: <a href="{{url}}" target="_blank">{{url}}</a>
           </p>
         {{/comments}}
 
@@ -274,8 +274,8 @@
     </script>
 
     <script type="text/mustache" id="loginTemplate">
-      <div class='span-24 last'>
-        <div class='container' style='text-align:center;'>
+      <div class="span-24 last">
+        <div class="container" style="text-align:center;">
           <div id="login">
             <form>
               <p>
@@ -297,7 +297,7 @@
                   <br>
                 </span>
               </p>
-              <p class='login_submit'>
+              <p class="login_submit">
                 <a href="javascript:void(false)" class="large primary button">Login</a>
                 <br>
                 <br>
