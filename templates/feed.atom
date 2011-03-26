@@ -10,7 +10,7 @@
     <name>{{username}}</name>
     <uri>http://{{domain}}/users/{{username}}</uri>
   </author>
-  <link href="http://couchappspora.superfeedr.com/" rel="hub"/>
+  <link href="{{pubhub_host}}" rel="hub"/>
   <link href="http://{{domain}}/salmon/{{username}}" rel="http://salmon-protocol.org/ns/salmon-replies"/>
   <link href="http://{{domain}}/salmon/{{username}}" rel="http://salmon-protocol.org/ns/salmon-mention"/>
   <link href="http://{{domain}}/feeds/{{username}}" rel="self" type="application/atom+xml"/>
@@ -49,6 +49,9 @@
     <statusnet:notice_info local_id="{{entry_id}}" source="web"></statusnet:notice_info>
     <link rel="ostatus:conversation" href="{{conversation_url}}"/>
     <category term="statusnet"></category>
+    {{#attachments}}
+      <link rel="enclosure" type="{{type}}" length="{{length}}" title="{{name}}" href="{{url}}" />
+    {{/attachments}}
   </entry>
   {{/entries}}
 </feed>
