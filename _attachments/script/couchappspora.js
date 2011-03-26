@@ -262,9 +262,9 @@ function submitPost( e ) {
     hostname : window.location.href.split( "/" )[ 2 ]
   };
   
-  // $.post("http://couchappspora.superfeedr.com",{ 
+  // $.postCORS("http://psychicwarlock.com/subscribe",{ 
   //   "hub.mode":"publish", "hub.url":"http://"+doc.hostname+"/feeds/"+doc.profile.name
-  // });
+  // }, function(data) { console.log("CORS: " + data) });
   
   if ( currentDoc ) {
     posts( db ).update( currentDoc.id, { message: doc.message }).addCallback( afterPost );
