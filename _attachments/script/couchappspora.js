@@ -62,7 +62,7 @@ function waitForLoginOrSignUp() {
     })
     
     form.submit( function( e ) {
-      var type = button.text()
+      var type = button.text().trim()
         , name = $( 'input[name=username]', this ).val()
         , pass = $( 'input[name=password]', this ).val(); 
 
@@ -495,7 +495,7 @@ function linkSplit( string )
 
 function getComments( post_id, callback ) {
   $.couch.db( couchOpts.db ).view( couchOpts.design + '/comments', {
-    startkey: [ ost_id ],
+    startkey: [ post_id ],
     endkey: [ post_id + "\u9999" ],
     success: function( data ) {
       callback( post_id, data );
@@ -534,7 +534,7 @@ function showComments( post_id, post ) {
 function submitComment( e ) {
   var form = $(this)
     , date = new Date()
-    , parent = form.closest( 'li.message' )
+    , parent = form.closest( '.stream_element' )
     , parent_id = parent.attr( 'data-post-id' )
     , parent_created_at = parent.attr( 'data-created-at' )
     , db = $.couch.db( couchOpts.db )
@@ -556,7 +556,6 @@ function submitComment( e ) {
 }
 
 function decorateStream() {
-  $( "a.hover" ).cluetip( { local: true } );
 	$( ".hover_profile" ).cluetip( { local: true, sticky: true, activation: "click" } );
   $( '.timeago' ).timeago();
 	$( 'a.hide_post_comments' ).click( function( e ) {
@@ -568,8 +567,9 @@ function decorateStream() {
 
 	$( 'a.show_post_comments' ).click( function( e ) {
 	  var postComments = $( this );
-    var post = postComments.closest( 'li.message' ).find( 'div.comments' )
-      , post_id = postComments.closest( 'li.message' ).attr( 'data-post-id' );
+    var post = postComments.closest( '.stream_element' ).find( 'div.comments' )
+      , post_id = postComments.closest( '.stream_element' ).attr( 'data-post-id' );
+  	  
     showComments( post_id, post );
     e.preventDefault();
 	})

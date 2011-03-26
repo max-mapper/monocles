@@ -521,6 +521,13 @@ ul.comment_set {
   float: left;
   margin-right: 10px; }
 
+.comment .avatar {
+  margin-right: 10px;
+  margin-bottom: 10px;
+  width: 30px;
+  height: 30px;
+}
+
 .pagination a {
   padding: 3px; }
 
