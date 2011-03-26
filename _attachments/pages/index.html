@@ -146,7 +146,7 @@
             </a>
             <div class='content'>
               <div class='from'>
-                <a class='author' href='#'>
+                <a class='author hover_profile' rel='#profile_{{nickname}}_{{randomToken}}' href='#'>
                   {{nickname}}
                 </a>
                 <p></p>
@@ -163,7 +163,7 @@
                 {{#message}}
                 	{{text}}
                 	{{#link}}
-                		<a href="{{link}}">{{link}}</a>
+                		<a href="{{link}}" class="hover">{{link}}</a>
                 	{{/link}}
                 {{/message}}
               </div>
@@ -208,9 +208,10 @@
             </div>
           </div>
           <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
-        		Name: {{nickname}}<br>
+        		Nickname: {{nickname}}<br>
         		Email: <a href='mailto:{{email}}' target='_blank'>{{email}}</a><br>
-        		Url: <a href='{{url}}' target='_blank'>{{url}}</a>
+        		URL: <a href='{{url}}' target='_blank'>{{url}}</a><br>
+        		Atom Feed: <a href='{{url}}/feeds/{{name}}' target='_blank'>{{name}}.atom</a>
         	</p>
         {{/items}}
         </div>
