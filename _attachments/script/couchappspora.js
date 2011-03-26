@@ -125,6 +125,7 @@ function fetchProfile( session, callback ) {
           // we copy the name to the profile so it can be used later
           // without publishing the entire userdoc (roles, pass, etc)
           profile.name = userDoc.name;
+          profile.base_url = couchOpts.baseURL;
           profileReady( profile );
           callback( profile );
         } else {
