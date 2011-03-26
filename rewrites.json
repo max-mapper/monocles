@@ -5,6 +5,11 @@
     "method": "GET"
   },
   {
+    "from": "",
+    "to": "_show/cors",
+    "method": "OPTIONS"
+  },
+  {
     "from":"push",
     "to": "_update/pubsub",
     "method": "POST"

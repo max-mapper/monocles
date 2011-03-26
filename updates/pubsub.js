@@ -1,4 +1,4 @@
-function(doc, req){
+function(doc, req) {
   req.body = req.body.replace(/<.*?>/,"");
   var codez = new XML(req.body);
   var atom = new Namespace('http://www.w3.org/2005/Atom');

@@ -251,6 +251,22 @@ function initFileUpload() {
   });
 }
 
+// pubsubhubbubb notification functions
+function subscribe() {
+  var callbackURL = "http://" + couchOpts.host + couchOpts.baseURL + "push"
+    , topicURL = "http://" + couchOpts.host + couchOpts.baseURL + "feeds/" + $( "#header" ).data( 'profile' ).name;
+  $.post("http://psychicwarlock.appspot.com/subscribe", { 
+    "hub.mode": "subscribe", "hub.verify": "sync", "hub.topic": topicURL, "hub.callback": callbackURL
+  })
+}
+
+function pingHub() {
+  var publishURL = "http://" + couchOpts.host + couchOpts.baseURL + "feeds/" + $( "#header" ).data( 'profile' );
+  $.post("http://psychicwarlock.appspot.com/publish", { 
+    "hub.mode": "publish", "hub.url": publishURL
+  })
+}
+
 function submitPost( e ) {
   var form = this;
   var date = new Date();
@@ -261,11 +277,6 @@ function submitPost( e ) {
     message : $( "[name=message]", form ).val(),
     hostname : window.location.href.split( "/" )[ 2 ]
   };
-  var host = doc.hostname;
-  
-  $.post("http://psychicwarlock.com/subscribe",{ 
-    "hub.mode": "subscribe", "hub.verify": "sync", "hub.topic": "http://"+host+couchOpts.baseURL+"feeds/"+doc.profile.name, "hub.callback": "http://"+host+couchOpts.baseURL+"push"
-  }, function(data) { console.log("CORS: " + data) });
     
   if ( currentDoc ) {
     posts( db ).update( currentDoc.id, { message: doc.message }).addCallback( afterPost );
@@ -285,6 +296,9 @@ function afterPost( newDoc ) {
 
   // Reload posts
   getPostsWithComments( { reload: true } );
+  
+  // notify the pubsubhubbub hub
+  pingHub();
 }
 
 function randomToken() {
@@ -598,7 +612,8 @@ var couchOpts = {
 $(function() {
   if ( !inVhost() ) {
     couchOpts.vhost = false
-    // grab db and ddoc ids from the current url
+    // grab info on db + ddoc paths from the current url
+    couchOpts.host = window.location.href.split( "/" )[ 2 ];
     couchOpts.db = document.location.href.split( '/' )[ 3 ];
     couchOpts.design = unescape( document.location.href ).split( '/' )[ 5 ];
     couchOpts.baseURL = "/" + couchOpts.db + "/_design/" + couchOpts.design + "/_rewrite/";

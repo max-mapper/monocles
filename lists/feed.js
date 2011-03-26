@@ -1,5 +1,5 @@
 function(head, req){
-  provides("atom",function(){
+  provides("atom",function() {
     var rows = [];
     // !json templates.feed
     Mustache = require("vendor/mustache");
