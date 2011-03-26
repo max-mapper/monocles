@@ -67,11 +67,14 @@
     </div>
 
     <script type="text/mustache" id="adminPartyTemplate">
-      <strong>Admin party, everyone is admin!</strong>Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
+      <strong>Admin party, everyone is admin!</strong>
+      Fix this in <a href="/_utils/index.html">Futon</a> before proceeding.
     </script>
 
     <script type="text/mustache" id="loggedInTemplate">
-      <li class="avatar">{{#gravatar_url}}<img src="{{gravatar_url}}" />{{/gravatar_url}}</li>
+      <li class="avatar">
+        {{#gravatar_url}}<img src="{{gravatar_url}}" />{{/gravatar_url}}
+      </li>
       <li><a href="#">{{nickname}}</a></li>
       <li><a href="#logout">logout</a></li>
     </script>
@@ -93,10 +96,13 @@
         <p>Hello {{name}}, Please setup your user profile.</p>
         <label for="nickname">Nickname
           <input type="text" name="nickname" value=""></label>
-        <label for="email">Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)
-          <input type="text" name="email" value=""></label>
+        <label for="email">
+          Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)
+          <input type="text" name="email" value="">
+        </label>
         <label for="url">URL
-          <input type="text" name="url" value=""></label>
+          <input type="text" name="url" value="">
+        </label>
         <input type="submit" value="Go &rarr;">
         <input type="hidden" name="userCtxName" value="{{name}}" id="userCtxName">
       </form>
@@ -126,7 +132,9 @@
         <form id="file_upload" method="PUT">
             <input class="drop_input" type="file" name="file" multiple>
             <button class="drop_button">Upload</button>
-            <p class="drop_instructions">Drop images here or click to attach</p>
+            <p class="drop_instructions">
+              Drop images here or click to attach
+            </p>
         </form>
       </div>
     </script>
@@ -174,8 +182,12 @@
                   </span>
                 </span>
                 <span class="timeago" title="{{created_at}}"></span>
-                <a href="#" class="show_post_comments">comment {{#hasComments}}({{commentCount}}){{/hasComments}}</a>
-                <a href="#" class="hide_post_comments" style="display:none">hide comments</a>
+                <a href="#" class="show_post_comments">
+                  comment {{#hasComments}}({{commentCount}}){{/hasComments}}
+                </a>
+                <a href="#" class="hide_post_comments" style="display:none">
+                  hide comments
+                </a>
               </div>
               <div class="comments">
 
@@ -183,7 +195,8 @@
                   <ul class="comment_set">
                     {{#hasHiddenComments}}
                       <li class="comment">
-                        <a href="#" class="show_post_comments"><em>show all comments</em></a>
+                        <a href="#" class="show_post_comments">
+                          <em>show all comments</em></a>
                       </li>
                     {{/hasHiddenComments}}
 
@@ -267,7 +280,9 @@
         <td>{{name}}</td>
         <td class="file_upload_progress"></td>
         <td class="file_upload_cancel">
-          <button class="ui-state-default ui-corner-all" title="Cancel"><span class="ui-icon ui-icon-cancel">Cancel</span></button>
+          <button class="ui-state-default ui-corner-all" title="Cancel">
+            <span class="ui-icon ui-icon-cancel">Cancel</span>
+          </button>
         </td>
       </tr>
     </script>
@@ -291,13 +306,17 @@
                 <input id="password" name="password" size="30" type="password">
                 <span>
                   or
-                  <a class="loginToggle" href="javascript:void(false)">Sign up</a>
+                  <a class="loginToggle" href="javascript:void(false)">
+                    Sign up
+                  </a>
                   <br>
                   <br>
                 </span>
               </p>
               <p class="login_submit">
-                <a href="javascript:void(false)" class="large primary button">Login</a>
+                <a href="javascript:void(false)" class="large primary button">
+                  Login
+                </a>
                 <br>
                 <br>
               </p>
