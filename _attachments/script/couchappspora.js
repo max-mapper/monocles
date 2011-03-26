@@ -1,4 +1,4 @@
-var currentDoc, oldestDoc, streamDisabled = false;
+var currentDoc, oldestDoc, streamDisabled = false, newUser = false;
 
 // vhosts are when you mask couchapps behind a pretty URL
 var inVhost = function() {
@@ -184,6 +184,10 @@ function profileReady( profile ) {
   $( 'label' ).inFieldLabels();
   $( 'form.status_message' ).submit( submitPost );
   initFileUpload();
+  if ( newUser ) {
+    subscribeHub();
+    newUser = false;
+  }
 }
 
 function initFileUpload() {
@@ -253,7 +257,7 @@ function initFileUpload() {
 }
 
 // pubsubhubbubb notification functions
-function subscribe() {
+function subscribeHub() {
   var callbackURL = "http://" + couchOpts.host + couchOpts.baseURL + "push"
     , topicURL = "http://" + couchOpts.host + couchOpts.baseURL + "feeds/" + $( "#header" ).data( 'profile' ).name;
   $.post("http://psychicwarlock.appspot.com/subscribe", { 
@@ -330,6 +334,7 @@ function signUp( name, pass ) {
   }, pass, {
     success : function() {
       login( name, pass );
+      newUser = true;
     }
   });
 }
@@ -608,13 +613,13 @@ var couchOpts = {
   , design: "ddoc"
   , vhost: true
   , baseURL: "/"
+  , host: window.location.href.split( "/" )[ 2 ]
 };
 
 $(function() {
   if ( !inVhost() ) {
     couchOpts.vhost = false
     // grab info on db + ddoc paths from the current url
-    couchOpts.host = window.location.href.split( "/" )[ 2 ];
     couchOpts.db = document.location.href.split( '/' )[ 3 ];
     couchOpts.design = unescape( document.location.href ).split( '/' )[ 5 ];
     couchOpts.baseURL = "/" + couchOpts.db + "/_design/" + couchOpts.design + "/_rewrite/";
