@@ -1,5 +1,5 @@
 function(doc) {
-  if (doc.created_at && !doc.parent_id) {
+  if (doc.type === "note") {
     emit(doc.updated_at || doc.created_at, doc);
   }
 }

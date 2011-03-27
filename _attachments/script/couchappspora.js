@@ -111,7 +111,7 @@ function fetchSession() {
         };
       }
     });
-  }, couchOpts );
+  }, config );
 }
 
 // gets user's stored profile info from couch
@@ -125,7 +125,7 @@ function fetchProfile( session, callback ) {
           // we copy the name to the profile so it can be used later
           // without publishing the entire userdoc (roles, pass, etc)
           profile.name = userDoc.name;
-          profile.base_url = couchOpts.baseURL;
+          profile.base_url = config.baseURL;
           profileReady( profile );
           callback( profile );
         } else {
@@ -175,7 +175,7 @@ function saveUser(form) {
         }
       });
     });
-  }, couchOpts);
+  }, config);
 }
 
 function profileReady( profile ) {
@@ -191,7 +191,7 @@ function profileReady( profile ) {
 }
 
 function initFileUpload() {
-  var db = $.couch.db( couchOpts.db )
+  var db = $.couch.db( config.db )
     , newId
     , currentURL
     , baseURL
@@ -199,7 +199,7 @@ function initFileUpload() {
   
   $.getJSON( '/_uuids', function( data ) { 
     newId = data.uuids[ 0 ];
-    baseURL = "/" + couchOpts.db + "/_design/" + couchOpts.design + "/_rewrite/db/" + newId + "/";
+    baseURL = "/" + config.db + "/_design/" + config.design + "/_rewrite/db/" + newId + "/";
   });
   
   uploadSequence.start = function ( index ) {
@@ -209,6 +209,7 @@ function initFileUpload() {
       this[ index ] = null;
     } else {
       var doc = {
+        type: "note",
         _id: currentDoc.id,
         _rev: currentDoc.rev,
         created_at : new Date(),
@@ -257,33 +258,27 @@ function initFileUpload() {
 }
 
 // pubsubhubbubb notification functions
-
-function pubSubHubBubbRubDub(options) {
-  $.post("http://psychicwarlock.com", options)
-}
-
 function subscribeHub() {
-  var callbackURL = "http://" + couchOpts.host + couchOpts.baseURL + "push"
-    , topicURL = "http://" + couchOpts.host + couchOpts.baseURL + "feeds/" + $( "#header" ).data( 'profile' ).name;
-  
-  pubSubHubBubbRubDub( { 
+  var callbackURL = "http://" + config.host + config.baseURL + "push"
+    , topicURL = "http://" + config.host + config.baseURL + "feeds/" + $( "#header" ).data( 'profile' ).name;
+  $.post(config.hubURL, { 
     "hub.mode": "subscribe", "hub.verify": "sync", "hub.topic": topicURL, "hub.callback": callbackURL
-  } )
+  })
 }
 
 function pingHub() {
-  var publishURL = "http://" + couchOpts.host + couchOpts.baseURL + "feeds/" + $( "#header" ).data( 'profile' ).name;
-  
-  pubSubHubBubbRubDub( {
+  var publishURL = "http://" + config.host + config.baseURL + "feeds/" + $( "#header" ).data( 'profile' ).name;
+  $.post(config.hubURL, { 
     "hub.mode": "publish", "hub.url": publishURL
-  } )
+  })
 }
 
 function submitPost( e ) {
   var form = this;
   var date = new Date();
-  var db = $.couch.db( couchOpts.db );
+  var db = $.couch.db( config.db );
   var doc = {
+    type: "note",
     created_at : date,
     profile : $( "#header" ).data( 'profile' ),
     message : $( "[name=message]", form ).val(),
@@ -419,9 +414,9 @@ function getPostsWithComments( opts ) {
     })
   }
   
-  $.couch.db( couchOpts.db ).view( couchOpts.design + '/recent-items', query );
+  $.couch.db( config.db ).view( config.design + '/notes', query );
 
-  $.couch.db( couchOpts.db ).view( couchOpts.design + '/comments', {
+  $.couch.db( config.db ).view( config.design + '/comments', {
     "descending" : true,
     "limit" : 250,
     success: function( data ) {
@@ -473,7 +468,7 @@ function renderPostsWithComments( posts, comments ) {
       }, r.value.profile );
     }),
     
-    db : couchOpts.db
+    db : config.db
   };
   data[ 'notid' ] = data[ 'items' ][ 0 ][ 'id' ];
   return data;
@@ -507,7 +502,7 @@ function linkSplit( string )
 }
 
 function getComments( post_id, callback ) {
-  $.couch.db( couchOpts.db ).view( couchOpts.design + '/comments', {
+  $.couch.db( config.db ).view( config.design + '/comments', {
     startkey: [ post_id ],
     endkey: [ post_id + "\u9999" ],
     success: function( data ) {
@@ -550,7 +545,7 @@ function submitComment( e ) {
     , parent = form.closest( '.stream_element' )
     , parent_id = parent.attr( 'data-post-id' )
     , parent_created_at = parent.attr( 'data-created-at' )
-    , db = $.couch.db( couchOpts.db )
+    , db = $.couch.db( config.db )
     , doc = {
         created_at : date,
         profile : $( '#header' ).data( 'profile' ),
@@ -615,21 +610,22 @@ function bindInfiniteScroll() {
 }
 
 // by default use the relative vhost links defined in rewrites.json
-var couchOpts = {
+var config = {
     db: "db"
   , design: "ddoc"
   , vhost: true
   , baseURL: "/"
   , host: window.location.href.split( "/" )[ 2 ]
+  , hubURL: "http://www.psychicwarlock.com"
 };
 
 $(function() {
   if ( !inVhost() ) {
-    couchOpts.vhost = false
+    config.vhost = false
     // grab info on db + ddoc paths from the current url
-    couchOpts.db = document.location.href.split( '/' )[ 3 ];
-    couchOpts.design = unescape( document.location.href ).split( '/' )[ 5 ];
-    couchOpts.baseURL = "/" + couchOpts.db + "/_design/" + couchOpts.design + "/_rewrite/";
+    config.db = document.location.href.split( '/' )[ 3 ];
+    config.design = unescape( document.location.href ).split( '/' )[ 5 ];
+    config.baseURL = "/" + config.db + "/_design/" + config.design + "/_rewrite/";
   }
   fetchSession();
   getPostsWithComments();

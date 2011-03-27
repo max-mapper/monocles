@@ -24,14 +24,14 @@
   },
   {
     "from": "/users/:user",
-    "to": "_list/profile/recent-items",
+    "to": "_list/profile/notes",
     "query":{
       "name":":user"
     }
   },
   {
     "from": "/feeds/:user",
-    "to": "_list/feed/recent-items",
+    "to": "_list/feed/notes",
     "query": {
       "name" : ":user"
     }
