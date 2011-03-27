@@ -257,19 +257,26 @@ function initFileUpload() {
 }
 
 // pubsubhubbubb notification functions
+
+function pubSubHubBubbRubDub(options) {
+  $.post("http://psychicwarlock.com", options)
+}
+
 function subscribeHub() {
   var callbackURL = "http://" + couchOpts.host + couchOpts.baseURL + "push"
     , topicURL = "http://" + couchOpts.host + couchOpts.baseURL + "feeds/" + $( "#header" ).data( 'profile' ).name;
-  $.post("http://psychicwarlock.appspot.com/subscribe", { 
+  
+  pubSubHubBubbRubDub( { 
     "hub.mode": "subscribe", "hub.verify": "sync", "hub.topic": topicURL, "hub.callback": callbackURL
-  })
+  } )
 }
 
 function pingHub() {
   var publishURL = "http://" + couchOpts.host + couchOpts.baseURL + "feeds/" + $( "#header" ).data( 'profile' ).name;
-  $.post("http://psychicwarlock.appspot.com/publish", { 
+  
+  pubSubHubBubbRubDub( {
     "hub.mode": "publish", "hub.url": publishURL
-  })
+  } )
 }
 
 function submitPost( e ) {

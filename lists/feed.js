@@ -12,7 +12,7 @@ function(head, req){
     var host = req.headers.Host;
     var view = {
       username: req.query.name,
-      hubURL: "http://psychicwarlock.com/publish",
+      hubURL: "http://psychicwarlock.com",
       domain: host,
       updated_at: Rfc3339.convert(new Date()),
       gravatar: rows[0].value.profile.gravatar_url,
