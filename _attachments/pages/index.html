@@ -144,11 +144,13 @@
         <div id="main_stream" class="stream">
         {{#items}}
           <div class="stream_element" data-post-id="{{id}}" data-created-at="{{created_at}}">
+            {{#profile}}
             <div class="right hidden controls">
               <a class="delete" href="#">
                 <img src="/images/deletelabel.png" />
               </a>
             </div>
+            {{/profile}}
             <a href="#">
               {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
             </a>
@@ -182,9 +184,11 @@
                   </span>
                 </span>
                 <span class="timeago" title="{{created_at}}"></span>
+                {{#profile}}
                 <a href="#" class="show_post_comments">
                   comment {{#hasComments}}({{commentCount}}){{/hasComments}}
                 </a>
+                {{/profile}}
                 <a href="#" class="hide_post_comments" style="display:none">
                   hide comments
                 </a>

@@ -325,6 +325,8 @@ function login( name, pass ) {
 function logout() {
   $.couch.logout({
     success : function() {
+      $( '#header' ).data( 'profile', null );
+      getPostsWithComments( { reload: true } );
       fetchSession();
     }
   });
@@ -414,7 +416,7 @@ function getPostsWithComments( opts ) {
     })
   }
   
-  $.couch.db( config.db ).view( config.design + '/notes', query );
+  $.couch.db( config.db ).view( config.design + '/stream', query );
 
   $.couch.db( config.db ).view( config.design + '/comments', {
     "descending" : true,
@@ -467,7 +469,7 @@ function renderPostsWithComments( posts, comments ) {
         attachments : attachments
       }, r.value.profile );
     }),
-    
+    profile: $( '#header' ).data( 'profile' ),
     db : config.db
   };
   data[ 'notid' ] = data[ 'items' ][ 0 ][ 'id' ];
