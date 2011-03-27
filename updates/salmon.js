@@ -1,5 +1,7 @@
-function(doc, req){
-  var Base64 = require("vendor/base64");
+function(doc, req) {
+  var Base64 = require("vendor/base64")
+    , md5 = require('vendor/md5')
+    ;
   req.body = req.body.replace(/<.*?>/,"");
   var codez = new XML(req.body);
   var atom = new Namespace('http://www.w3.org/2005/Atom');
@@ -28,5 +30,5 @@ function(doc, req){
   var hostname = profile.url.split("/")[2];
   var message = decoded..atom::content.toString().replace(/<.*?>/g,"");
   var created_at = new Date();
-  return [{_id:req.uuid, created_at:created_at, xml:req.body, decoded:decoded.toString(), hostname:hostname, profile:profile, message:message, parent_id:parent_id }, "posted"]
+  return [{_id:md5.hex(message), created_at:created_at, xml:req.body, decoded:decoded.toString(), hostname:hostname, profile:profile, message:message, parent_id:parent_id, type:"follow" }, "posted"]
 }
