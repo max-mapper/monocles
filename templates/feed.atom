@@ -10,7 +10,7 @@
     <name>{{username}}</name>
     <uri>http://{{domain}}/users/{{username}}</uri>
   </author>
-  <link href="{{pubhub_host}}" rel="hub"/>
+  <link href="{{hubURL}}" rel="hub"/>
   <link href="http://{{domain}}/salmon/{{username}}" rel="http://salmon-protocol.org/ns/salmon-replies"/>
   <link href="http://{{domain}}/salmon/{{username}}" rel="http://salmon-protocol.org/ns/salmon-mention"/>
   <link href="http://{{domain}}/feeds/{{username}}" rel="self" type="application/atom+xml"/>

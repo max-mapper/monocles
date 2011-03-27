@@ -266,7 +266,7 @@ function subscribeHub() {
 }
 
 function pingHub() {
-  var publishURL = "http://" + couchOpts.host + couchOpts.baseURL + "feeds/" + $( "#header" ).data( 'profile' );
+  var publishURL = "http://" + couchOpts.host + couchOpts.baseURL + "feeds/" + $( "#header" ).data( 'profile' ).name;
   $.post("http://psychicwarlock.appspot.com/publish", { 
     "hub.mode": "publish", "hub.url": publishURL
   })

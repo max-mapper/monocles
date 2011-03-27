@@ -9,10 +9,10 @@ function(head, req){
         rows.push(row);
       }
     }
-    var pubhub_host="http://psychicwarlock.com/publish"
     var host = req.headers.Host;
     var view = {
       username: req.query.name,
+      hubURL: "http://psychicwarlock.com/publish",
       domain: host,
       updated_at: Rfc3339.convert(new Date()),
       gravatar: rows[0].value.profile.gravatar_url,
