@@ -185,6 +185,17 @@ a {
   .error_messages ul {
     margin: 0; }
 
+.uploader {
+  width: 600px;
+  margin: 0 auto;
+  padding-left: 160px;
+}
+
+.drop_instructions {
+  margin: 0px;
+  padding: 0px;
+}
+
 header {
   z-index: 4;
   position: relative;
@@ -241,7 +252,7 @@ header {
     z-index: 5;
     background-color: #eeeeee;
     border-top: 1px solid white;
-    padding: 20px 0; }
+    padding: 20px 0 0 0; }
     header #header h1 {
       margin-bottom: 0;
       text-shadow: 0 2px 0 white; }

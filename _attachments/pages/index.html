@@ -35,11 +35,11 @@
     <header>
       <div class="container" id="headerContainer">
         <div href="#" id="diaspora_text">
-          <a href="#">
+          <a href="http://github.com/maxogden/couchappspora">
             COUCHAPPSPORA*
           </a>
           <span class="sub_text">
-            PREVIEW
+            ALPHA
           </span>
         </div>
         <div id="session_action">
@@ -133,10 +133,11 @@
         <form id="file_upload" method="PUT">
             <input class="drop_input" type="file" name="file" multiple>
             <button class="drop_button">Upload</button>
-            <p class="drop_instructions">
-              Drop images here or click to attach
-            </p>
+            <div>Add files or photos by dropping or clicking here</div>
         </form>
+        <table class="drop_instructions">
+          
+        </table>
       </div>
     </script>
 
@@ -283,7 +284,9 @@
     <script type="text/mustache" id="uploaderTemplate">
       <tr>
         <td>{{name}}</td>
-        <td class="file_upload_progress"></td>
+        <td class="file_upload_progress">
+          <div></div>
+        </td>
         <td class="file_upload_cancel">
           <button class="ui-state-default ui-corner-all" title="Cancel">
             <span class="ui-icon ui-icon-cancel">Cancel</span>

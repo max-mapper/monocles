@@ -153,7 +153,7 @@ function saveUser(form) {
     };
     
     if ( md5 ) {
-      newProfile.gravatar_url = 'http://www.gravatar.com/avatar/' + md5.hex( newProfile.email || newProfile.rand ) + '.jpg?s=40&d=identicon';    
+      newProfile.gravatar_url = 'http://www.gravatar.com/avatar/' + md5.hex( newProfile.email || newProfile.rand ) + '.jpg?s=50&d=identicon';    
     }
     
     $.couch.userDb( function( db ) {
@@ -190,70 +190,84 @@ function profileReady( profile ) {
   }
 }
 
+function addMessageToPhoto(photoDoc, callback) {
+  var db = $.couch.db( config.db );
+  
+  var docAdditions = {
+    type: "note",
+    _id: photoDoc.id,
+    _rev: photoDoc.rev,
+    created_at : new Date(),
+    profile : $( "#header" ).data( 'profile' ),
+    message : $( "form.status_message [name=message]" ).val(),
+    hostname : config.host
+  };
+
+  posts( db ).update( photoDoc.id, docAdditions ).addCallback( function( newDoc ) {
+    callback(newDoc);
+  });
+}
+
 function initFileUpload() {
   var db = $.couch.db( config.db )
-    , newId
-    , currentURL
-    , baseURL
+    , docURL
+    , currentFileName
     , uploadSequence = [ ];
   
   $.getJSON( '/_uuids', function( data ) { 
-    newId = data.uuids[ 0 ];
-    baseURL = "/" + config.db + "/_design/" + config.design + "/_rewrite/db/" + newId + "/";
+    docURL = config.baseURL + "db/" + data.uuids[ 0 ] + "/";
   });
   
-  uploadSequence.start = function ( index ) {
-    var next = this[ index ];
-    if ( next ) {
-      next( { url: currentURL } );
-      this[ index ] = null;
-    } else {
-      var doc = {
-        type: "note",
-        _id: currentDoc.id,
-        _rev: currentDoc.rev,
-        created_at : new Date(),
-        profile : $( "#header" ).data( 'profile' ),
-        message : $( "form.status_message [name=message]" ).val(),
-        hostname : window.location.href.split( "/" )[ 2 ]
-      };
-      posts( db ).update( doc._id, doc ).addCallback( function( newDoc ) {
-        currentDoc = newDoc;
-      });
-    }
-  };
-  
   $( '.drop_instructions' ).html( "" );
-  $( '#file_upload' ).fileUploadUI({
+
+  var uploadSequence = [];
+  uploadSequence.start = function (index, fileName, rev) {
+    var next = this[index];
+    currentFileName = fileName;
+    var url = docURL + fileName;
+    if ( rev ) url = url + "?rev=" + rev;
+    next(url);
+    this[index] = null;
+  };
+
+  $('#file_upload').fileUploadUI({
+    multipart: false,
     uploadTable: $( '.drop_instructions' ),
     downloadTable: $( '.drop_instructions' ),
     buildUploadRow: function ( files, index ) {
       return $( $.mustache( $( '#uploaderTemplate' ).text(), { name: files[ index ].name } ));
     },
     buildDownloadRow: function ( file ) {
-      return $( '<tr><td>' + file.id + '<\/td><\/tr>' );
+      return $( '<tr><td>' + currentFileName + '<\/td><\/tr>' );
     },
-    beforeSend: function ( event, files, index, xhr, handler, callBack ) {
-      handler.url = baseURL + files[ index ].fileName;
-      uploadSequence.push( callBack );
-      if ( index === 0 ) {
-        uploadSequence.splice( 0, uploadSequence.length - 1 );
+    beforeSend: function (event, files, index, xhr, handler, callBack) {
+      uploadSequence.push(function (url) {
+        handler.url = url;
+        callBack();
+      });
+      if (index === 0) {
+        uploadSequence.splice(0, uploadSequence.length - 1);
       }
-      if ( index + 1 === files.length ) {
-        uploadSequence.start( 0 );
+      if (index + 1 === files.length) {
+        uploadSequence.start(0, files[ index ].fileName);
       }
     },
-    onComplete: function ( event, files, index, xhr, handler ) {
+    onComplete: function (event, files, index, xhr, handler) {
       currentDoc = handler.response;
-      handler.url = currentURL = baseURL + files[ index ].fileName + "?rev=" + currentDoc.rev;
-      uploadSequence.start( index + 1 );
+      var nextUpload = uploadSequence[ index + 1 ];
+      if ( nextUpload ) {
+        uploadSequence.start( index + 1, files[ index ].fileName, currentDoc.rev );
+      } else {
+        addMessageToPhoto(currentDoc, function(newDoc) {
+          console.log("all done! " + JSON.stringify(newDoc));
+        });
+      }
     },
-    onAbort: function ( event, files, index, xhr, handler ) {
-      handler.removeNode( handler.uploadRow );
-      uploadSequence[ index ] = null;
-      uploadSequence.start( index + 1 );
-    },
-    multipart: false
+    onAbort: function (event, files, index, xhr, handler) {
+      handler.removeNode(handler.uploadRow);
+      uploadSequence[index] = null;
+      uploadSequence.start(index + 1, handler.url);
+    }
   });
 }
 
@@ -282,7 +296,7 @@ function submitPost( e ) {
     created_at : date,
     profile : $( "#header" ).data( 'profile' ),
     message : $( "[name=message]", form ).val(),
-    hostname : window.location.href.split( "/" )[ 2 ]
+    hostname : config.host
   };
     
   if ( currentDoc ) {
@@ -552,7 +566,7 @@ function submitComment( e ) {
         created_at : date,
         profile : $( '#header' ).data( 'profile' ),
         message : form.find( '[name=message]' ).val(),
-    	  hostname : window.location.href.split( "/" )[ 2 ],
+    	  hostname : config.host,
         parent_id : parent_id,
         parent_created_at : parent_created_at
     };

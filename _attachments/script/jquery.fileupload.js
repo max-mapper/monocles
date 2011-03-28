@@ -1,12 +1,12 @@
 /*
- * jQuery File Upload Plugin 3.7
+ * jQuery File Upload Plugin 3.8.1
+ * https://github.com/blueimp/jQuery-File-Upload
  *
- * Copyright 2010, Sebastian Tschan, AQUANTUM
+ * Copyright 2010, Sebastian Tschan
+ * https://blueimp.net
+ *
  * Licensed under the MIT license:
  * http://creativecommons.org/licenses/MIT/
- *
- * https://blueimp.net
- * http://www.aquantum.de
  */
 
 /*jslint browser: true */
@@ -19,7 +19,17 @@
         func = 'function',
         num = 'number',
         FileUpload,
-        methods;
+        methods,
+
+        MultiLoader = function (callBack, numberComplete) {
+            var loaded = 0;
+            this.complete = function () {
+                loaded += 1;
+                if (loaded === numberComplete) {
+                    callBack();
+                }
+            };
+        };
         
     FileUpload = function (container) {
         var fileUpload = this,
@@ -58,16 +68,6 @@
             protocolRegExp = /^http(s)?:\/\//,
             optionsReference,
 
-            MultiLoader = function (callBack, numberComplete) {
-                var loaded = 0;
-                this.complete = function () {
-                    loaded += 1;
-                    if (loaded === numberComplete) {
-                        callBack();
-                    }
-                };
-            },
-
             isXHRUploadCapable = function () {
                 return typeof XMLHttpRequest !== undef && typeof File !== undef && (
                     !settings.multipart || typeof FormData !== undef || typeof FileReader !== undef
@@ -77,19 +77,27 @@
             initEventHandlers = function () {
                 if (settings.dragDropSupport) {
                     if (typeof settings.onDocumentDragEnter === func) {
-                        documentListeners['dragenter.' + settings.namespace] = settings.onDocumentDragEnter;
+                        documentListeners['dragenter.' + settings.namespace] = function (e) {
+                            settings.onDocumentDragEnter(e);
+                        };
                     }
                     if (typeof settings.onDocumentDragLeave === func) {
-                        documentListeners['dragleave.' + settings.namespace] = settings.onDocumentDragLeave;
+                        documentListeners['dragleave.' + settings.namespace] = function (e) {
+                            settings.onDocumentDragLeave(e);
+                        };
                     }
                     documentListeners['dragover.'   + settings.namespace] = fileUpload.onDocumentDragOver;
                     documentListeners['drop.'       + settings.namespace] = fileUpload.onDocumentDrop;
                     $(document).bind(documentListeners);
                     if (typeof settings.onDragEnter === func) {
-                        dropZoneListeners['dragenter.' + settings.namespace] = settings.onDragEnter;
+                        dropZoneListeners['dragenter.' + settings.namespace] = function (e) {
+                            settings.onDragEnter(e);
+                        };
                     }
                     if (typeof settings.onDragLeave === func) {
-                        dropZoneListeners['dragleave.' + settings.namespace] = settings.onDragLeave;
+                        dropZoneListeners['dragleave.' + settings.namespace] = function (e) {
+                            settings.onDragLeave(e);
+                        };
                     }
                     dropZoneListeners['dragover.'   + settings.namespace] = fileUpload.onDragOver;
                     dropZoneListeners['drop.'       + settings.namespace] = fileUpload.onDrop;
@@ -183,6 +191,23 @@
                 return true;
             },
 
+            setRequestHeaders = function (xhr, settings, sameDomain) {
+                if (sameDomain) {
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                } else if (settings.withCredentials) {
+                    xhr.withCredentials = true;
+                }
+                if ($.isArray(settings.requestHeaders)) {
+                    $.each(settings.requestHeaders, function (index, header) {
+                        xhr.setRequestHeader(header[0], header[1]);
+                    });
+                } else if (settings.requestHeaders) {
+                    $.each(settings.requestHeaders, function (name, value) {
+                        xhr.setRequestHeader(name, value);
+                    });
+                }
+            },
+
             nonMultipartUpload = function (file, xhr, sameDomain) {
                 if (sameDomain) {
                     xhr.setRequestHeader('X-File-Name', unescape(encodeURIComponent(file.name)));
@@ -259,11 +284,7 @@
                     filesToUpload;
                 initUploadEventHandlers(files, index, xhr, settings);
                 xhr.open(getMethod(settings), url, true);
-                if (sameDomain) {
-                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                } else if (settings.withCredentials) {
-                    xhr.withCredentials = true;
-                }
+                setRequestHeaders(xhr, settings, sameDomain);
                 if (!settings.multipart) {
                     nonMultipartUpload(files[index], xhr, sameDomain);
                 } else {
@@ -287,15 +308,14 @@
                     uploadSettings = $.extend({}, settings);
                 uploadSettings.fileInput = input;
                 uploadSettings.uploadForm = form;
-                if (typeof settings.initUpload === func) {
-                    settings.initUpload(
+                if (typeof uploadSettings.initUpload === func) {
+                    uploadSettings.initUpload(
                         event,
                         files,
                         index,
                         xhr,
                         uploadSettings,
-                        function (newSettings) {
-                            $.extend(uploadSettings, newSettings);
+                        function () {
                             upload(files, index, xhr, uploadSettings);
                         }
                     );
@@ -391,8 +411,8 @@
                 };
                 iframe.bind('load', function () {
                     iframe.unbind('load');
-                    if (typeof settings.initUpload === func) {
-                        settings.initUpload(
+                    if (typeof uploadSettings.initUpload === func) {
+                        uploadSettings.initUpload(
                             event,
                             [{name: input.val(), type: null, size: null}],
                             0,
@@ -447,10 +467,10 @@
                 return false;
             }
             var dataTransfer = e.originalEvent.dataTransfer;
-            if (dataTransfer) {
+            if (dataTransfer && dataTransfer.files) {
                 dataTransfer.dropEffect = dataTransfer.effectAllowed = 'copy';
+                e.preventDefault();
             }
-            e.preventDefault();
         };
 
         this.onDrop = function (e) {
