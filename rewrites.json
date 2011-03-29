@@ -74,18 +74,18 @@
   },
   {
     "to": "./",
-    "from": "db/_design/ddoc"
+    "from": "api/_design/ddoc"
   },
   {
     "to": "./*",
-    "from": "db/_design/ddoc/*"
+    "from": "api/_design/ddoc/*"
   },
   {
     "to": "../../",
-    "from": "db"
+    "from": "api"
   },
   {
     "to": "../../*",
-    "from": "db/*"
+    "from": "api/*"
   }
 ]

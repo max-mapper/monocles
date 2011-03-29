@@ -11,7 +11,7 @@ $( function() {
 } );
 
 var defaults = {
-    db: "db" // relative vhost links defined in rewrites.json
+    db: "api" // relative vhost links defined in rewrites.json
   , design: "ddoc"
   , vhost: true
   , baseURL: "/"
@@ -245,7 +245,7 @@ var monocles = {
       , uploadSequence = [ ];
 
     $.getJSON( '/_uuids', function( data ) { 
-      docURL = monocles.config.baseURL + "db/" + data.uuids[ 0 ] + "/";
+      docURL = monocles.config.baseURL + "api/" + data.uuids[ 0 ] + "/";
     });
 
     $( '.file_list' ).html( "" );
