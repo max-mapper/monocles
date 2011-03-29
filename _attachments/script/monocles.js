@@ -490,6 +490,7 @@ var monocles = {
             }).map( function( cr ) {
               return $.extend({
                 id : cr.id,
+                created: cr.value.created_at,
                 message : monocles.linkSplit( cr.value.message )
               }, cr.value.profile );
             })
@@ -563,6 +564,7 @@ var monocles = {
     var comments = data.rows.map( function( r ) {
       return $.extend({
         id : r.id,
+        created: r.value.created_at,
         message : monocles.linkSplit( r.value.message ),
   			hostname : r.value.hostname || "unknown",
   			randomToken : monocles.randomToken()
@@ -582,6 +584,7 @@ var monocles = {
       post.show().find( '*' ).show();
       post.closest( 'li' ).find( 'a.show_post_comments' ).hide().end().find( 'a.hide_post_comments' ).show();
       post.find( 'label' ).inFieldLabels();
+      post.find( '.timeago' ).timeago();
       $( 'form', post ).submit( monocles.submitComment );
       $( ".hover_profile", post ).cluetip( { local: true, sticky: true, activation: "click" } );
     });

@@ -191,7 +191,7 @@
                     public
                   </span>
                 </span>
-                <span class="timeago" title="{{created_at}}"></span>
+                <span class="timeago" title="{{created_at}}">a while ago</span>
                 {{#profile}}
                 <a href="#" class="show_post_comments">
                   comment {{#hasComments}}({{commentCount}}){{/hasComments}}
@@ -216,6 +216,9 @@
                       <li class="comment">
                         {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
                         <span class="from">
+                          <a href="#showProf" class="hover_profile" rel="#profile_{{nickname}}_{{randomToken}}" title="{{nickname}} profile">
+                            {{nickname}}
+                          </a>
                           {{#message}}
                             {{text}}
                             {{#link}}
@@ -223,7 +226,7 @@
                             {{/link}}
                           {{/message}}
                         </span>
-                        <div class="time">a while ago</div>
+                        <div class="time timeago" title="{{created}}">a while ago</div>
                       </li>
                     {{/latestComments}}
                   </ul>
@@ -248,23 +251,23 @@
           <li class="comment">
             {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}" />{{/gravatar_url}}
             <span class="from">
-             <a href="#showProf" class="hover_profile" rel="#profile_{{nickname}}_{{randomToken}}" title="{{nickname}} profile">
-                  {{nickname}}@{{hostname}}
-                </a>
-                {{#message}}
-                  {{text}}
-                  {{#link}}
-                    <a href="{{link}}">{{link}}</a>
-                  {{/link}}
-                {{/message}}
+               <a href="#showProf" class="hover_profile" rel="#profile_{{nickname}}_{{randomToken}}" title="{{nickname}} profile">
+                 {{nickname}}
+               </a>
+               {{#message}}
+                 {{text}}
+                 {{#link}}
+                   <a href="{{link}}">{{link}}</a>
+                 {{/link}}
+               {{/message}}
             </span>
-            <div class="time">a while ago</div>
+            <div class="time timeago" title="{{created}}">a while ago</div>
           </li>
-          <p id="profile_{{nickname}}_{{randomToken}}" style="display:none">
-            Name: {{nickname}}<br>
-            Email: <a href="mailto:{{email}}" target="_blank">{{email}}</a><br>
-            Url: <a href="{{url}}" target="_blank">{{url}}</a>
-          </p>
+          <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
+            Nickname: {{nickname}}<br>
+            URL: <a href='{{url}}' target='_blank'>{{url}}</a><br>
+            Atom Feed: <a href='{{base_url}}feeds/{{name}}' target='_blank'>{{name}}.atom</a>
+        	</p>
         {{/comments}}
 
         {{#empty}}
@@ -339,6 +342,5 @@
         </div>
       </div>
     </script>
-
   </body>
 </html>
