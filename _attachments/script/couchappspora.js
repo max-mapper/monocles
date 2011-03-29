@@ -1,4 +1,4 @@
-var currentDoc, oldestDoc, streamDisabled = false, newUser = false;
+var currentDoc, oldestDoc, streamDisabled = false, newUser = false, infiniteLoading = false;
 
 // vhosts are when you mask couchapps behind a pretty URL
 var inVhost = function() {
@@ -388,6 +388,8 @@ function loaderShowing() {
 }
 
 function getPostsWithComments( opts ) {
+  if(infiniteLoading) return;
+  infiniteLoading = true;
   enableStream();
   var opts = opts || {};
   if( opts.offsetDoc === false ) return;
@@ -402,7 +404,7 @@ function getPostsWithComments( opts ) {
       var append = true;
       if ( opts.reload ) append = false;
       render( 'stream', 'stream', renderPostsWithComments( posts, comments ), append );
-      
+      infiniteLoading = false;
       decorateStream();
     }
   }
@@ -496,25 +498,27 @@ function linkSplit( string )
 	//from http://snipplr.com/view/6889/regular-expressions-for-uri-validationparsing
 	var regexUri = /([a-z0-9+.-]+):(?:\/\/(?:((?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*)@)?((?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*)(?::(\d*))?(\/(?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*)?|(\/?(?:[a-z0-9-._~!$&'()*+,;=:@]|%[0-9A-F]{2})+(?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*)?)(?:\?((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?(?:#((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?/i;
 	var res = [];
-	while ( string.length > 0 ) {
-		var pos = string.search( regexUri );
-		switch( pos ) {
-			case -1: // no match
-				res.push( { "text": string } );
-				string = "";
-				break;
-			case 0: // match at front of string
-				var link = string.match( regexUri )[ 0 ];
-				res.push( { "link": link } );
-				string = string.substr( link.length );
-				break;
-			default:
-				res.push( { "text": string.substr( 0, pos ) } );
-				string = string.substr( pos );
-				break;
-		}	
-	}
-	return res
+	if(string) {
+		while ( string.length > 0 ) {
+			var pos = string.search( regexUri );
+			switch( pos ) {
+				case -1: // no match
+					res.push( { "text": string } );
+					string = "";
+					break;
+				case 0: // match at front of string
+					var link = string.match( regexUri )[ 0 ];
+					res.push( { "link": link } );
+					string = string.substr( link.length );
+					break;
+				default:
+					res.push( { "text": string.substr( 0, pos ) } );
+					string = string.substr( pos );
+					break;
+			}	
+		}
+    }
+	return res;
 }
 
 function getComments( post_id, callback ) {
