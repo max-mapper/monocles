@@ -256,8 +256,6 @@ header {
     header #header h1 {
       margin-bottom: 0;
       text-shadow: 0 2px 0 white; }
-    header #header a {
-      color: #111111; }
       header #header a:hover {
         background: none;
         color: #333333; }
@@ -267,6 +265,14 @@ header {
       margin-top: -5px; }
   header #headerContainer {
     position: relative;
+  }
+  
+  header .loginMessage {
+    padding-bottom: 15px;
+  }
+  
+  header .loginMessage a {
+    color: #019DBE;
   }
   
   header #header p {
