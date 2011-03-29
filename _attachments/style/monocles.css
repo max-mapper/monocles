@@ -41,7 +41,6 @@ a {
   height: 50px; }
   
 .loader {
-  display: none;
   width: 128px;
   margin: 30px auto 0px auto;
 }

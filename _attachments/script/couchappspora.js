@@ -406,6 +406,7 @@ function getPostsWithComments( opts ) {
       render( 'stream', 'stream', renderPostsWithComments( posts, comments ), append );
       infiniteLoading = false;
       decorateStream();
+	  hideLoader();
     }
   }
 
@@ -421,6 +422,7 @@ function getPostsWithComments( opts ) {
         posts = data;
         renderStream(); 
       }
+	  hideLoader();
     }
   }
   
@@ -445,8 +447,8 @@ function getPostsWithComments( opts ) {
         list.push( c );
         return list;
       }, [] );
-
       renderStream();
+	  hideLoader();
     }
   });
 }
@@ -628,6 +630,7 @@ function bindInfiniteScroll() {
     }
   });
 }
+
 
 // by default use the relative vhost links defined in rewrites.json
 var config = {
