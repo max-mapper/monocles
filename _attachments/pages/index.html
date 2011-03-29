@@ -133,11 +133,17 @@
         <form id="file_upload" method="PUT">
             <input class="drop_input" type="file" name="file" multiple>
             <button class="drop_button">Upload</button>
-            <div>Add files or photos by dropping or clicking here</div>
+            <span class="drop_instructions">Add files or photos by dropping or clicking here</span>
         </form>
-        <table class="drop_instructions">
+        <table class="file_list">
           
         </table>
+      </div>
+    </script>
+    
+    <script type="text/mustache" id="emptyTemplate">
+      <div class="emptyStream">
+        There aren't any posts yet! Why don't you start?
       </div>
     </script>
 

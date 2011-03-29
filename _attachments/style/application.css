@@ -188,13 +188,11 @@ a {
 .uploader {
   width: 600px;
   margin: 0 auto;
-  padding-left: 160px;
-}
+  padding-left: 160px; }
 
-.drop_instructions {
+.file_list {
   margin: 0px;
-  padding: 0px;
-}
+  padding: 0px; }
 
 header {
   z-index: 4;
@@ -278,6 +276,18 @@ header {
   header #header p {
     margin: 0px;
   }
+  
+.emptyStream {
+  font-size: 12px;
+  width: 950px;
+  margin: 0 auto;
+  text-align: center; }
+
+.drop_instructions {
+  color: #777;
+  font-weight: normal;}
+  .file_upload:hover .drop_instructions {
+    color: #000;}
   
 .stream audio {
   display: block;

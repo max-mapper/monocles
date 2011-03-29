@@ -104,10 +104,12 @@ function fetchSession() {
           });
         } else if ( isAdminParty( session.userCtx ) ) {
           render( 'adminParty', 'account' );
+          getPostsWithComments();
         } else {
           render( 'loginButton', 'account' );
           render( 'loggedOut', 'header' );
           waitForLoginOrSignUp();
+          getPostsWithComments();
         };
       }
     });
@@ -218,7 +220,7 @@ function initFileUpload() {
     docURL = config.baseURL + "db/" + data.uuids[ 0 ] + "/";
   });
   
-  $( '.drop_instructions' ).html( "" );
+  $( '.file_list' ).html( "" );
 
   var uploadSequence = [];
   uploadSequence.start = function (index, fileName, rev) {
@@ -232,8 +234,8 @@ function initFileUpload() {
 
   $('#file_upload').fileUploadUI({
     multipart: false,
-    uploadTable: $( '.drop_instructions' ),
-    downloadTable: $( '.drop_instructions' ),
+    uploadTable: $( '.file_list' ),
+    downloadTable: $( '.file_list' ),
     buildUploadRow: function ( files, index ) {
       return $( $.mustache( $( '#uploaderTemplate' ).text(), { name: files[ index ].name } ));
     },
@@ -312,7 +314,7 @@ function submitPost( e ) {
 function afterPost( newDoc ) {
   // Clear post entry form
   $( "form.status_message [name=message]" ).val( "" );
-  $( '.drop_instructions' ).html( "" );
+  $( '.file_list' ).html( "" );
   currentDoc = null;
 
   // Reload posts
@@ -396,14 +398,17 @@ function getPostsWithComments( opts ) {
 
   // Renders only when posts and comments are both loaded.
   function renderStream() {
-    if ( posts && comments ) {
+     if ( posts && comments ) {
       hideLoader();
       
-      var append = true;
-      if ( opts.reload ) append = false;
-      render( 'stream', 'stream', renderPostsWithComments( posts, comments ), append );
-      
-      decorateStream();
+      if ( posts.length > 0 ) {
+        var append = true;
+        if ( opts.reload ) append = false;
+        render( 'stream', 'stream', renderPostsWithComments( posts, comments ), append );
+        decorateStream();
+      } else {
+        render( 'empty', 'stream' );
+      }
     }
   }
 
@@ -414,11 +419,12 @@ function getPostsWithComments( opts ) {
       if( data.rows.length === 0 ) {
         oldestDoc = false;
         hideLoader();
+        posts = [];
       } else {
         oldestDoc = data.rows[ data.rows.length - 1 ];
-        posts = data;
-        renderStream(); 
+        posts = data.rows;
       }
+      renderStream();
     }
   }
   
@@ -451,7 +457,7 @@ function getPostsWithComments( opts ) {
 
 function renderPostsWithComments( posts, comments ) {
   var data = {
-    items : posts.rows.map( function( r ) {
+    items : posts.map( function( r ) {
       var postComments = comments.rows.filter( function( cr ) {
             return cr.value.parent_id === r.id;
           }).map( function( cr ) {
@@ -644,6 +650,5 @@ $(function() {
     config.baseURL = "/" + config.db + "/_design/" + config.design + "/_rewrite/";
   }
   fetchSession();
-  getPostsWithComments();
   bindInfiniteScroll();
 });
