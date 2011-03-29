@@ -236,8 +236,8 @@
             </div>
           </div>
           <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
-            Nickname: {{nickname}}<br>
-            URL: <a href='{{url}}' target='_blank'>{{url}}</a><br>
+            OStatus Address: {{name}}@{{host}}<br>
+            {{#url}}URL: <a href='{{.}}' target='_blank'>{{.}}</a><br>{{/url}}
             Atom Feed: <a href='{{base_url}}feeds/{{name}}' target='_blank'>{{name}}.atom</a>
         	</p>
         {{/items}}
@@ -264,8 +264,8 @@
             <div class="time timeago" title="{{created}}">a while ago</div>
           </li>
           <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
-            Nickname: {{nickname}}<br>
-            URL: <a href='{{url}}' target='_blank'>{{url}}</a><br>
+            OStatus Address: {{name}}@{{host}}<br>
+            {{#url}}URL: <a href='{{.}}' target='_blank'>{{.}}</a><br>{{/url}}
             Atom Feed: <a href='{{base_url}}feeds/{{name}}' target='_blank'>{{name}}.atom</a>
         	</p>
         {{/comments}}

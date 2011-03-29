@@ -73,8 +73,7 @@ var monocles = {
 
       monocles.disableStream();
 
-      // TODO: dynamic host
-      monocles.render( 'login', 'stream', { host: "monocles" }, false );
+      monocles.render( 'login', 'stream', { host: monocles.config.host }, false );
 
       var form = $( "#login form" )
         , button = $( '.login_submit .button' );
@@ -133,7 +132,7 @@ var monocles = {
               });
               monocles.getPostsWithComments( { reload: true } );
               // TODO sammy
-              $( "a[href=#logout]" ).click (function() { monocles.logout() });
+              $( "a[href=#logout]" ).click ( function() { monocles.logout() } );
             });
           } else if ( monocles.isAdminParty( session.userCtx ) ) {
             monocles.render( 'adminParty', 'account' );
@@ -518,7 +517,8 @@ var monocles = {
         }, r.value.profile );
       }),
       profile: monocles.userProfile(),
-      db : monocles.config.db
+      db : monocles.config.db,
+      host: monocles.config.host
     };
     data[ 'notid' ] = data[ 'items' ][ 0 ][ 'id' ];
     return data;
@@ -573,6 +573,7 @@ var monocles = {
 
     return {
       id : post_id,
+      host: monocles.config.host,
       empty : comments.length === 0,
       comments : comments
     };
