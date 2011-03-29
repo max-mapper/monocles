@@ -3,7 +3,7 @@
   <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
     <link rel="stylesheet" href="style/blueprint-screen.css" type="text/css">
-    <link rel="stylesheet" href="style/application.css" type="text/css">
+    <link rel="stylesheet" href="style/monocles.css" type="text/css">
     <link rel="stylesheet" href="style/ui.css" type="text/css">
     <link rel="stylesheet" href="style/jquery.cluetip.css" type="text/css">
     <link rel="stylesheet" href="style/jquery.fileupload-ui.css" type="text/css">
@@ -17,7 +17,6 @@
     <script type="text/javascript" src="script/jiverscripts/conc/observable.js"></script>
     <script type="text/javascript" src="script/jiverscripts/conc/promise.js"></script>
     <script type="text/javascript" src="script/jquery.infieldlabel.js"></script>
-    <script type="text/javascript" src="script/ezcrypto.js"></script>
     <script type="text/javascript" src="/_utils/script/sha1.js"></script>
     <script type="text/javascript" src="/_utils/script/json2.js"></script>
     <script type="text/javascript" src="script/jquery.couch.js"></script>
@@ -29,14 +28,15 @@
     <script type="text/javascript" src="script/jquery.timeago.js"></script>
     <script type="text/javascript" src="script/models/posts.js"></script>
     <script type="text/javascript" src="script/models/comments.js"></script>
-    <script type="text/javascript" src="script/couchappspora.js"></script>
+    <!-- and, finally -->
+    <script type="text/javascript" src="script/monocles.js"></script>
   </head>
   <body>
     <header>
       <div class="container" id="headerContainer">
         <div href="#" id="diaspora_text">
           <a href="http://github.com/maxogden/couchappspora">
-            COUCHAPPSPORA*
+            MONOCLES*
           </a>
           <span class="sub_text">
             ALPHA
@@ -89,7 +89,7 @@
     </script>
 
     <script type="text/mustache" id="loggedOutTemplate">
-      <div class="container"><p class="loginMessage">Welcome to <a href="https://github.com/maxogden/couchappspora">Couchappspora</a>, an open source social network that lets you talk to people on other networks. Log in or sign up to post.</p></div>
+      <div class="container"><p class="loginMessage">Welcome to <a href="https://github.com/maxogden/couchappspora">monocles</a>, an open source social network based on <a href="https://joindiaspora.com/">Diaspora</a> that lets people on <a href="http://ostatus.org/faq">different networks</a> follow each other. Log in or sign up to post.</p></div>
     </script>
 
     <script type="text/mustache" id="newProfileFormTemplate">

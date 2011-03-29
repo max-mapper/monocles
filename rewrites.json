@@ -65,7 +65,7 @@
     "from": "vendor/*"
   },
   {
-    "to": "pages/index.html",
+    "to": "pages/monocles.html",
     "from": ""
   },
   {

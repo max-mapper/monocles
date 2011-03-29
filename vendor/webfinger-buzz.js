@@ -62,7 +62,7 @@ wf.finger(userUri, function(xrdObj) {
             console.log("<<REQUEST URL>>"+JSON.stringify(requestUrl.href));
             console.log("<<HUB URL>>"+link.href);
             var hubUrl = url.parse(link.href);
-            var request = httpClient.request("POST", hubUrl.pathname+"?hub.callback=http://tyler.couchone.com/spora/_design/couchappspora/_rewrite/xml&hub.mode=subscribe&hub.topic="+requestUrl.href+"&hub.verify=sync", {"host": hubUrl.hostname});
+            var request = httpClient.request("POST", hubUrl.pathname+"?hub.callback=http://tyler.couchone.com/spora/_design/monocles/_rewrite/xml&hub.mode=subscribe&hub.topic="+requestUrl.href+"&hub.verify=sync", {"host": hubUrl.hostname});
             request.addListener('response', function (response) {
               response.setBodyEncoding("utf8");
               var body = "";

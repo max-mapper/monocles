@@ -57,7 +57,7 @@
 }
 
 .file_upload_progress .ui-progressbar-value {
-  background: url(pbar-ani.gif);
+  background: url(images/pbar-ani.gif);
 }
 
 .file_upload_progress div {
