@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style/ui.css" type="text/css">
     <link rel="stylesheet" href="style/jquery.cluetip.css" type="text/css">
     <link rel="stylesheet" href="style/jquery.fileupload-ui.css" type="text/css">
+    <link rel="stylesheet" href="style/tipsy.css" type="text/css">
     <link rel="stylesheet" href="style/css3buttons.css" type="text/css">
     <script type="text/javascript" src="script/jquery-1.4.4.min.js"></script>
     <script type="text/javascript" src="script/jquery.fileupload.js"></script>
@@ -25,6 +26,7 @@
     <script type="text/javascript" src="script/sammy.js"></script>
     <script type="text/javascript" src="script/helpers.js"></script>
     <script type="text/javascript" src="script/jquery.cluetip.js"></script>
+    <script type="text/javascript" src="script/jquery.tipsy.js"></script>
     <script type="text/javascript" src="script/jquery.timeago.js"></script>
     <script type="text/javascript" src="script/models/posts.js"></script>
     <script type="text/javascript" src="script/models/comments.js"></script>
@@ -115,29 +117,45 @@
           <h1 class="aspect-header"><a href="#">Public</a></h1>
         </div>
         <div class="span-19 message-container last" style="position:relative;">
-          <div id="publisher">
-            {{#gravatar_url}}<img class="avatar" src="{{gravatar_url}}"/>{{/gravatar_url}}
-            <form class="status_message">
-              <p>
-                <label for="status_message">
-                  Message
-                </label>
-                <textarea id="status_message" name="message" rows="2" ></textarea>
-              </p>
-              <input type="submit" value="Share" class="btn button" id="sendbutton" >
+          <div id="publisher" class="">
+            <div id="click_to_share">
+              <img src="images/pen_16x16.png">
+              <span>whats on your mind?</span>
+            </div>
+            <div class="content_creation">
+              <form class="new_status_message">
+                <div id="file-upload" style="position: relative; overflow-x: hidden; overflow-y: hidden; direction: ltr;">
+                  <img alt="Photos" src="images/image_24x24.png">
+                  <br>
+                  add photos
+                  <input multiple="multiple" type="file" name="file" style="position: absolute; right: 0px; top: 0px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; opacity: 0; ">
+                </div>
+                <div id="publisher_textarea_wrapper">
+                  <ul class="drop_instructions" id="photodropzone"></ul>
+                  <textarea cols="40" id="status_message" name="status_message" rows="2" tabindex="1" style="resize: none; overflow-y: hidden; min-height: 42px; height: 82px; " autocomplete="off" class="ac_input"></textarea>
+                 <div class="options_and_submit">
+                   <table class="file_list">
+
+                   </table>
+                   <div class="public_toggle">
+                     <span id="publisher_service_icons">
+                       <img alt="Globe" class="public_icon dim tip" height="16" src="images/lock_fill_12x16.png" width="12" title="Keep this private">
+                       <img class="cclogo dim tip" height="16" width="16" title="License with Creative Commons BY" src="images/cclogo.png">
+                     </span>
+                     <input class="button" id="status_message_submit" name="commit" tabindex="2" type="submit" value="Share" disabled="">
+                   </div>
+                </div>
+              </div>
             </form>
+                <div class="uploader">
+                  <form id="file_upload" method="PUT">
+                      <input class="drop_input" type="file" name="file" multiple>
+                  </form>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="uploader">
-        <form id="file_upload" method="PUT">
-            <input class="drop_input" type="file" name="file" multiple>
-            <button class="drop_button">Upload</button>
-            <span class="drop_instructions">Add files or photos by dropping or clicking here</span>
-        </form>
-        <table class="file_list">
-          
-        </table>
       </div>
     </script>
     
@@ -307,7 +325,7 @@
     <script type="text/mustache" id="loginTemplate">
       <div class="span-24 last">
         <div class="container" style="text-align:center;">
-          <div id="login">
+          <div id="login" tabIndex="1">
             <form>
               <p>
                 <label for="username" style="opacity: 1;">Username</label>

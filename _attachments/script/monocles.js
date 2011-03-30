@@ -218,6 +218,7 @@ var monocles = {
     $( 'label' ).inFieldLabels();
     $( 'form.status_message' ).submit( monocles.submitPost );
     monocles.initFileUpload();
+    $(".tip").tipsy({trigger: 'hover', gravity: 'n'});
     if ( monocles.newUser ) {
       monocles.subscribeHub();
       newUser = false;
@@ -260,6 +261,7 @@ var monocles = {
     };
 
     $('#file_upload').fileUploadUI({
+      dropZone: $( '#file-upload' ),
       multipart: false,
       uploadTable: $( '.file_list' ),
       downloadTable: $( '.file_list' ),
@@ -286,8 +288,6 @@ var monocles = {
         var nextUpload = uploadSequence[ index + 1 ];
         if ( nextUpload ) {
           uploadSequence.start( index + 1, files[ index ].fileName, monocles.currentDoc.rev );
-        } else {
-          monocles.addMessageToPhoto(monocles.currentDoc);
         }
       },
       onAbort: function (event, files, index, xhr, handler) {
@@ -328,7 +328,7 @@ var monocles = {
     };
 
     if ( monocles.currentDoc ) {
-      posts( monocles.db() ).update( monocles.currentDoc.id, { message: doc.message }).addCallback( monocles.afterPost );
+      posts( monocles.db() ).update( monocles.currentDoc.id, doc).addCallback( monocles.afterPost );
     } else {
       posts( monocles.db() ).save( doc ).addCallback( monocles.afterPost );
     }

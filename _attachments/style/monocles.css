@@ -288,7 +288,194 @@ header {
   font-weight: normal;}
   .file_upload:hover .drop_instructions {
     color: #000;}
+
+#file-upload input {
+  height: 100%;
+  width: 100%;
+  cursor: pointer; }
+
+#publisher {
+  width: 575px;
+  z-index: 0;
+  color: #999999;
+  overflow: auto;
+  position: relative;
+  margin-bottom: 10px;
+  margin-top: 0;
+  padding: 12px;
+    padding-top: 1px;
+  top: 0; }
+  #publisher.mention_popup {
+    padding: 1px 12px;
+    margin-bottom: 0;
+    border-bottom: none; }
+  #publisher.closed .options_and_submit {
+    display: none !important; }
+  #publisher.closed #file-upload {
+    display: none; }
+  #publisher.closed form textarea {
+    height: 18px !important; }
+  #publisher form {
+    position: relative;
+    top: 0; }
+  #publisher #status_message {
+    float: left;}
+  #publisher input[type='text'],
+  #publisher textarea {
+    width: 435px;
+    margin: 0; }
+  #publisher textarea {
+    border: 1px solid #3f8fba;
+    height: 42px; }
+  #publisher label {
+    font-size: 14px; }
+  #publisher .options_and_submit {
+    min-height: 21px;
+    float: left;
+    width: 125px;
+    position: relative;
+    padding-top: 6px;
+    margin-bottom: -2px; }
+    #publisher .options_and_submit input[type='submit'] {
+      width: 75px; }
+    #publisher .options_and_submit input {
+      display: inline; }
+    #publisher .options_and_submit .public_toggle {
+      text-align: right; }
+    #publisher .options_and_submit #publisher_service_icons {
+      position: relative;
+      top: 3px;
+      margin-right: 10px; }
+    #publisher .options_and_submit .mention_helper {
+      float: left; }
+    #publisher .options_and_submit #fileInfo {
+      display: inline;
+      position: relative;
+      top: -2px; }
+  #publisher .content_creation {
+    margin-top: 1em; }
+  #publisher #click_to_share {
+    position: relative;
+    padding: 1em;
+      padding-top: 0;
+    margin-bottom: -16px; }
+    #publisher #click_to_share span {
+      margin-left: 12px;
+      font-weight: bold;
+      color: #444444; }
+    #publisher #click_to_share img {
+      display: inline;
+      position: absolute;
+      top: 0;
+      left: 0px; }
+  #publisher #file-upload {
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    z-index: 10;
+    float: right;
+    height: 42px;
+    width: 103px;
+    margin: 0;
+    border: 2px solid #cccccc;
+    background-color: #fafafa;
+    padding: 0.3em;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: smaller;
+    text-align: center;
+    text-shadow: 0 1px 0 #eeeeee; }
+    #publisher #file-upload img {
+      filter: alpha(opacity=40);
+      -moz-opacity: 0.4;
+      -khtml-opacity: 0.4;
+      opacity: 0.4;
+      display: inline-block;
+      margin: 0;
+      padding: 0;
+      margin-bottom: -3px; }
+    #publisher #file-upload:hover {
+      background-color: #eeeeee;
+      cursor: pointer;
+      color: #666666; }
+      #publisher #file-upload:hover img {
+        filter: alpha(opacity=60);
+        -moz-opacity: 0.6;
+        -khtml-opacity: 0.6;
+        opacity: 0.6; }
+    #publisher #file-upload:active {
+      text-shadow: 0 1px 0 #fafafa;
+      color: #cccccc; }
+      #publisher #file-upload:active img {
+        filter: alpha(opacity=10);
+        -moz-opacity: 0.1;
+        -khtml-opacity: 0.1;
+        opacity: 0.1; }
+    #publisher #file-upload.loading {
+      filter: alpha(opacity=50);
+      -moz-opacity: 0.5;
+      -khtml-opacity: 0.5;
+      opacity: 0.5; }
+
+#publisher_textarea_wrapper {
+  position: relative; }
+  #publisher_textarea_wrapper textarea {
+    z-index: 2; }
+    #publisher_textarea_wrapper textarea.with_attachments {
+      padding-bottom: 70px; }
+  #publisher_textarea_wrapper #photodropzone {
+    z-index: 3;
+    position: absolute;
+    bottom: 0;
+    width: 435px;
+    left: 5px;
+    padding: 0; }
+    #publisher_textarea_wrapper #photodropzone li {
+      display: inline-block;
+      margin-right: 4px; }
+      #publisher_textarea_wrapper #photodropzone li img {
+        width: 50px; }
+      #publisher_textarea_wrapper #photodropzone li .circle {
+        -moz-border-radius: 20px;
+        -webkit-border-radius: 20px;
+        border-radius: 20px;
+        display: none;
+        z-index: 1;
+        position: absolute;
+        right: -7px;
+        top: -5px;
+        background-color: #333333;
+        width: 20px;
+        max-width: 20px;
+        height: 20px;
+        max-height: 20px;
+        border: 1px solid white; }
+      #publisher_textarea_wrapper #photodropzone li .x {
+        display: none;
+        z-index: 2;
+        position: absolute;
+        top: -3px;
+        right: -1px;
+        font-size: small;
+        font-weight: bold; }
+      #publisher_textarea_wrapper #photodropzone li:hover {
+        cursor: default; }
+        #publisher_textarea_wrapper #photodropzone li:hover .circle {
+          display: block; }
+        #publisher_textarea_wrapper #photodropzone li:hover .x {
+          display: block; }
+
+.field_with_submit input[type='text'] {
+  width: 82%;
+  display: inline; }
+
+.dim {
+  filter: alpha(opacity=30);
+  -moz-opacity: 0.3;
+  -khtml-opacity: 0.3;
+  opacity: 0.3; }
   
+
 .stream audio {
   display: block;
   margin: 5px 0; }
@@ -606,51 +793,6 @@ input[type='text'], textarea {
   width: 66%;
   border-top: 1px solid #666666;
   height: auto; }
-
-#submit_block {
-  text-align: right;
-  font-size: 12px; }
-
-  .status_message p {
-    position: relative;
-    padding: 0;
-    margin: 0; }
-
-  .status_message p label {
-    color: #999999;
-    position: absolute;
-    line-height: 28px;
-    left: 0.48em;
-    font-weight: normal; }
-
-  #publisher {
-    color: #999999;
-    position: relative; }
-    #publisher .avatar {
-      float: left;
-      margin-right: 15px; }
-    #publisher p {
-      position: absolute;
-      left: 0;
-      top: 0; }
-    #publisher form {
-      display: inline; 
-      position: relative;
-      font-size: 120%;
-      margin: 1em;
-      margin-left: 0em; }
-      #publisher form input[type='submit'] {
-        float: right;
-        margin-right: 20px;
-        margin-top: 26px; }
-    #publisher textarea {
-      width: 600px;
-      height: 40px;
-      margin-top: 0;
-      margin-bottom: 0;
-      -webkit-box-shadow: 0 1px 0 white; }
-    #publisher .button {
-      margin-left: 100px; }
 
 #image_picker .small_photo {
   height: 100px;

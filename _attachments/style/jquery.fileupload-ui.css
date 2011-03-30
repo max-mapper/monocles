@@ -1,17 +1,7 @@
 .file_upload {
-  position: relative;
   overflow: hidden;
-  direction: ltr;
   cursor: pointer;
   text-align: center;
-  color: #333;
-  font-weight: bold;
-  -moz-border-radius: 10px;
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
-  width: 600px;
-  height: 30px;
-  line-height: 30px;
 }
 
 .file_upload_small {
@@ -57,7 +47,7 @@
 }
 
 .file_upload_progress .ui-progressbar-value {
-  background: url(images/pbar-ani.gif);
+  background: url(../images/pbar-ani.gif);
 }
 
 .file_upload_progress div {
