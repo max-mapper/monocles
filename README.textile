@@ -19,7 +19,7 @@ h3. Hosting your own
 p. You can run monocles anywhere that you can run CouchDB, and since it's a CouchApp, the entire application lives inside your database and can be replicated from any other monocles seed. To demonstrate the built in replication that you get with CouchDB:
 
 * Get a CouchDB somewhere! You can get a hosted Couch from "Cloudant":http://cloudant.com, a downloadable Couch from "CouchBase":http://www.couchbase.com/downloads, or an Android Couch from the Android Marketplace
-* Make a database and set up bidirectional continuous replication from @http://monocl.es/db@ (or any other monocles instance) to your new database
+* Make a database and set up bidirectional continuous replication from @http://monocl.es/api@ (or any other monocles instance) to your new database. 
 * Visit "http://yourcouch/yourdb/==_design/monocles/_==rewrite":http://yourcouch/yourdb/_design/monocles/_rewrite
 
 h3. TO-DO (aka 'how to contribute')
