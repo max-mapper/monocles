@@ -1,6 +1,6 @@
-h1. CouchAppspora (codenamed 'monocles')
+h1. Monocles (formerly CouchAppSpora)
 
-h3. ..is Diaspora implemented on CouchDB
+h3. ..is (more or less) Diaspora implemented on CouchDB
 
 p. The Diaspora source code was initially "released":http://www.joindiaspora.com/2010/09/15/developer-release.html on September 15th, 2010. This project is an implementation of the Diaspora protocol as a CouchApp built entirely on CouchDB.
 
@@ -10,7 +10,7 @@ p. CouchDB is a good fit for a federated social web node due to it's robust repl
 
 h3. Protocols
 
-p. I am shooting for Social Web Acid Test level 0 (SWAT0) compliance by implementing the OStatus stack. Since Couch can use CommonJS, I started a project called "ostatus-js":http://github.com/maxogden/ostatus-js to write the OStatus protocols in server side javascript. To learn more about how monocles works and interoperates with other seeds, check out "this wiki page":http://github.com/maxogden/couchappspora/wiki/Protocols-and-examples.
+p. I am shooting for Social Web Acid Test level 0 (SWAT0) compliance by implementing the OStatus stack. Since Couch can use CommonJS, I started a project called "ostatus-js":http://github.com/maxogden/ostatus-js to write the OStatus protocols in server side javascript. To learn more about how monocles works and interoperates with other seeds, check out "this wiki page":http://github.com/maxogden/monocles/wiki/Protocols-and-examples.
 
 p. !http://i.imgur.com/J0HPe.png!
 
@@ -18,7 +18,7 @@ h3. Hosting your own
 
 p. You can run monocles anywhere that you can run CouchDB, and since it's a CouchApp, the entire application lives inside your database and can be replicated from any other monocles seed. To demonstrate the built in replication that you get with CouchDB:
 
-* Get a CouchDB somewhere! You can get a hosted Couch from "Cloudant":http://cloudant.com, a downloadable Couch from "CouchBase":http://www.couchbase.com/downloads, or an Android Couch from the Android Marketplace
+* Get a CouchDB somewhere! You can get a hosted Couch from "Cloudant":http://cloudant.com or "IrisCouch":http://iriscouch.com, a downloadable Couch from "CouchBase":http://www.couchbase.com/downloads, or an Android Couch from the Android Marketplace
 * Make a database and set up bidirectional continuous replication from @http://monocl.es/api@ (or any other monocles instance) to your new database. 
 * Visit "http://yourcouch/yourdb/==_design/monocles/_==rewrite":http://yourcouch/yourdb/_design/monocles/_rewrite
 
@@ -26,7 +26,7 @@ h3. TO-DO (aka 'how to contribute')
 
 p. Hack on the interface and make it do something cool! The bulk of the application logic is in @monocles.js@, @monocles.html@ and @monocles.css@
 
-p. Check out the "Issues page":http://github.com/maxogden/couchappspora/issues
+p. Check out the "Issues page":http://github.com/maxogden/monocles/issues
 
 p. If you've never worked with CouchApps before, I'd highly recommend learning more about them at "couchapp.org":http://couchapp.org/
 

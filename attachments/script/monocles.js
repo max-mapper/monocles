@@ -165,8 +165,10 @@ var monocles = {
           } else {
             monocles.render( 'newProfileForm', 'stream', session.userCtx, false );
             $( '#stream form' ).submit( function( e ) {
+              alert('woo')
               monocles.saveUser( $( this ) );
               e.preventDefault();
+              return false;
             });
           }
         }
@@ -176,7 +178,7 @@ var monocles = {
   
   saveUser: function(form) {
     $.couch.app( function( app ) {     
-      var md5 = app.require( "vendor/md5" );
+      var md5 = app.require( "common/md5" );
 
       var name = $( "input[name=userCtxName]", form ).val();
       var newProfile = {
