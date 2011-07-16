@@ -69,52 +69,65 @@ var monocles = {
   
   // binds UX interaction and form submit event handlers to the signup/login forms
   waitForLoginOrSignUp: function() {
-    $( "a.login" ).click( function() {
-
-      monocles.disableStream();
-
-      monocles.render( 'login', 'stream', { host: monocles.config.host }, false );
-
-      var form = $( "#login form" )
-        , button = $( '.login_submit .button' );
-
-      setTimeout( function() {
-        $( '#stream' ).fadeIn(200);
-        $( 'label', form ).inFieldLabels();
-        $( "input[name=username]", form ).focus();
-      }, 200);
-
-      $( '.loginToggle' ).click( function ( e ) {
-        var label = $( this )
-          , labelText = label.text()
-          , buttonText = button.text();
-
-        label.text( buttonText );
-        button.text( labelText );
-      })
-
-      form.submit( function( e ) {
-        var type = button.text().trim()
-          , name = $( 'input[name=username]', this ).val()
-          , pass = $( 'input[name=password]', this ).val(); 
-
-        if ( type === 'Sign up' ) {
-          monocles.signUp( name, pass );
-        } else if ( type === 'Login' ) {
-          monocles.login( name, pass );
+    $( "a.login" ).click( function(e) {
+      e.preventDefault();
+      function loginFail() { alert('oh noes! an error occurred whilst logging you in')};
+      navigator.id.getVerifiedEmail(function(assertion) {
+        if (assertion) {
+          console.log("assertion from browserid", assertion);
+          var verificationURL = '/_browserid';
+          $.post(verificationURL, {assertion: assertion}).then(function(response) {
+            console.log("response from couch", response);
+          }, loginFail);
+        } else {
+          loginFail()
         }
-
-        e.preventDefault();
-      })
-
-      $( "input", form ).keydown( function( e ) {
-         if( e.keyCode == 13 ) form.submit();
       });
-
-      button.click( function( e ) {
-        form.submit();
-        e.preventDefault();
-      });
+      // 
+      // monocles.disableStream();
+      // 
+      // monocles.render( 'login', 'stream', { host: monocles.config.host }, false );
+      // 
+      // var form = $( "#login form" )
+      //   , button = $( '.login_submit .button' );
+      // 
+      // setTimeout( function() {
+      //   $( '#stream' ).fadeIn(200);
+      //   $( 'label', form ).inFieldLabels();
+      //   $( "input[name=username]", form ).focus();
+      // }, 200);
+      // 
+      // $( '.loginToggle' ).click( function ( e ) {
+      //   var label = $( this )
+      //     , labelText = label.text()
+      //     , buttonText = button.text();
+      // 
+      //   label.text( buttonText );
+      //   button.text( labelText );
+      // })
+      // 
+      // form.submit( function( e ) {
+      //   var type = button.text().trim()
+      //     , name = $( 'input[name=username]', this ).val()
+      //     , pass = $( 'input[name=password]', this ).val(); 
+      // 
+      //   if ( type === 'Sign up' ) {
+      //     monocles.signUp( name, pass );
+      //   } else if ( type === 'Login' ) {
+      //     monocles.login( name, pass );
+      //   }
+      // 
+      //   e.preventDefault();
+      // })
+      // 
+      // $( "input", form ).keydown( function( e ) {
+      //    if( e.keyCode == 13 ) form.submit();
+      // });
+      // 
+      // button.click( function( e ) {
+      //   form.submit();
+      //   e.preventDefault();
+      // });
 
     })
   }, 
