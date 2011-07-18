@@ -14,6 +14,10 @@ ddoc =
     , {from:"/users/:user", to:"_list/profile/stream", query:{name: ":user" } },
     , {from:"/feeds/:user", to:"_list/feed/stream", query: {name : ":user" } },
     , {from:"/salmon/:user", to:"_update/salmon" },
+    , {from:"/api/stream", to:"_view/stream"}
+    , {from:"/api/comments", to:"_view/comments"}
+    , {from:"/api/couch", to:"../../../"}
+    , {from:"/api/couch/*", to:"../../../*"}
     , {from:"/api", to:"../../"}
     , {from:"/api/*", to:"../../*"}
     , {from:"/*", to:"*"}

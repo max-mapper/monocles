@@ -1,182 +1,129 @@
-$( function() {
-  if ( ! monocles.inVhost() ) {
-    var cfg = monocles.config;
-    cfg.vhost = false
-    cfg.db = document.location.href.split( '/' )[ 3 ];
-    cfg.design = unescape( document.location.href ).split( '/' )[ 5 ];
-    cfg.baseURL = "/" + cfg.db + "/_design/" + cfg.design + "/_rewrite/";
-  }
-  monocles.fetchSession();
-  monocles.bindInfiniteScroll();
-} );
+var monocles = function() {
 
-var defaults = {
-    db: "api" // relative vhost links defined in rewrites.json
-  , design: "ddoc"
-  , vhost: true
-  , baseURL: "/"
-  , host: window.location.href.split( "/" )[ 2 ]
-  , hubURL: "http://www.psychicwarlock.com"
-}
+  var currentDoc = null,
+    oldestDoc = null,
+    streamDisabled = false,
+    newUser = false;
 
-var monocles = {
-  config: defaults,
-
-  // initial state
-  currentDoc: null,
-  oldestDoc: null,
-  streamDisabled: false,
-  newUser: false,
-
-  db: function() {
-    return $.couch.db( monocles.config.db );
-  },
+  var db = couch.db(app.baseURL + "api");
   
-  userProfile: function() {
+  function userProfile() {
     return $( '#header' ).data( 'profile' );
-  },
-  
-  // vhosts are when you mask couchapps behind a pretty URL
-  inVhost: function() {
-    var vhost = false;
-    if ( document.location.pathname.indexOf( "_design" ) === -1 ) {
-      vhost = true;
-    }
-    return vhost;
-  },
-  
-  // true if no admins exist in the database
-  isAdminParty: function( userCtx ) {
-    return userCtx.roles.indexOf("_admin") !== -1;
-  },
-  
-  /** Uses mustache to render a template out to a target DOM
-   *  template: camelcase ID (minus the word Template) of the DOM object containg your mustache template
-   *  target: ID of the DOM node you wish to render the template into
-   *  data: data object to pass into the mustache template when rendering
-   *  append: whether or not to append to or replace the contents of the target
-  **/
-  render: function( template, target, data, append ) {
-    if ( ! data ) data = {};
-    var html = $.mustache( $( "#" + template + "Template" ).text(), data ),
-        targetDom = $( "#" + target );
-    if( append ) {
-      targetDom.append( html );    
-    } else {
-      targetDom.html( html );
-    }
-  },
-  
+  }
+
   // binds UX interaction and form submit event handlers to the signup/login forms
-  waitForLoginOrSignUp: function() {
-    $( "a.login" ).click( function() {
+  function showLogin() {
+    disableStream();
 
-      monocles.disableStream();
+    util.render( 'login', 'stream', { host: document.domain }, false );
 
-      monocles.render( 'login', 'stream', { host: monocles.config.host }, false );
+    var form = $( "#login form" )
+      , button = $( '.login_submit .button' );
 
-      var form = $( "#login form" )
-        , button = $( '.login_submit .button' );
+    setTimeout( function() {
+      $( '.stream' ).fadeIn(200);
+      $( 'label', form ).inFieldLabels();
+      $( "input[name=username]", form ).focus();
+    }, 200);
 
-      setTimeout( function() {
-        $( '#stream' ).fadeIn(200);
-        $( 'label', form ).inFieldLabels();
-        $( "input[name=username]", form ).focus();
-      }, 200);
+    $( '.loginToggle' ).click( function ( e ) {
+      var label = $( this )
+        , labelText = label.text()
+        , buttonText = button.text();
 
-      $( '.loginToggle' ).click( function ( e ) {
-        var label = $( this )
-          , labelText = label.text()
-          , buttonText = button.text();
-
-        label.text( buttonText );
-        button.text( labelText );
-      })
-
-      form.submit( function( e ) {
-        var type = button.text().trim()
-          , name = $( 'input[name=username]', this ).val()
-          , pass = $( 'input[name=password]', this ).val(); 
-
-        if ( type === 'Sign up' ) {
-          monocles.signUp( name, pass );
-        } else if ( type === 'Login' ) {
-          monocles.login( name, pass );
-        }
-
-        e.preventDefault();
-      })
-
-      $( "input", form ).keydown( function( e ) {
-         if( e.keyCode == 13 ) form.submit();
-      });
-
-      button.click( function( e ) {
-        form.submit();
-        e.preventDefault();
-      });
-
+      label.text( buttonText );
+      button.text( labelText );
     })
-  }, 
+
+    form.submit( function( e ) {
+      var type = button.text().trim()
+        , name = $( 'input[name=username]', this ).val()
+        , pass = $( 'input[name=password]', this ).val(); 
+
+      if ( type === 'Sign up' ) {
+        signUp( name, pass );
+      } else if ( type === 'Login' ) {
+        couch.login( {name: name, password: pass} ).then(fetchSession);
+      }
+
+      e.preventDefault();
+      return false;
+    })
+
+    $( "input", form ).keydown( function( e ) {
+       if( e.keyCode == 13 ) form.submit();
+    });
+
+    button.click( function( e ) {
+      form.submit();
+      e.preventDefault();
+    });
+  }
+  
+  function signUp( name, pass ) {
+    $.couch.signup({
+      name : name
+    }, pass, {
+      success : function() {
+        login( name, pass );
+        newUser = true;
+      }
+    });
+  }
   
   // checks if the user is logged in and responds accordingly
-  fetchSession: function() {
-    $.couch.app ( function( app ) { 
-      $.couch.session({
-        success : function( session ) {
-          if ( session.userCtx.name ) {
-            monocles.fetchProfile( session, function( profile ) {
-              monocles.render( 'loggedIn', 'account', {
-                nickname : profile.nickname,
-                gravatar_url : profile.gravatar_url
-              });
-              monocles.getPostsWithComments( { reload: true } );
-              // TODO sammy
-              $( "a[href=#logout]" ).click ( function() { monocles.logout() } );
+  function fetchSession() {
+    couch.session().then(
+      function( session ) {
+        if ( session.userCtx.name ) {
+          fetchProfile( session, function( profile ) {
+            util.render( 'loggedIn', 'account', {
+              nickname : profile.nickname,
+              gravatar_url : profile.gravatar_url
             });
-          } else if ( monocles.isAdminParty( session.userCtx ) ) {
-            monocles.render( 'adminParty', 'account' );
-            monocles.getPostsWithComments();
-          } else {
-            monocles.render( 'loginButton', 'account' );
-            monocles.render( 'loggedOut', 'header' );
-            monocles.waitForLoginOrSignUp();
-            monocles.getPostsWithComments();
-          };
-        }
-      });
-    }, monocles.config );
-  },
+            getPostsWithComments( { reload: true } );
+          });
+        } else if ( util.isAdminParty( session.userCtx ) ) {
+          util.render( 'adminParty', 'account' );
+          getPostsWithComments();
+        } else {
+          util.render( 'loginButton', 'account' );
+          util.render( 'loggedOut', 'header' );
+          getPostsWithComments();
+        };
+      }
+    );
+  }
   
   // gets user's stored profile info from couch
   // asks them to fill out a form if it's their first login
-  fetchProfile: function( session, callback ) {
-    $.couch.userDb( function( db ) {
-      db.openDoc( "org.couchdb.user:" + session.userCtx.name, {
-        success : function( userDoc ) {
+  function fetchProfile( session, callback ) {
+    couch.userDb().then(function(userDb) {
+      userDb.get( "org.couchdb.user:" + session.userCtx.name).then(
+        function( userDoc ) {
           var profile = userDoc[ "couch.app.profile" ];
           if ( profile ) {
             // we copy the name to the profile so it can be used later
             // without publishing the entire userdoc (roles, pass, etc)
             profile.name = userDoc.name;
-            profile.base_url = monocles.config.baseURL;
-            monocles.profileReady( profile );
+            profile.base_url = app.baseURL;
+            profileReady( profile );
             callback( profile );
           } else {
-            monocles.render( 'newProfileForm', 'stream', session.userCtx, false );
-            $( '#stream form' ).submit( function( e ) {
+            util.render( 'newProfileForm', 'stream', session.userCtx, false );
+            $( '.stream form' ).submit( function( e ) {
               alert('woo')
-              monocles.saveUser( $( this ) );
+              saveUser( $( this ) );
               e.preventDefault();
               return false;
             });
           }
         }
-      });
-    });
-  },
+      )
+    })
+  }
   
-  saveUser: function(form) {
+  function saveUser(form) {
     $.couch.app( function( app ) {     
       var md5 = app.require( "common/md5" );
 
@@ -192,61 +139,61 @@ var monocles = {
         newProfile.gravatar_url = 'http://www.gravatar.com/avatar/' + md5.hex( newProfile.email || newProfile.rand ) + '.jpg?s=50&d=identicon';    
       }
 
-      $.couch.userDb( function( db ) {
+      couch.userDb().then( function( userDb ) {
         var userDocId = "org.couchdb.user:" + name;
-        db.openDoc( userDocId, {
+        userDb.get( userDocId, {
           success : function( userDoc ) {
             userDoc[ "couch.app.profile" ] = newProfile;
-            db.saveDoc( userDoc, {
+            userDb.saveDoc( userDoc, {
               success : function() {
                 newProfile.name = userDoc.name;
-                monocles.render( 'loggedIn', 'account', {
+                util.render( 'loggedIn', 'account', {
                   nickname : newProfile.nickname,
                   gravatar_url : newProfile.gravatar_url
                 });
-                monocles.getPostsWithComments( { reload: true } );
-                monocles.profileReady( newProfile );
+                getPostsWithComments( { reload: true } );
+                profileReady( newProfile );
               }
             });
           }
         });
       });
-    }, monocles.config);
-  },
+    });
+  }
   
-  profileReady: function( profile ) {
+  function profileReady( profile ) {
     $( '#header' ).data( 'profile', profile );
-    monocles.render( 'profileReady', 'header', profile )
+    util.render( 'profileReady', 'header', profile )
     $( 'label' ).inFieldLabels();
-    $( 'form.status_message' ).submit( monocles.submitPost );
-    monocles.initFileUpload();
-    if ( monocles.newUser ) {
-      monocles.subscribeHub();
+    $( 'form.status_message' ).submit( submitPost );
+    initFileUpload();
+    if ( newUser ) {
+      subscribeHub();
       newUser = false;
     }
-  },
+  }
   
-  addMessageToPhoto: function(photoDoc, callback) {
+  function addMessageToPhoto(photoDoc, callback) {
     var docAdditions = {
       type: "note",
       _id: photoDoc.id,
       _rev: photoDoc.rev,
       created_at : new Date(),
-      profile : monocles.userProfile(),
+      profile : userProfile(),
       message : $( "form.status_message [name=message]" ).val(),
-      hostname : monocles.config.host
+      hostname : document.domain
     };
 
-    posts( monocles.db() ).update( photoDoc.id, docAdditions );
-  },
+    posts( db ).update( photoDoc.id, docAdditions );
+  }
   
-  initFileUpload: function() {
+  function initFileUpload() {
     var docURL
       , currentFileName
       , uploadSequence = [ ];
 
     $.getJSON( '/_uuids', function( data ) { 
-      docURL = monocles.config.baseURL + "api/" + data.uuids[ 0 ] + "/";
+      docURL = app.baseURL + "api/" + data.uuids[ 0 ] + "/";
     });
 
     $( '.file_list' ).html( "" );
@@ -284,12 +231,12 @@ var monocles = {
         }
       },
       onComplete: function (event, files, index, xhr, handler) {
-        monocles.currentDoc = handler.response;
+        currentDoc = handler.response;
         var nextUpload = uploadSequence[ index + 1 ];
         if ( nextUpload ) {
-          uploadSequence.start( index + 1, files[ index ].fileName, monocles.currentDoc.rev );
+          uploadSequence.start( index + 1, files[ index ].fileName, currentDoc.rev );
         } else {
-          monocles.addMessageToPhoto(monocles.currentDoc);
+          addMessageToPhoto(currentDoc);
         }
       },
       onAbort: function (event, files, index, xhr, handler) {
@@ -298,162 +245,117 @@ var monocles = {
         uploadSequence.start(index + 1, handler.url);
       }
     });
-  },
+  }
   
   // pubsubhubbubb notification functions
-  subscribeHub: function() {
-    var cfg = monocles.config
-      , callbackURL = "http://" + cfg.host + cfg.baseURL + "push"
-      , topicURL = "http://" + cfg.host + cfg.baseURL + "feeds/" + monocles.userProfile().name;
-    $.post(cfg.hubURL, { 
+  function subscribeHub() {
+    var callbackURL = "http://" + document.domain + app.baseURL + "push"
+      , topicURL = "http://" + document.domain + app.baseURL + "feeds/" + userProfile().name;
+    $.post(app.hubURL, { 
       "hub.mode": "subscribe", "hub.verify": "sync", "hub.topic": topicURL, "hub.callback": callbackURL
     })
-  },
+  }
   
-  pingHub: function() {
-    var cfg = monocles.config
-      , publishURL = "http://" + cfg.host + cfg.baseURL + "feeds/" + monocles.userProfile().name;
-    $.post(cfg.hubURL, { 
+  function pingHub() {
+    var publishURL = "http://" + document.domain + app.baseURL + "feeds/" + userProfile().name;
+    $.post(app.hubURL, { 
       "hub.mode": "publish", "hub.url": publishURL
     })
-  },
+  }
   
-  submitPost: function( e ) {
+  function submitPost( e ) {
     var form = this;
     var date = new Date();
     var doc = {
       type: "note",
       created_at : date,
-      profile : monocles.userProfile(),
+      profile : userProfile(),
       message : $( "[name=message]", form ).val(),
-      hostname : monocles.config.host
+      hostname : document.domain
     };
 
-    if ( monocles.currentDoc ) {
-      posts( monocles.db() ).update( monocles.currentDoc.id, { message: doc.message }).addCallback( monocles.afterPost );
+    if ( currentDoc ) {
+      posts( db ).update( currentDoc.id, { message: doc.message }).addCallback( afterPost );
     } else {
-      posts( monocles.db() ).save( doc ).addCallback( monocles.afterPost );
+      posts( db ).save( doc ).addCallback( afterPost );
     }
 
     e.preventDefault();
     return false;
-  },
+  }
   
-  afterPost: function( newDoc ) {
+  function afterPost( newDoc ) {
     // Clear post entry form
     $( "form.status_message [name=message]" ).val( "" );
     $( '.file_list' ).html( "" );
-    monocles.currentDoc = null;
+    currentDoc = null;
 
     // Reload posts
-    monocles.getPostsWithComments( { reload: true } );
+    getPostsWithComments( { reload: true } );
 
     // notify the pubsubhubbub hub
-    monocles.pingHub();
-  },
+    pingHub();
+  }
   
-  randomToken: function() {
+  function randomToken() {
     return String( Math.floor( Math.random() * 1000 ) );
-  },
-  
-  login: function( name, pass ) {
-    $.couch.login({
-      name : name,
-      password : pass,
-      success : function( r ) {
-        monocles.fetchSession();
-      }
-    });
-  },
-  
-  logout: function() {
-    $.couch.logout({
-      success : function() {
-        $( '#header' ).data( 'profile', null );
-        monocles.getPostsWithComments( { reload: true } );
-        monocles.fetchSession();
-      }
-    });
-  },
-  
-  signUp: function( name, pass ) {
-    $.couch.signup({
-      name : name
-    }, pass, {
-      success : function() {
-        monocles.login( name, pass );
-        monocles.newUser = true;
-      }
-    });
-  },
+  }
 
-  disableStream: function() {
-    if ( monocles.streamDisabled === false ) {
+  function disableStream() {
+    if ( streamDisabled === false ) {
       $( 'header' ).fadeOut( 200 );
-      $( '#stream' ).hide();
-      monocles.streamDisabled = true;
+      $( '.stream' ).hide();
+      streamDisabled = true;
     }
-  },
+  }
 
-  enableStream: function() {
-    if ( monocles.streamDisabled ) {
+  function enableStream() {
+    if ( streamDisabled ) {
       $( 'header' ).fadeIn( 200 );
-      $( '#stream' ).show();
-      monocles.streamDisabled = false;
+      $( '.stream' ).show();
+      streamDisabled = false;
     }
-  },
+  }
 
-  showLoader: function() {
+  function showLoader() {
     $( '.loader' ).removeClass( 'hidden' );
-  },
+  }
 
-  hideLoader: function() {
+  function hideLoader() {
     $( '.loader' ).addClass( 'hidden' );
-  },
+  }
 
-  loaderShowing: function() {
+  function loaderShowing() {
     var showing = false;
     if( $( '.loader' ).css( 'display' ) !== "none" ) showing = true;
     return showing;
-  },
+  }
   
-  getPostsWithComments: function( opts ) {
-    monocles.enableStream();
+  function getPostsWithComments( opts ) {
+    enableStream();
     var opts = opts || {};
     if( opts.offsetDoc === false ) return;
     var posts, comments;
-    monocles.showLoader();
+    showLoader();
 
     // Renders only when posts and comments are both loaded.
     function renderStream() {
        if ( posts && comments ) {
-        monocles.hideLoader();
+        hideLoader();
 
         if ( posts.length > 0 ) {
           var append = true;
           if ( opts.reload ) append = false;
-          monocles.render( 'stream', 'stream', monocles.renderPostsWithComments( posts, comments ), append );
-          monocles.decorateStream();
+          util.render( 'stream', 'stream', renderPostsWithComments( posts, comments ), append );
         } else if ( ! opts.offsetDoc ){
-          monocles.render( 'empty', 'stream' );
+          util.render( 'empty', 'stream' );
         }
       }
     }
 
     var query = {
       "descending" : true,
-      "limit" : 20,
-      success: function( data ) {
-        if( data.rows.length === 0 ) {
-          monocles.oldestDoc = false;
-          monocles.hideLoader();
-          posts = [];
-        } else {
-          monocles.oldestDoc = data.rows[ data.rows.length - 1 ];
-          posts = data.rows;
-        }
-        renderStream();
-      }
+      "limit" : 20
     }
 
     if ( opts.offsetDoc ) {
@@ -464,12 +366,27 @@ var monocles = {
       })
     }
 
-    monocles.db().view( monocles.config.design + '/stream', query );
+    couch.get('api/stream', {data: query} ).then(
+      function( data ) {
+        if( data.rows.length === 0 ) {
+          oldestDoc = false;
+          hideLoader();
+          posts = [];
+        } else {
+          oldestDoc = data.rows[ data.rows.length - 1 ];
+          posts = data.rows;
+        }
+        renderStream();
+      }
+    );
 
-    monocles.db().view( monocles.config.design + '/comments', {
+    var commentsQuery = {
       "descending" : true,
-      "limit" : 250,
-      success: function( data ) {
+      "limit" : 250
+    }
+    
+    couch.get( 'api/comments', {data: commentsQuery}).then( 
+      function( data ) {
         comments = data;
 
         // Reverse order of comments
@@ -480,10 +397,10 @@ var monocles = {
 
         renderStream();
       }
-    });
-  },
+    );
+  }
 
-  renderPostsWithComments: function( posts, comments ) {
+  function renderPostsWithComments( posts, comments ) {
     var data = {
       items : posts.map( function( r ) {
         var postComments = comments.rows.filter( function( cr ) {
@@ -492,14 +409,14 @@ var monocles = {
               return $.extend({
                 id : cr.id,
                 created: cr.value.created_at,
-                message : monocles.linkSplit( cr.value.message )
+                message : util.linkSplit( cr.value.message )
               }, cr.value.profile );
             })
 
           , attachments = Object.keys( r.value._attachments || {} ).map( function( file ) {
               return {
                 file : file,
-                randomToken : monocles.randomToken()
+                randomToken : randomToken()
               };
             });
 
@@ -510,90 +427,64 @@ var monocles = {
           hasHiddenComments : postComments.length > 2,
           commentCount : postComments.length,
           hiddenCommentCount : postComments.length - 2,
-          randomToken : monocles.randomToken(),
-          message : monocles.linkSplit( r.value.message ),
+          randomToken : randomToken(),
+          message : util.linkSplit( r.value.message ),
           id: r.id,
           created_at : r.value.created_at,
       		hostname : r.value.hostname || "unknown",
           attachments : attachments
         }, r.value.profile );
       }),
-      profile: monocles.userProfile(),
-      db : monocles.config.db,
-      host: monocles.config.host
+      profile: userProfile(),
+      db : "monocles",
+      host: document.domain
     };
     data[ 'notid' ] = data[ 'items' ][ 0 ][ 'id' ];
     return data;
-  },
+  }
 
-  //splits message into an array of tagged links or text
-  linkSplit: function( string ) {
-  	//from http://snipplr.com/view/6889/regular-expressions-for-uri-validationparsing
-  	var regexUri = /([a-z0-9+.-]+):(?:\/\/(?:((?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*)@)?((?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*)(?::(\d*))?(\/(?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*)?|(\/?(?:[a-z0-9-._~!$&'()*+,;=:@]|%[0-9A-F]{2})+(?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*)?)(?:\?((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?(?:#((?:[a-z0-9-._~!$&'()*+,;=:\/?@]|%[0-9A-F]{2})*))?/i;
-  	var res = [];
-  	while ( string.length > 0 ) {
-  		var pos = string.search( regexUri );
-  		switch( pos ) {
-  			case -1: // no match
-  				res.push( { "text": string } );
-  				string = "";
-  				break;
-  			case 0: // match at front of string
-  				var link = string.match( regexUri )[ 0 ];
-  				res.push( { "link": link } );
-  				string = string.substr( link.length );
-  				break;
-  			default:
-  				res.push( { "text": string.substr( 0, pos ) } );
-  				string = string.substr( pos );
-  				break;
-  		}	
-  	}
-  	return res
-  },
-
-  getComments: function( post_id, callback ) {
-    monocles.db().view( monocles.config.design + '/comments', {
+  function getComments( post_id, callback ) {
+    db.view( config.design + '/comments', {
       startkey: [ post_id ],
       endkey: [ post_id + "\u9999" ],
       success: function( data ) {
         callback( post_id, data );
       }
     });
-  },
+  }
 
-  formatComments: function( post_id, data ) {
+  function formatComments( post_id, data ) {
     var comments = data.rows.map( function( r ) {
       return $.extend({
         id : r.id,
         created: r.value.created_at,
-        message : monocles.linkSplit( r.value.message ),
+        message : util.linkSplit( r.value.message ),
   			hostname : r.value.hostname || "unknown",
-  			randomToken : monocles.randomToken()
+  			randomToken : randomToken()
       }, r.value.profile );
     });
 
     return {
       id : post_id,
-      host: monocles.config.host,
+      host: document.domain,
       empty : comments.length === 0,
       comments : comments
     };
-  },
+  }
 
-  showComments: function( post_id, post ) {
-    monocles.getComments( post_id, function( post_id, data ) {
-      post.html( $.mustache( $( '#commentsTemplate' ).text(), monocles.formatComments( post_id, data ) ) );
+  function showComments( post_id, post ) {
+    getComments( post_id, function( post_id, data ) {
+      post.html( $.mustache( $( '#commentsTemplate' ).text(), formatComments( post_id, data ) ) );
       post.show().find( '*' ).show();
       post.closest( 'li' ).find( 'a.show_post_comments' ).hide().end().find( 'a.hide_post_comments' ).show();
       post.find( 'label' ).inFieldLabels();
       post.find( '.timeago' ).timeago();
-      $( 'form', post ).submit( monocles.submitComment );
+      $( 'form', post ).submit( submitComment );
       $( ".hover_profile", post ).cluetip( { local: true, sticky: true, activation: "click" } );
     });
-  },
+  }
 
-  submitComment: function( e ) {
+  function submitComment( e ) {
     var form = $(this)
       , date = new Date()
       , parent = form.closest( '.stream_element' )
@@ -601,22 +492,22 @@ var monocles = {
       , parent_created_at = parent.attr( 'data-created-at' )
       , doc = {
           created_at : date,
-          profile : monocles.userProfile(),
+          profile : userProfile(),
           message : form.find( '[name=message]' ).val(),
-      	  hostname : monocles.config.host,
+      	  hostname : document.domain,
           parent_id : parent_id,
           parent_created_at : parent_created_at
       };
 
-    comments( monocles.db() ).save( doc ).addCallback( function( savedComment ) {
+    comments( db ).save( doc ).addCallback( function( savedComment ) {
       form.find( '[name=message]' ).val( '' );
-      monocles.showComments( parent_id, form.closest( 'div.comments' ) );
+      showComments( parent_id, form.closest( 'div.comments' ) );
     });
 
     e.preventDefault();
-  },
+  }
 
-  decorateStream: function() {
+  function decorateStream() {
   	$( ".hover_profile" ).cluetip( { local: true, sticky: true, activation: "click" } );
     $( '.timeago' ).timeago();
   	$( 'a.hide_post_comments' ).click( function( e ) {
@@ -631,19 +522,19 @@ var monocles = {
       var post = postComments.closest( '.stream_element' ).find( 'div.comments' )
         , post_id = postComments.closest( '.stream_element' ).attr( 'data-post-id' );
 
-      monocles.showComments( post_id, post );
+      showComments( post_id, post );
       e.preventDefault();
   	})
-  },
+  }
 
-  bindInfiniteScroll: function() {
+  function bindInfiniteScroll() {
     var settings = {
       lookahead: 400,
       container: $( document )
     };
 
     $( window ).scroll( function( e ) {
-      if ( monocles.loaderShowing() || monocles.streamDisabled ) {
+      if ( loaderShowing() || streamDisabled ) {
         return;
       }
 
@@ -657,8 +548,40 @@ var monocles = {
       var distanceToBottom = $( document ).height() - ( containerScrollTop + $( window ).height() );
 
       if ( distanceToBottom < settings.lookahead ) {  
-        monocles.getPostsWithComments( { offsetDoc: monocles.oldestDoc } );
+        getPostsWithComments( { offsetDoc: oldestDoc } );
       }
     });
   }
-}
+  
+  return {
+    db: db,
+    userProfile: userProfile,
+    showLogin: showLogin,
+    fetchSession: fetchSession,
+    fetchProfile: fetchProfile,
+    saveUser: saveUser,
+    profileReady: profileReady,
+    addMessageToPhoto: addMessageToPhoto,
+    initFileUpload: initFileUpload,
+    subscribeHub: subscribeHub,
+    pingHub: pingHub,
+    submitPost: submitPost,
+    afterPost: afterPost,
+    randomToken: randomToken,
+    signUp: signUp,
+    disableStream: disableStream,
+    enableStream: enableStream,
+    showLoader: showLoader,
+    hideLoader: hideLoader,
+    loaderShowing: loaderShowing,
+    getPostsWithComments: getPostsWithComments,
+    renderPostsWithComments: renderPostsWithComments,
+    getComments: getComments,
+    formatComments: formatComments,
+    showComments: showComments,
+    submitComment: submitComment,
+    decorateStream: decorateStream,
+    bindInfiniteScroll: bindInfiniteScroll
+  }
+  
+}();
