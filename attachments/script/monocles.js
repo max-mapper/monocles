@@ -43,7 +43,10 @@ var monocles = function() {
       if ( type === 'Sign up' ) {
         signUp( name, pass );
       } else if ( type === 'Login' ) {
-        couch.login( {name: name, password: pass} ).then(fetchSession);
+        couch.login( {name: name, password: pass} ).then(function() {
+          delete app.session;
+          app.sammy.setLocation("#");
+        });
       }
 
       e.preventDefault();
@@ -71,28 +74,44 @@ var monocles = function() {
     });
   }
   
-  // checks if the user is logged in and responds accordingly
+  function showSessionStatus() {
+    if (!app.session) {
+      monocles.fetchSession().then(function(session) { 
+        app.session = session;
+        showSessionStatus();
+      });
+      return;
+    }
+    
+    var session = app.session,
+        opts = {};
+        
+    if ( session.userCtx.name ) {
+      fetchProfile( session, function( profile ) {
+        util.render( 'loggedIn', 'account', {
+          nickname : profile.nickname,
+          gravatar_url : profile.gravatar_url
+        });
+        opts = { reload: true };
+      });
+    } else if ( util.isAdminParty( session.userCtx ) ) {
+      util.render( 'adminParty', 'account' );
+    } else {
+      util.render( 'loginButton', 'account' );
+      util.render( 'loggedOut', 'header' );
+    };
+    getPostsWithComments(opts);
+  }
+
   function fetchSession() {
+    var dfd = $.Deferred();
     couch.session().then(
       function( session ) {
-        if ( session.userCtx.name ) {
-          fetchProfile( session, function( profile ) {
-            util.render( 'loggedIn', 'account', {
-              nickname : profile.nickname,
-              gravatar_url : profile.gravatar_url
-            });
-            getPostsWithComments( { reload: true } );
-          });
-        } else if ( util.isAdminParty( session.userCtx ) ) {
-          util.render( 'adminParty', 'account' );
-          getPostsWithComments();
-        } else {
-          util.render( 'loginButton', 'account' );
-          util.render( 'loggedOut', 'header' );
-          getPostsWithComments();
-        };
+        app.session = session;
+        dfd.resolve(session);
       }
     );
+    return dfd;
   }
   
   // gets user's stored profile info from couch
@@ -557,6 +576,7 @@ var monocles = function() {
     db: db,
     userProfile: userProfile,
     showLogin: showLogin,
+    showSessionStatus: showSessionStatus,
     fetchSession: fetchSession,
     fetchProfile: fetchProfile,
     saveUser: saveUser,

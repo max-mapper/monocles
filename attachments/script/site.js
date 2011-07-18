@@ -18,18 +18,16 @@ app.handler = function(route) {
 
 app.routes = {
   home: function() {
-    monocles.fetchSession();
-    // monocles.bindInfiniteScroll();
+    monocles.showSessionStatus();
   },
   login: function() {
     monocles.showLogin();
   },
   logout: function() {
     couch.logout().then(function() {
+      delete app.session;
       $( '#header' ).data( 'profile', null );
-      monocles.getPostsWithComments( { reload: true } );
-      monocles.fetchSession();
-      window.location = "";
+      app.sammy.setLocation("#");
     })
   }
 }
@@ -48,5 +46,6 @@ app.sammy = $.sammy(function () {
 });
 
 $(function() {
-  app.sammy.run();  
+  app.sammy.run(); 
+  monocles.bindInfiniteScroll(); 
 })
