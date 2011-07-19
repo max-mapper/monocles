@@ -25,9 +25,9 @@
     <script type="text/javascript" src="script/lib/sammy-0.6.3.min.js"></script>
     <script type="text/javascript" src="script/lib/microevent.js"></script>
     <script type="text/javascript" src="script/lib/underscore.js"></script>
+    <script type="text/javascript" src="script/lib/md5.js"></script>
     <script type="text/javascript" src="script/lib/jquery.cluetip.js"></script>
     <script type="text/javascript" src="script/lib/jquery.timeago.js"></script>
-    <script type="text/javascript" src="script/lib/models/posts.js"></script>
     <script type="text/javascript" src="script/lib/models/comments.js"></script>
     <!-- and, finally -->
     <script type="text/javascript" src="script/util.js"></script>
@@ -102,9 +102,9 @@
           <input type="text" name="nickname" value=""></label>
         <label for="email">
           Email (<em>for <a href="http://gravatar.com">Gravatar</a></em>)
-          <input type="text" name="email" value="">
+          <input type="text" name="email" value="{{name}}">
         </label>
-        <label for="url">URL
+        <label for="url">URL (<em>for shameless self promotion</em>)
           <input type="text" name="url" value="">
         </label>
         <input type="submit" value="Go &rarr;">

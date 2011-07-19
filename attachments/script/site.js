@@ -18,10 +18,7 @@ app.handler = function(route) {
 
 app.routes = {
   home: function() {
-    monocles.showSessionStatus();
-  },
-  login: function() {
-    monocles.showLogin();
+    monocles.fetchSession();
   },
   logout: function() {
     couch.logout().then(function() {
@@ -46,6 +43,10 @@ app.sammy = $.sammy(function () {
 });
 
 $(function() {
+  $('.login').live('click', function(e) {
+    monocles.showLogin();
+    return false;
+  })
   app.sammy.run(); 
   monocles.bindInfiniteScroll(); 
 })
