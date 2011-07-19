@@ -174,15 +174,15 @@
                 {{#photos}}
                 <div class="photo_attachments">
                   <div class="key_photo">
-                    <a href="/{{db}}/{{id}}/{{file}}">
-                      <img src="/{{db}}/{{id}}/{{file}}" rel="{{file}}"/>
+                    <a href="{{url}}">
+                      <img src="{{url}}" rel="{{name}}"/>
                     </a>
                   </div>
                   <br />
                 </div>
                 {{/photos}}
                 {{#files}}
-                  <a href="/{{db}}/{{id}}/{{file}}">{{file}}</a>
+                  <a href="{{url}}">{{name}}</a>
                 {{/files}}
                 {{#message}}
                 	{{text}}

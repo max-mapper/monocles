@@ -42,7 +42,7 @@
   couch.userDb = function() {
     var dfd = $.Deferred();
     couch.session().then(function(session) {
-      dfd.resolve(couch.db(session.info.authentication_db));
+      dfd.resolve(couch.db(couch.rootPath + session.info.authentication_db));
     })
     return dfd;
   }
@@ -50,7 +50,7 @@
   couch.db = function(uri) {
     return {
       name: name,
-      uri: encodeURIComponent(uri) + "/",
+      uri: uri + "/",
 
       get: function(id) {
         return couch.request({url:this.uri + id, type:"GET"});

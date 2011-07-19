@@ -15,7 +15,7 @@ var monocles = function() {
     function loginFail() { alert('oh noes! an error occurred whilst logging you in')};
     navigator.id.getVerifiedEmail(function(assertion) {
       if (assertion) {
-        var verificationURL = 'api/couch/_browserid';
+        var verificationURL = couch.rootPath + '_browserid';
         var verification = { 'assertion': encodeURIComponent(assertion)
                            , 'audience' : encodeURIComponent(document.domain)
                            };
@@ -149,9 +149,9 @@ var monocles = function() {
       , currentFileName
       , uploadSequence = [ ];
 
-    couch.request({url: "api/couch/_uuids"}).then(  
+    couch.request({url: couch.rootPath + "_uuids"}).then(  
       function( data ) { 
-        docURL = app.baseURL + "api/" + data.uuids[ 0 ] + "/";
+        docURL = couch.dbPath + data.uuids[ 0 ] + "/";
       }
     )
 
@@ -325,7 +325,7 @@ var monocles = function() {
       })
     }
 
-    couch.get('api/stream', {data: query} ).then(
+    couch.get('stream', {data: query} ).then(
       function( data ) {
         if( data.rows.length === 0 ) {
           oldestDoc = false;
@@ -344,7 +344,7 @@ var monocles = function() {
       "limit" : 250
     }
     
-    couch.get( 'api/comments', {data: commentsQuery}).then( 
+    couch.get( 'comments', {data: commentsQuery}).then( 
       function( data ) {
         comments = data;
 
@@ -379,7 +379,10 @@ var monocles = function() {
           var attachments = _.keys( r.value._attachments || {} );
           
           _.each(attachments, function( file ) { 
-            var attachment = { file : file };
+            var attachment = { 
+              name : file,
+              url: couch.dbPath + r.id + "/" + file
+             };
               if (r.value._attachments[file].content_type.match(/(jpe?g|png|gif)/ig)) {
                 photos.push(attachment);
               } else {
@@ -418,7 +421,7 @@ var monocles = function() {
       endkey: [postID + "\u9999"]
     }
     cq = commentsQuery;
-    return couch.get( 'api/comments', {data: commentsQuery});
+    return couch.get( 'comments', {data: commentsQuery});
   }
 
   function formatComments( postID, data ) {

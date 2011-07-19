@@ -4,8 +4,8 @@ var app = {
 };
 
 // TODO make this auto somehow
-couch.dbPath = app.baseURL;
-couch.rootPath = app.baseURL + "api/couch/";
+couch.dbPath = app.baseURL + "api/";
+couch.rootPath = couch.dbPath + "couch/";
 
 app.handler = function(route) {
   if (route.params && route.params.route) {
