@@ -1,7 +1,6 @@
 var monocles = function() {
 
-  var currentDoc = null,
-    oldestDoc = null,
+  var oldestDoc = null,
     streamDisabled = false,
     newUser = false;
 
@@ -145,23 +144,6 @@ var monocles = function() {
     }
   }
   
-  function addMessageToDoc(docID) {
-    var dfd = $.Deferred();
-    db.get(docID).then(function(doc) {
-      var docAdditions = {
-        type: "note",
-        created_at : new Date(),
-        profile : userProfile(),
-        message : $( "form.status_message [name=message]" ).val(),
-        hostname : document.domain
-      };
-      db.save( $.extend({}, doc, docAdditions )).then(function(savedDoc) {
-        dfd.resolve(savedDoc);
-      });
-    })
-    return dfd.promise();
-  }
-  
   function initFileUpload() {
     var docURL
       , currentFileName
@@ -208,12 +190,10 @@ var monocles = function() {
         }
       },
       onComplete: function (event, files, index, xhr, handler) {
-        currentDoc = handler.response;
+        app.pendingDoc = handler.response;
         var nextUpload = uploadSequence[ index + 1 ];
         if ( nextUpload ) {
-          uploadSequence.start( index + 1, files[ index ].fileName, currentDoc.rev );
-        } else {
-          addMessageToDoc(currentDoc.id);
+          uploadSequence.start( index + 1, files[ index ].fileName, app.pendingDoc.rev );
         }
       },
       onAbort: function (event, files, index, xhr, handler) {
@@ -243,7 +223,7 @@ var monocles = function() {
   function submitPost( e ) {
     var form = this;
     var date = new Date();
-    var doc = {
+    var post = {
       type: "note",
       created_at : date,
       profile : userProfile(),
@@ -251,12 +231,14 @@ var monocles = function() {
       hostname : document.domain
     };
 
-    if ( currentDoc ) {
-      db.save( $.extend({}, currentDoc, { message: doc.message } )).then( afterPost );
+    if ( app.pendingDoc ) {
+      db.get(app.pendingDoc.id).then(function(doc) {
+        db.save( $.extend({}, post, doc )).then( afterPost );
+      })
     } else {
-      db.save( doc ).then( afterPost );
+      db.save( post ).then( afterPost );
     }
-
+    
     e.preventDefault();
     return false;
   }
@@ -265,7 +247,7 @@ var monocles = function() {
     // Clear post entry form
     $( "form.status_message [name=message]" ).val( "" );
     $( '.file_list' ).html( "" );
-    currentDoc = null;
+    app.pendingDoc = null;
 
     // Reload posts
     getPostsWithComments( { reload: true } );
@@ -562,7 +544,6 @@ var monocles = function() {
     fetchProfile: fetchProfile,
     saveUser: saveUser,
     profileReady: profileReady,
-    addMessageToDoc: addMessageToDoc,
     initFileUpload: initFileUpload,
     subscribeHub: subscribeHub,
     pingHub: pingHub,

@@ -92,7 +92,7 @@
     </script>
 
     <script type="text/mustache" id="loggedOutTemplate">
-      <div class="container"><p class="loginMessage">Welcome to <a href="https://github.com/maxogden/monocles">monocles</a>, an open source social network based on <a href="https://joindiaspora.com/">Diaspora</a> that lets people on <a href="http://ostatus.org/faq">different networks</a> follow each other. Log in or sign up to post.</p></div>
+      <div class="container"><p class="loginMessage">Welcome to <a href="https://github.com/maxogden/monocles">monocles</a>, an open source social network based on <a href="https://joindiaspora.com/">Diaspora</a> that lets people on <a href="http://ostatus.org/faq">different networks</a> follow each other. <a class="login">Log in with BrowserID</a> to post.</p></div>
     </script>
 
     <script type="text/mustache" id="newProfileFormTemplate">
@@ -182,7 +182,7 @@
                 </div>
                 {{/photos}}
                 {{#files}}
-                  {{file}},
+                  <a href="/{{db}}/{{id}}/{{file}}">{{file}}</a>
                 {{/files}}
                 {{#message}}
                 	{{text}}
