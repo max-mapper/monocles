@@ -16,11 +16,10 @@
   }
   
   couch.get = function(path, opts) {
-    if (opts.data) {
-      _.each(_.keys(opts.data), function(k) {
-        opts.data[k] = JSON.stringify(opts.data[k]);
-      })
-    }
+    if (!opts) opts = {data: {}};
+    _.each(_.keys(opts.data), function(k) {
+      opts.data[k] = JSON.stringify(opts.data[k]);
+    })
     return couch.request($.extend({}, {url: couch.dbPath + path, type: "GET"}, opts));
   }
   

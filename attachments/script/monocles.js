@@ -17,8 +17,8 @@ var monocles = function() {
     navigator.id.getVerifiedEmail(function(assertion) {
       if (assertion) {
         var verificationURL = 'api/couch/_browserid';
-        var verification = { 'assertion': window.encodeURIComponent(assertion)
-                           , 'audience' : window.encodeURIComponent(window.location.host)
+        var verification = { 'assertion': encodeURIComponent(assertion)
+                           , 'audience' : encodeURIComponent(document.domain)
                            };
         couch.request({url: verificationURL, type: "POST", data: JSON.stringify(verification)}).then(
           function(response) { 
@@ -68,7 +68,7 @@ var monocles = function() {
         dfd.resolve(session);
       }
     );
-    return dfd;
+    return dfd.promise();
   }
   
   // gets user's stored profile info from couch
@@ -97,11 +97,10 @@ var monocles = function() {
         }
       )
     })
-    return dfd;
+    return dfd.promise();
   }
   
   function saveUser(form) {
-
     var name = $( "input[name=userCtxName]", form ).val();
     var newProfile = {
       rand : Math.random().toString(), 
@@ -146,18 +145,21 @@ var monocles = function() {
     }
   }
   
-  function addMessageToPhoto(photoDoc, callback) {
-    var docAdditions = {
-      type: "note",
-      _id: photoDoc.id,
-      _rev: photoDoc.rev,
-      created_at : new Date(),
-      profile : userProfile(),
-      message : $( "form.status_message [name=message]" ).val(),
-      hostname : document.domain
-    };
-
-    posts( db ).update( photoDoc.id, docAdditions );
+  function addMessageToDoc(docID) {
+    var dfd = $.Deferred();
+    db.get(docID).then(function(doc) {
+      var docAdditions = {
+        type: "note",
+        created_at : new Date(),
+        profile : userProfile(),
+        message : $( "form.status_message [name=message]" ).val(),
+        hostname : document.domain
+      };
+      db.save( $.extend({}, doc, docAdditions )).then(function(savedDoc) {
+        dfd.resolve(savedDoc);
+      });
+    })
+    return dfd.promise();
   }
   
   function initFileUpload() {
@@ -165,9 +167,11 @@ var monocles = function() {
       , currentFileName
       , uploadSequence = [ ];
 
-    $.getJSON( '/_uuids', function( data ) { 
-      docURL = app.baseURL + "api/" + data.uuids[ 0 ] + "/";
-    });
+    couch.request({url: "api/couch/_uuids"}).then(  
+      function( data ) { 
+        docURL = app.baseURL + "api/" + data.uuids[ 0 ] + "/";
+      }
+    )
 
     $( '.file_list' ).html( "" );
 
@@ -209,7 +213,7 @@ var monocles = function() {
         if ( nextUpload ) {
           uploadSequence.start( index + 1, files[ index ].fileName, currentDoc.rev );
         } else {
-          addMessageToPhoto(currentDoc);
+          addMessageToDoc(currentDoc.id);
         }
       },
       onAbort: function (event, files, index, xhr, handler) {
@@ -375,23 +379,32 @@ var monocles = function() {
 
   function renderPostsWithComments( posts, comments ) {
     var data = {
-      items : posts.map( function( r ) {
-        var postComments = comments.rows.filter( function( cr ) {
-              return cr.value.parent_id === r.id;
-            }).map( function( cr ) {
-              return $.extend({
-                id : cr.id,
-                created: cr.value.created_at,
-                message : util.linkSplit( cr.value.message )
-              }, cr.value.profile );
-            })
-
-          , attachments = Object.keys( r.value._attachments || {} ).map( function( file ) {
-              return {
-                file : file,
-                randomToken : randomToken()
-              };
-            });
+      items : _.map(posts, function( r ) {
+        var postComments = comments.rows.filter(
+          function( cr ) {
+            return cr.value.parent_id === r.id;
+          }).map( 
+          function( cr ) {
+            return $.extend({
+              id : cr.id,
+              created: cr.value.created_at,
+              message : util.linkSplit( cr.value.message )
+            }, cr.value.profile );
+          }), 
+          photos = [], 
+          files = [];
+          
+          var attachments = _.keys( r.value._attachments || {} );
+          
+          _.each(attachments, function( file ) { 
+            var attachment = { file : file };
+              if (r.value._attachments[file].content_type.match(/(jpe?g|png|gif)/ig)) {
+                photos.push(attachment);
+              } else {
+                files.push(attachment);
+              }
+            }
+          );
 
         return $.extend({
           comments : postComments,
@@ -405,7 +418,8 @@ var monocles = function() {
           id: r.id,
           created_at : r.value.created_at,
       		hostname : r.value.hostname || "unknown",
-          attachments : attachments
+          files : files,
+          photos: photos
         }, r.value.profile );
       }),
       profile: userProfile(),
@@ -467,7 +481,7 @@ var monocles = function() {
         });
       })
     })
-    return dfd;
+    return dfd.promise();
   }
 
   function submitComment( e ) {
@@ -548,7 +562,7 @@ var monocles = function() {
     fetchProfile: fetchProfile,
     saveUser: saveUser,
     profileReady: profileReady,
-    addMessageToPhoto: addMessageToPhoto,
+    addMessageToDoc: addMessageToDoc,
     initFileUpload: initFileUpload,
     subscribeHub: subscribeHub,
     pingHub: pingHub,
