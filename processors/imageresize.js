@@ -20,25 +20,26 @@ var db = "http://admin:admin@localhost:5984/monocles"
   ;
 
 follow({db:db, include_docs:true}, function(error, change) {
-  if (error || change.deleted) return;
+  if (error || change.deleted || !("doc" in change)) return;
+  if (!("_attachments" in change.doc)) return;
+   
   ensureCommit().then( function() {
-    getDoc(db + "/" + change.doc._id).then(function(doc) {
-      var attachments = doc._attachments
-        , needsResize = []
-        ;
+    var doc = change.doc;
+    var attachments = doc._attachments
+      , needsResize = []
+      ;
 
-      if (!doc.attachment_meta) doc.attachment_meta = {};
-      if ( ( doc._id.substr(0,7) === "_design" ) || ( ! attachments ) ) return;
+    if (!doc.attachment_meta) doc.attachment_meta = {};
+    if ( ( doc._id.substr(0,7) === "_design" ) || ( ! attachments ) ) return;
 
-      _.each(_.keys(attachments), function(name) {
-        var converted = false;
-        if (doc.attachment_meta && doc.attachment_meta[name]) converted = doc.attachment_meta[name].converted;
-        if ( ( _.include(_.keys(doc), "message") ) && ( !converted ) && ( name.match(/jpe?g|png/ig) ) ) needsResize.push(name);          
-      })
-
-      if (needsResize.length > 0) sys.puts('Resizing ' + needsResize.length + " from doc " + doc._id + "...");
-      resize(needsResize, db + "/" + doc._id, doc);
+    _.each(_.keys(attachments), function(name) {
+      var converted = false;
+      if (doc.attachment_meta && doc.attachment_meta[name]) converted = doc.attachment_meta[name].converted;
+      if ( ( _.include(_.keys(doc), "message") ) && ( !converted ) && ( name.match(/jpe?g|png/ig) ) ) needsResize.push(name);          
     })
+
+    if (needsResize.length > 0) sys.puts('Resizing ' + needsResize.length + " from doc " + doc._id + "...");
+    resize(needsResize, db + "/" + doc._id, doc);
   })
 })
 
@@ -52,18 +53,6 @@ function ensureCommit() {
       dfd.resolve(status.ok);
     }
   });
-  return dfd.promise;
-}
-
-function getDoc(uri) {
-  var dfd = deferred();
-  request({uri: uri, headers:h}, 
-    function(err, resp, body) {
-      if (err || resp.statusCode > 299) throw new Error("Could not download doc\n"+body);
-      var doc = JSON.parse(body);
-      dfd.resolve(doc);      
-    }
-  )
   return dfd.promise;
 }
 

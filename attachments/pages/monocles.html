@@ -12,23 +12,18 @@
     <script type="text/javascript" src="script/lib/jquery-1.6.2.min.js"></script>
     <script type="text/javascript" src="script/lib/jquery.fileupload.js"></script>
     <script type="text/javascript" src="script/lib/jquery.fileupload-ui.js"></script>
-    <script type="text/javascript" src="script/lib/jiverscripts/compat/object.js"></script>
-    <script type="text/javascript" src="script/lib/jiverscripts/compat/array.js"></script>
-    <script type="text/javascript" src="script/lib/jiverscripts/conc/next_tick.js"></script>
-    <script type="text/javascript" src="script/lib/jiverscripts/conc/observable.js"></script>
-    <script type="text/javascript" src="script/lib/jiverscripts/conc/promise.js"></script>
     <script type="text/javascript" src="script/lib/jquery.infieldlabel.js"></script>
     <script type="text/javascript" src="/_utils/script/sha1.js"></script>
     <script type="text/javascript" src="/_utils/script/json2.js"></script>
     <script type="text/javascript" src="script/lib/jquery.couch2.js"></script>
     <script type="text/javascript" src="script/lib/jquery.mustache.js"></script>
+    <script type="text/javascript" src="script/lib/jquery.masonry.min.js"></script>
     <script type="text/javascript" src="script/lib/sammy-0.6.3.min.js"></script>
     <script type="text/javascript" src="script/lib/microevent.js"></script>
     <script type="text/javascript" src="script/lib/underscore.js"></script>
     <script type="text/javascript" src="script/lib/md5.js"></script>
     <script type="text/javascript" src="script/lib/jquery.cluetip.js"></script>
     <script type="text/javascript" src="script/lib/jquery.timeago.js"></script>
-    <script type="text/javascript" src="script/lib/models/comments.js"></script>
     <!-- and, finally -->
     <script type="text/javascript" src="script/util.js"></script>
     <script type="text/javascript" src="script/site.js"></script>
@@ -257,19 +252,12 @@
     </script>
     
     <script type="text/mustache" id="imagesTemplate">
-      <div class="span-19 last" id="items">
-        <div id="main_stream" class="stream">
-        {{#photos}}
-        <div class="photo_attachments">
-          <div class="key_photo">
-            <a href="{{url}}">
-              <img src="{{url}}" rel="{{name}}"/>
-            </a>
-          </div>
-          <br />
-        </div>
-        {{/photos}}
-        </div>
+      <div id="main_stream" class="stream">
+      {{#photos}}
+      <a class="image" href="{{url}}">
+        <img src="{{url}}" rel="{{name}}"/>
+      </a>
+      {{/photos}}
       </div>
     </script>
 

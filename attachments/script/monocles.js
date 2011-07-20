@@ -37,8 +37,7 @@ var monocles = function() {
       return;
     }
     
-    var session = app.session,
-        opts = {};
+    var session = app.session;
         
     if ( session.userCtx.name ) {
       fetchProfile( session ).then( function( profile ) {
@@ -50,11 +49,11 @@ var monocles = function() {
       });
     } else if ( util.isAdminParty( session.userCtx ) ) {
       util.render( 'adminParty', 'account' );
-      getPostsWithComments(opts);
+      getPostsWithComments();
     } else {
       util.render( 'loginButton', 'account' );
       util.render( 'loggedOut', 'header' );
-      getPostsWithComments(opts);
+      getPostsWithComments({ reload: true });
     }
   }
 

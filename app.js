@@ -46,7 +46,7 @@ ddoc.views = {
       var _ = require( "views/lib/underscore" );
       if (doc._attachments) {
         _.each(_.keys(doc._attachments), function(name) {
-          if (name.match(/jpe?g|png/)) {
+          if (name.match(/jpe?g|png/ig)) {
             emit([doc.created_at, doc.profile.name], _.extend({}, doc._attachments[name], {filename: name}));
           }
         })

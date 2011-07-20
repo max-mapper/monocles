@@ -737,6 +737,10 @@ h1.big_text {
   font-size: 12px;
   font-weight: normal; }
 
+.wide {
+  width: 100%;
+}
+
 #content_bottom {
   position: relative;
   line-height: 36px;

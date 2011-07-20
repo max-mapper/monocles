@@ -23,7 +23,7 @@ app.routes = {
     monocles.fetchSession();
   },
   images: function() {
-    couch.get('images').then(
+    couch.get('images?descending=true').then(
       function( data ) {
         var photos = _.map(data.rows, function( r ) { 
           return { 
@@ -34,7 +34,6 @@ app.routes = {
         util.render( 'images', 'content', {photos: photos} );
       }
     )
-    
   },
   logout: function() {
     couch.logout().then(function() {
@@ -47,7 +46,14 @@ app.routes = {
 
 app.after = {
   stream: function() {
+    $('#content').removeClass("wide");
     monocles.decorateStream();
+  },
+  images: function() {
+    $('#content').addClass("wide");
+    $('main_stream').masonry({
+      itemSelector: '.image'
+    });
   }
 }
 
