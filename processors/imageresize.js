@@ -11,94 +11,111 @@ var follow = require('follow')
   , fs = require("fs")
   , mimetypes = require('./mimetypes')
   , request = require('request')
+  , deferred = require('deferred')
   , _ = require("underscore")
   ;
 
-var db = "http://username:password@yourcouch.com/monocles"
+var db = "http://admin:admin@localhost:5984/monocles"
   , h = {"Content-type": "application/json", "Accept": "application/json"}
-  , converted = []
   ;
 
 follow({db:db, include_docs:true}, function(error, change) {
-  if(!error) {
-    
-    var doc = change.doc
-      , attachments = doc._attachments
-      ;
+  if (error || change.deleted) return;
+  ensureCommit().then( function() {
+    getDoc(db + "/" + change.doc._id).then(function(doc) {
+      var attachments = doc._attachments
+        , needsResize = []
+        ;
 
-    if ( ( doc._id.substr(0,7) === "_design" ) || ( ! attachments ) ) return;
+      if (!doc.attachment_meta) doc.attachment_meta = {};
+      if ( ( doc._id.substr(0,7) === "_design" ) || ( ! attachments ) ) return;
 
-    _.each(_.keys(attachments), function(name) {
-      var uniqueName = doc._id + unescape(name);      
-      if ( ( doc.message ) && ( attachments[name].length > 500000 ) && ( name.match(/jpe?g|png/) ) ) {
-        if ( !(_.include(converted, uniqueName)) ) {
-          converted.push(uniqueName);
-          ensureCommit(function(uri, doc) {
-            return function() {
-              resize(uri, doc);
-            }
-          }(db + "/" + doc._id + "/" + escape(unescape(name)), doc))
-        }
-      }
+      _.each(_.keys(attachments), function(name) {
+        var converted = false;
+        if (doc.attachment_meta && doc.attachment_meta[name]) converted = doc.attachment_meta[name].converted;
+        if ( ( _.include(_.keys(doc), "message") ) && ( !converted ) && ( name.match(/jpe?g|png/ig) ) ) needsResize.push(name);          
+      })
+
+      if (needsResize.length > 0) sys.puts('Resizing ' + needsResize.length + " from doc " + doc._id + "...");
+      resize(needsResize, db + "/" + doc._id, doc);
     })
-  }
+  })
 })
 
-function ensureCommit(callback) {
+function ensureCommit() {
+  var dfd = deferred();
   request({uri:db + "/_ensure_full_commit", method:'POST', headers:h, body: "''"}, function (err, resp, body) {
     if (err) throw err;
     if (resp.statusCode > 299) throw new Error("Could not check committed status\n"+body);
     var status = JSON.parse(body);
     if (status.ok) {
-      callback();
-    } else {
-      setTimeout( function() {
-        ensureCommit( callback );
-      }, 1000 );
+      dfd.resolve(status.ok);
     }
   });
+  return dfd.promise;
 }
 
-function download(uri, callback) {
-  var filename = unescape(url.parse(uri).pathname.split("/").pop())
-    ;
+function getDoc(uri) {
+  var dfd = deferred();
+  request({uri: uri, headers:h}, 
+    function(err, resp, body) {
+      if (err || resp.statusCode > 299) throw new Error("Could not download doc\n"+body);
+      var doc = JSON.parse(body);
+      dfd.resolve(doc);      
+    }
+  )
+  return dfd.promise;
+}
+
+function download(uri) {
+  var dfd = deferred();
+  var filename = unescape(url.parse(uri).pathname.split("/").pop());
   request({
     uri: uri,
     encoding: "binary"
-  }, function(err, resp, body) {
-    if (err || resp.statusCode > 299) {
-      setTimeout(function() {
-        download(uri, callback)
-      }, 1000)
-    } else {
-      fs.writeFileSync(filename, body, 'binary');
-      callback(filename);      
+  }, 
+  function(err, resp, body) {
+    if (err || resp.statusCode > 299) throw new Error("Could not download photo\n"+body);
+      fs.writeFileSync(filename, body, 'binary')
+      dfd.resolve(filename);      
     }
+  )
+  return dfd.promise;
+}
+
+function resize(attachments, uri, doc) {
+  function doneResizing() { if (left === 0) upload(files, uri, doc) };
+  var files = []
+    , left = attachments.length;
+  _.each(attachments, function(name) {
+    download(uri + "/" + escape(unescape(name))).then(
+      function(filename) {
+        im.convert([filename, '-resize', '500', filename], 
+        function(err, stdout, stderr) {
+          if (err) throw err;
+          left--;
+          files.push(filename);
+          doneResizing();
+        })
+      }
+    )
   })
 }
 
-function resize(uri, doc) {
-  download(uri, function(filename) {
-    im.convert([filename, '-resize', '500', filename], 
-    function(err, stdout, stderr) {
-      if (err) throw err;
-      upload(filename, db + "/" + doc._id, doc);
-    })
-  })
-}
-
-function upload(filename, uri, doc) {
-  fs.readFile(filename, 'binary', function (er, data) {
+function upload(files, uri, doc) {
+  _.each(files, function(filename) {
+    var data = fs.readFileSync(filename, 'binary')
     var mime = mimetypes.lookup(path.extname(filename).slice(1));
     data = new Buffer(data, 'binary').toString('base64');
     doc._attachments[filename] = {data:data, content_type:mime};
-    var body = JSON.stringify(doc);
-    request({uri:uri, method:'PUT', body:body, headers:h}, function (err, resp, body) {
-      if (err) throw err;
-      if (resp.statusCode > 299) throw new Error("Could not upload converted photo\n"+body);
-      sys.puts('Resized ' + filename + " from doc " + doc._id);
-    });
+    doc.attachment_meta[filename] = {converted: true};
   })
+  var body = JSON.stringify(doc);
+  request({uri:uri, method:'PUT', body:body, headers:h}, function (err, resp, body) {
+    if (err) throw err;
+    if (resp.statusCode > 299) throw new Error("Could not upload converted photo\n"+body);
+    sys.puts('Resized ' + files.length + " from doc " + doc._id);
+  });
 }
 // 
 // TODO binary version (doesnt work yet -- incorrect encoding?):
