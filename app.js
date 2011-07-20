@@ -15,6 +15,7 @@ ddoc =
     , {from:"/feeds/:user", to:"_list/feed/stream", query: {name : ":user" } },
     , {from:"/salmon/:user", to:"_update/salmon" },
     , {from:"/api/stream", to:"_view/stream"}
+    , {from:"/api/images", to:"_view/images"}
     , {from:"/api/comments", to:"_view/comments"}
     , {from:"/api/couch", to:"../../../"}
     , {from:"/api/couch/*", to:"../../../*"}
@@ -39,6 +40,18 @@ ddoc.views = {
         emit(doc.updated_at || doc.created_at, doc);
       }
     }
+  },
+  images: {
+    map: function(doc) {
+      var _ = require( "views/lib/underscore" );
+      if (doc._attachments) {
+        _.each(_.keys(doc._attachments), function(name) {
+          if (name.match(/jpe?g|png/)) {
+            emit([doc.created_at, doc.profile.name], _.extend({}, doc._attachments[name], {filename: name}));
+          }
+        })
+      }
+    }
   }
 };
 
@@ -47,8 +60,8 @@ ddoc.lists = {
     provides("atom",function() {
       var rows = [];
       // !json templates.feed
-      Mustache = require("common/mustache");
-      Rfc3339 = require("common/rfc3339");
+      Mustache = require("views/lib/mustache");
+      Rfc3339 = require("views/lib/rfc3339");
       while(row = getRow()){
         if (row.value.profile && row.value.profile.name === req.query.name){
           rows.push(row);
@@ -90,7 +103,7 @@ ddoc.lists = {
     //!json templates.profile
     provides("html", function(){
 
-      Mustache = require("common/mustache");
+      Mustache = require("views/lib/mustache");
       var rows = [];
       while(row = getRow()){
       if (row.value.profile && row.value.profile.name === req.query.name && row.value.message.length > 0){
@@ -121,7 +134,7 @@ ddoc.shows = {
   lrdd: function(doc, req){
     //!json templates.lrdd
     uri = req.query.q
-    Mustache = require("common/mustache");
+    Mustache = require("views/lib/mustache");
     var username = uri.split("@")[0].replace("acct:","");
     var host = req.headers.Host;
     var view = {
@@ -135,7 +148,7 @@ ddoc.shows = {
   },
   profile: function(doc, req){
     //!json templates.profile
-    Mustache = require("common/mustache");
+    Mustache = require("views/lib/mustache");
     var profile = doc.couch.app.profile;
     var html = Mustache.to_html(templates.profile, profile);
     provides("html", function(){
@@ -145,7 +158,7 @@ ddoc.shows = {
   webfinger: function(doc, req){
     //!json templates.xrd
     uri = req.query.q
-    Mustache = require("common/mustache");
+    Mustache = require("views/lib/mustache");
     var host = req.headers.Host;
     var view = {
       host: host
@@ -159,7 +172,7 @@ ddoc.shows = {
 
 ddoc.updates = {
   pubsub: function(head, req) {
-    var xml2js = require('common/xml2js');
+    var xml2js = require('views/lib/xml2js');
     var json;
 
     new xml2js.Parser(function(data) {
@@ -169,8 +182,8 @@ ddoc.updates = {
     return json;
   },
   salmon: function(doc, req) {
-    // var Base64 = require("common/base64")
-    //   , md5 = require('common/md5')
+    // var Base64 = require("views/lib/base64")
+    //   , md5 = require('views/lib/md5')
     //   ;
     // req.body = req.body.replace(/<.*?>/,"");
     // var codez = new XML(req.body);
@@ -205,7 +218,7 @@ ddoc.updates = {
 }
 
 ddoc.validate_doc_update = function ( newDoc, oldDoc, userCtx, secObj ) {
-  var v = require( "common/validate" ).init( newDoc, oldDoc, userCtx, secObj );
+  var v = require( "views/lib/validate" ).init( newDoc, oldDoc, userCtx, secObj );
   
   if ( v.isAdmin() ) return;
   
@@ -224,7 +237,7 @@ ddoc.validate_doc_update = function ( newDoc, oldDoc, userCtx, secObj ) {
   
 }
 
-ddoc.common = couchapp.loadFiles('./common');
+ddoc.views.lib = couchapp.loadFiles('./common');
 ddoc.templates = couchapp.loadFiles('./templates');
 couchapp.loadAttachments(ddoc, path.join(__dirname, 'attachments'));
 

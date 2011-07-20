@@ -86,8 +86,8 @@ var monocles = function() {
             profileReady( profile );
             dfd.resolve( profile );
           } else {
-            util.render( 'newProfileForm', 'stream', session.userCtx, false );
-            $( '#stream form' ).submit( function( e ) {
+            util.render( 'newProfileForm', 'content', session.userCtx, false );
+            $( '#content form' ).submit( function( e ) {
               saveUser( $( e.target ) );
               e.preventDefault();
               return false;
@@ -142,6 +142,14 @@ var monocles = function() {
       subscribeHub();
       newUser = false;
     }
+  }
+  
+  function switchNav(route) {
+    var nav = $("#aspect_nav ul");
+    nav.find(".selected").removeClass('selected');
+    var link = nav.find("a[href=#" + route + "]");
+    link.parents('li').addClass('selected');
+    $(".aspect-header a").text(link.attr('data-label'));
   }
   
   function initFileUpload() {
@@ -305,9 +313,9 @@ var monocles = function() {
         if ( posts.length > 0 ) {
           var append = true;
           if ( opts.reload ) append = false;
-          util.render( 'stream', 'stream', {data: renderPostsWithComments( posts, comments ), append: append} );
+          util.render( 'stream', 'content', {data: renderPostsWithComments( posts, comments ), append: append} );
         } else if ( ! opts.offsetDoc ){
-          util.render( 'empty', 'stream' );
+          util.render( 'empty', 'content' );
         }
       }
     }
@@ -547,6 +555,7 @@ var monocles = function() {
     fetchProfile: fetchProfile,
     saveUser: saveUser,
     profileReady: profileReady,
+    switchNav: switchNav,
     initFileUpload: initFileUpload,
     subscribeHub: subscribeHub,
     pingHub: pingHub,

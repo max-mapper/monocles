@@ -52,8 +52,13 @@
         <div id="aspect_nav">
           <ul>
             <li class="selected">
-              <a href="#">
-                Public
+              <a href="#stream" data-label="Activity Stream">
+                Stream
+              </a>
+            </li>
+            <li>
+              <a href="#images" data-label="Images">
+                Images
               </a>
             </li>
           </ul>
@@ -64,7 +69,7 @@
       <div id="header">
       </div>
     </header>
-    <div class="container" id="stream">
+    <div class="container" id="content">
     </div>
     <div class="loader">
       <img src="images/loading-bar.gif"></img>
@@ -115,7 +120,7 @@
     <script type="text/mustache" id="profileReadyTemplate">
       <div class="container">
         <div class="span-5 aspect-title last">
-          <h1 class="aspect-header"><a href="#">Public</a></h1>
+          <h1 class="aspect-header"><a href="#">Activity Stream</a></h1>
         </div>
         <div class="span-19 message-container last" style="position:relative;">
           <div id="publisher">
@@ -247,6 +252,23 @@
             Atom Feed: <a href='{{base_url}}feeds/{{name}}' target='_blank'>{{name}}.atom</a>
         	</p>
         {{/items}}
+        </div>
+      </div>
+    </script>
+    
+    <script type="text/mustache" id="imagesTemplate">
+      <div class="span-19 last" id="items">
+        <div id="main_stream" class="stream">
+        {{#photos}}
+        <div class="photo_attachments">
+          <div class="key_photo">
+            <a href="{{url}}">
+              <img src="{{url}}" rel="{{name}}"/>
+            </a>
+          </div>
+          <br />
+        </div>
+        {{/photos}}
         </div>
       </div>
     </script>

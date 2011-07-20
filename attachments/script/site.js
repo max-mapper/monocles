@@ -10,15 +10,31 @@ couch.rootPath = couch.dbPath + "couch/";
 app.handler = function(route) {
   if (route.params && route.params.route) {
     var path = route.params.route;
+    monocles.switchNav(path);
     app.routes[path](route.params.id);
   } else {
-    app.routes['home']();
-  }  
+    monocles.switchNav('stream');
+    app.routes['stream']();
+  }
 };
 
 app.routes = {
-  home: function() {
+  stream: function() {
     monocles.fetchSession();
+  },
+  images: function() {
+    couch.get('images').then(
+      function( data ) {
+        var photos = _.map(data.rows, function( r ) { 
+          return { 
+            name : r.value.filename,
+            url: couch.dbPath + r.id + "/" + r.value.filename
+          };
+        });
+        util.render( 'images', 'content', {photos: photos} );
+      }
+    )
+    
   },
   logout: function() {
     couch.logout().then(function() {
