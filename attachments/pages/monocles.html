@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
+    <title>Monocl.es - script kiddie challenge edition</title>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
     <link rel="stylesheet" href="style/blueprint-screen.css" type="text/css">
     <link rel="stylesheet" href="style/monocles.css" type="text/css">
@@ -37,7 +38,7 @@
             MONOCLES
           </a>
           <span class="sub_text">
-            BETA
+            (rogue fork)
           </span>
         </div>
         <div id="session_action">
@@ -92,7 +93,19 @@
     </script>
 
     <script type="text/mustache" id="loggedOutTemplate">
-      <div class="container"><p class="loginMessage">Welcome to <a href="https://github.com/maxogden/monocles">monocles</a>, an open source social network based on <a href="https://joindiaspora.com/">Diaspora</a> that lets people on <a href="http://ostatus.org/faq">different networks</a> follow each other. <a class="login">Log in with BrowserID</a> to post.</p></div>
+      <div class="container"><p class="loginMessage">Welcome to <a href="https://github.com/maxogden/monocles">monocles</a>, an open source social network based on <a href="https://joindiaspora.com/">Diaspora</a> that lets people on <a href="http://ostatus.org/faq">different networks</a> follow each other. <a class="login">Log in with BrowserID</a> to post.</p>
+          <div class="error_messages">
+            <h2>
+              Privacy warning: The email address you use in order to login with BrowserID email address will be publicly
+              <a href="/_users/_all_docs" target="_blank">exposed</a>. Until this bug
+              <a href="http://getsatisfaction.com/iriscouch/topics/protect_emails_of_browserid_users" target="_blank">gets fixed</a>,
+              you are advised to you use a disposable address service like
+              <a href="http://yopmail.com" target="_blank">yopmail</a> or 
+              <a href="http://mailinator.com" target="_blank">mailinator</a>.
+            </h2>
+            By the way, your <em>gravatar</em> email address no longer leaks ;)
+          </div>
+      </div>
     </script>
 
     <script type="text/mustache" id="newProfileFormTemplate">
@@ -167,7 +180,7 @@
             </a>
             <div class='content'>
               <div class='from'>
-                <a class='author hover_profile' rel='#profile_{{nickname}}_{{randomToken}}' title="{{nickname}}'s info" href='#'>
+                <a class='author hover_profile' rel='#profile_{{nickname}}_{{randomToken}}' title="{{nickname}}'s info" href='#showProf'>
                   {{nickname}}
                 </a>
                 <p></p>
@@ -242,10 +255,8 @@
             </div>
           </div>
           <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
-            OStatus Address: {{name}}@{{host}}<br>
-            {{#url}}URL: <a href='{{.}}' target='_blank'>{{.}}</a><br>{{/url}}
-            Atom Feed: <a href='{{base_url}}feeds/{{name}}' target='_blank'>{{name}}.atom</a>
-        	</p>
+            {{#url}}URL: <a href='{{url}}' target='_blank'>{{url}}</a><br>{{/url}}
+          </p>
         {{/items}}
         </div>
       </div>
@@ -280,10 +291,8 @@
             <div class="time timeago" title="{{created}}">a while ago</div>
           </li>
           <p id='profile_{{nickname}}_{{randomToken}}' style="display:none">
-            OStatus Address: {{name}}@{{host}}<br>
-            {{#url}}URL: <a href='{{.}}' target='_blank'>{{.}}</a><br>{{/url}}
-            Atom Feed: <a href='{{base_url}}feeds/{{name}}' target='_blank'>{{name}}.atom</a>
-        	</p>
+            {{#url}}URL: <a href='{{url}}' target='_blank'>{{url}}</a><br>{{/url}}
+          </p>
         {{/comments}}
 
         {{#empty}}

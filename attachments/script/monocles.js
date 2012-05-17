@@ -103,11 +103,12 @@ var monocles = function() {
     var newProfile = {
       rand : Math.random().toString(), 
       nickname : $( "input[name=nickname]", form ).val(),
-      email : $( "input[name=email]", form ).val(),
+      //email : $( "input[name=email]", form ).val(),
+      email : "hidden@nonoyo.biz",
       url : $( "input[name=url]", form ).val()
     };
 
-    newProfile.gravatar_url = 'http://www.gravatar.com/avatar/' + md5.hex( newProfile.email || newProfile.rand ) + '.jpg?s=50&d=identicon';    
+    newProfile.gravatar_url = 'http://www.gravatar.com/avatar/' + md5.hex( $( "input[name=email]", form ).val() || newProfile.rand ) + '.jpg?s=50&d=identicon';    
 
     couch.userDb().then( function( userDb ) {
       var userDocId = "org.couchdb.user:" + encodeURIComponent(name);
